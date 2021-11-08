@@ -38,7 +38,7 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
                         rs.getInt("id"),
                         rs.getString("email"),
                         rs.getString("password"));
-        Collection<Users> users = jdbcTemplate.query("SELECT id FROM users",rowMapper);
+        Collection<Users> users = jdbcTemplate.query("SELECT id,email,password FROM users",rowMapper);
         return users;
     }
 
