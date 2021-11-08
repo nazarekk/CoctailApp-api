@@ -31,7 +31,7 @@ jobs:
           command: mvn test
   static-analysis:
     docker:
-      - image: circleci/openjdk:8.0
+      - image: cimg/openjdk:8.0
     steps:
       - checkout
       - restore_cache:
