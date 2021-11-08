@@ -14,7 +14,6 @@ public class InMemoryRegistrationDao implements PostgresRegistrationDao {
 
     public InMemoryRegistrationDao() {
         users = new LinkedHashMap<>();
-        test(users);
     }
 
     private static boolean emailCheck(String email){
@@ -41,13 +40,6 @@ public class InMemoryRegistrationDao implements PostgresRegistrationDao {
     private static final Pattern checkP = Pattern.compile(
             "^[a-zA-Z0-9_]{5,}$"
     );
-
-
-
-    private static void test(Map<String, Users> users)	{
-        users.put("test@gmail.com", new Users("test@gmail.com","pass123"));
-        users.put("test@a.aa", new Users("test@a.aa","pass123"));
-    }
 
     public void create(Users user) {
         if(emailCheck(user.getEmail())){

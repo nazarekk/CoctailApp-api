@@ -5,13 +5,14 @@ import lombok.Data;
 
 import java.util.Objects;
 
-@Data @AllArgsConstructor
+@Data
 public class Users {
     int id;
     String email;
     String password;
 
-    public Users(String email, String password) {
+    public Users(int id,String email, String password) {
+        this.id=id;
         this.email = email;
         this.password = password;
     }
