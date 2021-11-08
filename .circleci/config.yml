@@ -8,14 +8,14 @@ jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
   test:
     docker:
-      - image: circleci/openjdk:8.0
+      - image: cimg/openjdk:8.0
     steps:
       - checkout
       - run: ./mvnw test
 
   build:
     docker:
-      - image: circleci/openjdk:8.0
+      - image: cimg/openjdk:8.0
     steps:
       - checkout
       - run: ./mvnw -Dmaven.test.skip=true package
