@@ -52,7 +52,11 @@ jobs:
       - run:
           name: Run Static Analysis
           command: |
+<<<<<<< HEAD
             pmd-bin-6.0.1/bin/run.sh pmd -d . -R https://github.com/pmd/pmd/blob/master/pmd-java/src/main/resources/rulesets/java/basic.xml -f text -l apex -r static-analysis.txt
+=======
+              pmd-bin-6.0.1/bin/run.sh pmd -d . -R https://github.com/pmd/pmd/blob/master/pmd-java/src/main/resources/rulesets/java/basic.xml -f text -l apex -r static-analysis.txt
+>>>>>>> c7a871c1f277976f2025e70bd5521924ccd779d0
       - store_artifacts:
           path: static-analysis.txt
 
