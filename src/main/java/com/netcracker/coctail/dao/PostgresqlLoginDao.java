@@ -1,6 +1,6 @@
-package com.example.coctailapp.login.dao;
+package com.netcracker.coctail.dao;
 
-import com.example.coctailapp.login.model.Login;
+import com.netcracker.coctail.model.Login;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

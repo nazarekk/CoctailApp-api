@@ -1,7 +1,7 @@
-package com.example.coctailapp.login.controllers;
+package com.netcracker.coctail.controllers;
 
-import com.example.coctailapp.login.dao.LoginDao;
-import com.example.coctailapp.login.model.Login;
+import com.netcracker.coctail.dao.LoginDao;
+import com.netcracker.coctail.model.Login;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;

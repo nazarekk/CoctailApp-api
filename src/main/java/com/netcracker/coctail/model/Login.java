@@ -1,4 +1,4 @@
-package com.example.coctailapp.login.model;
+package com.netcracker.coctail.model;
 
 import lombok.Data;
 @Data
