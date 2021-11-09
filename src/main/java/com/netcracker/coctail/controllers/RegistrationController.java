@@ -2,7 +2,8 @@ package com.netcracker.coctail.controllers;
 
 import java.util.Collection;
 
-import com.netcracker.coctail.model.Users;
+import com.netcracker.coctail.model.ReadUser;
+import com.netcracker.coctail.model.CreateUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,14 +25,14 @@ public class RegistrationController {
 
 
 
-    @GetMapping(value = "/usersList")
-    public Collection<Users> getAll() {
+    @GetMapping(value = "/list")
+    public Collection<ReadUser> getAll() {
         return PostgresRegistrationDao.getAll();
     }
 
-    @PostMapping(value = "/createUser")
-    public void create(@RequestBody Users user) {
-        PostgresRegistrationDao.create(user);
+    @PostMapping(value = "/create")
+    public String create(@RequestBody CreateUser user) {
+        return PostgresRegistrationDao.create(user);
     }
 
 }
