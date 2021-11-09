@@ -19,14 +19,14 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    Collection<Login> getAll(){
+    Collection<Login> getAll() {
         return loginDao.getAll();
     }
 
     @PostMapping("/login")
     public String check(@RequestParam(name = "email", required = true, defaultValue = " ") String email,
-                        @RequestParam(name = "password", required = true, defaultValue = " ") String password){
-        if(loginDao.getByEmailAndPassword(email,password)){
+                        @RequestParam(name = "password", required = true, defaultValue = " ") String password) {
+        if (loginDao.getByEmailAndPassword(email, password)) {
             return "ok";
         }
         return "not ok";
