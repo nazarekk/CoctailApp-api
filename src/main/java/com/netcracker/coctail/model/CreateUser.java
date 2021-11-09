@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 public class Users {
-    int id;
     String email;
     String password;
+    String verification;
 
-    public Users(int id, String email, String password) {
-        this.id = id;
+    public Users(String email, String password, String verification) {
         this.email = email;
         this.password = password;
+        this.verification = verification;
     }
 }
