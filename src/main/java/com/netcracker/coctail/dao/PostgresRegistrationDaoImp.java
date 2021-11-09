@@ -21,20 +21,17 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public static boolean emailCheck(String email){
-        return (checkE.matcher(email).matches())	;
+    public static boolean emailCheck(String email) {
+        return (checkE.matcher(email).matches());
     }
 
-    public static boolean passwordCheck(String password){
-        boolean ok = false;
-        if(password.matches(".*\\d+.*")){
-            if(password.matches(".*[a-z]+.*")){
-                if(password.matches(".*[A-Z]+.*")){
-                    ok = true;
-                }
-            }
-        };
-        return (checkP.matcher(password).matches()&&ok&&password.length()>5);
+    public static boolean passwordCheck(String password) {
+        if (password.matches(".*\\d+.*") & (password.matches(".*[a-z]+.*")) & (password.matches(".*[A-Z]+.*"))) {
+            return (checkP.matcher(password).matches() && password.length() > 5);
+        }
+        else {
+            return false;
+        }
     }
 
     private static final Pattern checkE = Pattern.compile(
@@ -49,7 +46,7 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
     public void create(Users user) {
         final String sql = "INSERT INTO users (id, email, password) VALUES (:id, :email, :password)";
         KeyHolder holder = new GeneratedKeyHolder();
-        if(emailCheck(user.getEmail())) {
+        if (emailCheck(user.getEmail())) {
             if (passwordCheck(user.getPassword())) {
                     SqlParameterSource param = new MapSqlParameterSource()
                             .addValue("id", user.getId())
@@ -67,11 +64,7 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
                         rs.getInt("id"),
                         rs.getString("email"),
                         rs.getString("password"));
-        Collection<Users> users = jdbcTemplate.query("SELECT id, email, password FROM users",rowMapper);
+        Collection<Users> users = jdbcTemplate.query("SELECT id, email, password FROM users", rowMapper);
         return users;
     }
-
-   /* public Collection<Integer> getAllId() {
-        return jdbcTemplate.queryForList("SELECT id FROM users", Integer.class);
-    }*/
 }

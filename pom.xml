@@ -52,25 +52,20 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.1.2</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>9.1</version>
+					</dependency>
+				</dependencies>
 				<configuration>
-					<configLocation>check-style.xml</configLocation>
-					<failsOnError>true</failsOnError>
 					<violationSeverity>warning</violationSeverity>
+					<configLocation>check-style.xml</configLocation>
+					<consoleOutput>true</consoleOutput>
 				</configuration>
 				<executions>
 					<execution>
@@ -87,7 +82,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
-					<rulesetsTargetDirectory>basic.xml</rulesetsTargetDirectory>
+					<rulesetsTargetDirectory>\PMD</rulesetsTargetDirectory>
 					<failOnViolation>true</failOnViolation>
 					<printFailingErrors>true</printFailingErrors>
 				</configuration>
