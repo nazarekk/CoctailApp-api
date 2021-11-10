@@ -1,6 +1,7 @@
 package com.netcracker.coctail.model;
 
 import lombok.Data;
+
 @Data
 public class Login {
     private Integer id;

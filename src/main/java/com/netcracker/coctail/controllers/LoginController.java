@@ -26,12 +26,13 @@ public class LoginController {
     @PostMapping("/login")
     public String check(@RequestParam(name = "email", required = true, defaultValue = " ") String email,
                         @RequestParam(name = "password", required = true, defaultValue = " ") String password) {
-        if (loginDao.getByEmailAndPassword(email, password)) {
+        if (loginDao.checkByEmailAndPassword(email, password)) {
             return "ok";
-        }
-        return "not ok";
+        } else {
+            return "not ok";
         }
     }
+}
 
 
 
