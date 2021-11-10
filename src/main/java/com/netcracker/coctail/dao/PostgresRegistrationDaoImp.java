@@ -2,6 +2,7 @@ package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.ReadUser;
 import com.netcracker.coctail.model.CreateUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -9,12 +10,19 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import com.netcracker.coctail.services.MailSender;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+
+
+
 @Repository
 public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
+
+    @Autowired
+    private MailSender mailSender;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -34,7 +42,7 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
                 "^[a-zA-Z0-9_]{5,}$"
         );
         if (password.matches(".*\\d+.*") & (password.matches(".*[a-z]+.*")) & (password.matches(".*[A-Z]+.*"))) {
-            return (checkP.matcher(password).matches() & password.length() > 5);
+            return (checkP.matcher(password).matches());
         }
         return false;
     }
@@ -46,14 +54,16 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
         KeyHolder holder = new GeneratedKeyHolder();
         if (emailCheck(user.getEmail())) {
             if (passwordCheck(user.getPassword())) {
-                if(user.getVerification().equals(user.getPassword())){
+                if (user.getVerification().equals(user.getPassword())) {
                     SqlParameterSource param = new MapSqlParameterSource()
                             .addValue("email", user.getEmail())
                             .addValue("password", user.getPassword());
                     jdbcTemplate.update(sql, param, holder);
+                    String message = "Hello! Registration is complete";
+                    mailSender.send(user.getEmail(), "verification", message);
                     return "user created successfully!";
                 }
-                else{
+                else {
                     return "passwords do not match";
                 }
             }
