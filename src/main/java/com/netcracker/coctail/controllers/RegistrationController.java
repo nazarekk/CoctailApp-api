@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("/users")
 public class RegistrationController {
 
     @Resource
@@ -30,7 +29,7 @@ public class RegistrationController {
         return PostgresRegistrationDao.getAll();
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/users")
     public String create(@RequestBody CreateUser user) {
         return PostgresRegistrationDao.create(user);
     }
