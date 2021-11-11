@@ -31,7 +31,7 @@ public class RegistrationController {
         return PostgresRegistrationDao.getAll();
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "https://coctailappfront.herokuapp.com/")
     @PostMapping
     public String create(@RequestBody CreateUser user) {
         return PostgresRegistrationDao.create(user);

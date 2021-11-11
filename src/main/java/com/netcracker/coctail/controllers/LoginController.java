@@ -25,7 +25,7 @@ public class LoginController {
         return loginDao.getAll();
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "https://coctailappfront.herokuapp.com/")
     @PostMapping("/login")
     public String check(@RequestParam(name = "email", required = true, defaultValue = " ") String email,
                         @RequestParam(name = "password", required = true, defaultValue = " ") String password) {
