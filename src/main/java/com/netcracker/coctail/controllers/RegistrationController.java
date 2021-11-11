@@ -25,12 +25,12 @@ public class RegistrationController {
 
 
 
-    @GetMapping(value = "/list")
+    @GetMapping
     public Collection<ReadUser> getAll() {
         return PostgresRegistrationDao.getAll();
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping
     public String create(@RequestBody CreateUser user) {
         return PostgresRegistrationDao.create(user);
     }

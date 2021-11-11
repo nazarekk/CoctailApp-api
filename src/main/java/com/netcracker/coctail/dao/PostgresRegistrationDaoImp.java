@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import com.netcracker.coctail.services.MailSender;
 
@@ -47,6 +48,12 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
         return false;
     }
 
+    @Async
+    public void send(String email){
+        String message = "Hello! Registration is complete";
+        mailSender.send(email, "verification", message);
+
+    }
 
     @Override
     public String create(CreateUser user) {
@@ -54,19 +61,13 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
         KeyHolder holder = new GeneratedKeyHolder();
         if (emailCheck(user.getEmail())) {
             if (passwordCheck(user.getPassword())) {
-                if (user.getVerification().equals(user.getPassword())) {
                     SqlParameterSource param = new MapSqlParameterSource()
                             .addValue("email", user.getEmail())
                             .addValue("password", user.getPassword());
                     jdbcTemplate.update(sql, param, holder);
-                    String message = "Hello! Registration is complete";
-                    mailSender.send(user.getEmail(), "verification", message);
+                    send(user.getEmail());
                     return "user created successfully!";
                 }
-                else {
-                    return "passwords do not match";
-                }
-            }
             else {
                 return "invalid password";
             }
