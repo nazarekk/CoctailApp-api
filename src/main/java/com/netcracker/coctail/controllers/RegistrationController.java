@@ -1,6 +1,5 @@
 package com.netcracker.coctail.controllers;
 
-import com.netcracker.coctail.dao.*;
 import java.util.Collection;
 
 import com.netcracker.coctail.model.ReadUser;
