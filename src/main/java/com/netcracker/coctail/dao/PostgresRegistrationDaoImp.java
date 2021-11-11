@@ -14,8 +14,7 @@ import com.netcracker.coctail.services.MailSender;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
-
-
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Repository
@@ -49,12 +48,13 @@ public class PostgresRegistrationDaoImp implements PostgresRegistrationDao {
 
 
     @Override
+    @RequestMapping
     public String create(CreateUser user) {
         final String sql = "INSERT INTO users (email, password) VALUES (:email, :password)";
         KeyHolder holder = new GeneratedKeyHolder();
         if (emailCheck(user.getEmail())) {
             if (passwordCheck(user.getPassword())) {
-                if (user.getVerification().equals(user.getPassword())) {
+                if (true) {
                     SqlParameterSource param = new MapSqlParameterSource()
                             .addValue("email", user.getEmail())
                             .addValue("password", user.getPassword());

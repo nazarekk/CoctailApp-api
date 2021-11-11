@@ -1,9 +1,11 @@
 package com.netcracker.coctail.controllers;
 
+import com.netcracker.coctail.dao.*;
 import java.util.Collection;
 
 import com.netcracker.coctail.model.ReadUser;
 import com.netcracker.coctail.model.CreateUser;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +32,7 @@ public class RegistrationController {
         return PostgresRegistrationDao.getAll();
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping
     public String create(@RequestBody CreateUser user) {
         return PostgresRegistrationDao.create(user);
