@@ -4,7 +4,7 @@ import com.netcracker.coctail.model.Login;
 
 import java.util.Collection;
 
-public interface LoginDao {
+public interface  LoginDao {
     Login read(String id);
     //void update (Login login);
 
