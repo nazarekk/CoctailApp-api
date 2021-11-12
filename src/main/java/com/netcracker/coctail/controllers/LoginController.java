@@ -20,7 +20,7 @@ public class LoginController {
         this.loginDao = loginDao;
     }
 
-    @GetMapping("/login")
+    @GetMapping
     Collection<Login> getAll() {
         return loginDao.getAll();
     }
