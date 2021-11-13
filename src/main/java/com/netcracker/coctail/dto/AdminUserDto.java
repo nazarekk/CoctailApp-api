@@ -5,10 +5,6 @@ import lombok.Data;
 import com.netcracker.coctail.model.Status;
 import com.netcracker.coctail.model.User;
 
-/**
- * DTO class for user requests by ROLE_ADMIN
- */
-
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AdminUserDto {

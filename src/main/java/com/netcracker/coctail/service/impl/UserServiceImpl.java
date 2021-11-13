@@ -4,8 +4,8 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.repository.RoleRepository;
 import com.netcracker.coctail.repository.UserRepository;
 import com.netcracker.coctail.service.UserService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +17,12 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Data
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public List<User> getAll() {

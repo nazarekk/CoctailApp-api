@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import com.netcracker.coctail.model.User;
 
-/**
- * DTO class for user requests by ROLE_USER
- */
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
