@@ -1,6 +1,6 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.ActivateUser;
+
 import com.netcracker.coctail.model.ReadUser;
 import com.netcracker.coctail.model.CreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import com.netcracker.coctail.services.MailSender;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,9 +30,9 @@ public class RegistrationDaoImp implements RegistrationDao {
     }
 
     @Async
-    public void send(String email, String code){
+    public void send(String email, String code) {
         String message = "Hello! To finish registration visit http://localhost:8080/api/users/activation/'%s'";
-        mailSender.send(email, "verification", String.format(message,code));
+        mailSender.send(email, "verification", String.format(message, code));
 
     }
 
@@ -42,27 +41,15 @@ public class RegistrationDaoImp implements RegistrationDao {
         final String sql = "INSERT INTO users (email, password, activation) VALUES (:email, :password, :activation)";
         String activation = UUID.randomUUID().toString();
         KeyHolder holder = new GeneratedKeyHolder();
-                    SqlParameterSource param = new MapSqlParameterSource()
-                            .addValue("email", user.getEmail())
-                            .addValue("password", user.getPassword())
-                            .addValue("activation", activation);
-                    jdbcTemplate.update(sql, param, holder);
-                    send(user.getEmail(), activation);
-                    return "user created successfully!";
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("email", user.getEmail())
+                .addValue("password", user.getPassword())
+                .addValue("activation", activation);
+        jdbcTemplate.update(sql, param, holder);
+        send(user.getEmail(), activation);
+        return "user created successfully!";
     }
 
-    /* @Override
-     public Collection<ReadUser> getAll() {
-         RowMapper<ReadUser> rowMapper = (rs, rownum) ->
-                 new ReadUser(
-                         rs.getInt("id"),
-                         rs.getString("email"),
-                         rs.getString("password"),
-                         rs.getInt("status"),
-                         rs.getString("activation"),
-                         rs.getBoolean("isActive"));
-         return jdbcTemplate.query("SELECT userid, email, password, status, activation, isActive FROM users", rowMapper);
-     }*/
     @Override
     public List<ReadUser> getByCode(String code) {
         String sql = "SELECT userid, email FROM users WHERE activation = '%s'";
@@ -70,12 +57,11 @@ public class RegistrationDaoImp implements RegistrationDao {
                 new ReadUser(
                         rs.getInt("userid"),
                         rs.getString("email"));
-        return jdbcTemplate.query(String.format(sql,code), rowMapper);
+        return jdbcTemplate.query(String.format(sql, code), rowMapper);
     }
 
-    public boolean activateUser(String code){
+    public void activateUser(String code) {
         List<ReadUser> users = getByCode(code);
         users.get(0).setRoleId(2);
-        return true;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,13 +23,13 @@ public class CreateUserValidator implements Validator {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public boolean getByEmail(String email) {
-        String SELECT_EMAIL="SELECT userid, email FROM users WHERE email = '%s'";
+        String SELECT_EMAIL = "SELECT userid, email FROM users WHERE email = '%s'";
         RowMapper<ReadUser> rowMapper = (rs, rownum) ->
                 new ReadUser(
                         rs.getInt("userid"),
                         rs.getString("email")
-                        );
-        List<ReadUser> query = jdbcTemplate.query(String.format(SELECT_EMAIL,email),rowMapper);
+                );
+        List<ReadUser> query = jdbcTemplate.query(String.format(SELECT_EMAIL, email), rowMapper);
         if (query.isEmpty()) {
             return true;
         }
@@ -36,7 +37,7 @@ public class CreateUserValidator implements Validator {
     }
 
     @Override
-    public boolean supports(Class<?> clazz){
+    public boolean supports(Class<?> clazz) {
         return CreateUser.class.equals(clazz);
     }
 
@@ -59,13 +60,13 @@ public class CreateUserValidator implements Validator {
 
     public void validate(Object target, Errors errors) {
         CreateUser user = (CreateUser) target;
-        if (!emailCheck(user.getEmail())){
+        if (!emailCheck(user.getEmail())) {
             throw new InvalidEmailException();
         }
         if (!passwordCheck(user.getPassword())) {
             throw new InvalidPasswordException();
         }
-        if(!getByEmail(user.getEmail())){
+        if (!getByEmail(user.getEmail())) {
             throw new DuplicateEmailException();
         }
     }
