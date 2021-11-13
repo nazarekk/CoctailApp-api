@@ -2,10 +2,8 @@ package com.netcracker.coctail.model;
 
 import lombok.Data;
 
-
 @Data
-public class CreateUser {
+public class ActivateUser {
     private final String email;
-    private final String password;
-    private final String activation;
+    private int roleId;
 }

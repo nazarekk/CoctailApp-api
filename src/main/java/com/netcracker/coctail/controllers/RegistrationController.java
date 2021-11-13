@@ -1,38 +1,50 @@
 package com.netcracker.coctail.controllers;
 
 import java.util.Collection;
+import java.util.WeakHashMap;
 
+import com.netcracker.coctail.dao.RegistrationDao;
+import com.netcracker.coctail.model.ActivateUser;
 import com.netcracker.coctail.model.ReadUser;
 import com.netcracker.coctail.model.CreateUser;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.netcracker.coctail.validators.CreateUserValidator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class RegistrationController {
 
     @Resource
-    com.netcracker.coctail.dao.PostgresRegistrationDao PostgresRegistrationDao;
+    RegistrationDao RegistrationDao;
 
-    public RegistrationController(com.netcracker.coctail.dao.PostgresRegistrationDao postgresRegistrationDao) {
-        this.PostgresRegistrationDao = postgresRegistrationDao;
+    private final RegistrationDao registrationDao;
+    private final CreateUserValidator createUserValidator;
+
+    @InitBinder
+    public void initBinder(WebDataBinder dataBinder){
+        dataBinder.setValidator(createUserValidator);
     }
 
-
-
-    @GetMapping
+    /*@GetMapping
     public Collection<ReadUser> getAll() {
-        return PostgresRegistrationDao.getAll();
+        return RegistrationDao.getAll();
+    }*/
+
+    @GetMapping("/activation/{code}")
+    public String activate(@PathVariable String code){
+        boolean isActivated = RegistrationDao.activateUser(code);
+        return "Molodec";
     }
 
     @PostMapping
-    public String create(@RequestBody CreateUser user) {
-        return PostgresRegistrationDao.create(user);
+    public String create(@RequestBody @Valid CreateUser user) {
+        return RegistrationDao.create(user);
     }
 
 }
