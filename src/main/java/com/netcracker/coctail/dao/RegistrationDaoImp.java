@@ -19,9 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import com.netcracker.coctail.services.MailSender;
-import com.netcracker.coctail.config.WebSecurity;
 
-import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -62,16 +60,11 @@ public class RegistrationDaoImp implements RegistrationDao {
     }
 
     @Override
-    public List<ReadUser> getByCode(String code) {
-        RowMapper<ReadUser> rowMapper = (rs, rownum) ->
-                new ReadUser(
-                        rs.getInt("userid"),
-                        rs.getString("email"));
-        return jdbcTemplate.query(String.format(userActivation, code), rowMapper);
-    }
-
     public void activateUser(String code) {
-        List<ReadUser> users = getByCode(code);
-        users.get(0).setRoleId(2);
+        KeyHolder holder = new GeneratedKeyHolder();
+        SqlParameterSource param = new MapSqlParameterSource()
+            .addValue("roleid", 2)
+            .addValue("activation", code);
+        jdbcTemplate.update(userActivation, param);
     }
 }

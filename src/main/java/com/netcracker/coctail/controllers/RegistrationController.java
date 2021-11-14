@@ -1,5 +1,6 @@
 package com.netcracker.coctail.controllers;
 
+import com.netcracker.coctail.dao.CreateModeratorDao;
 import com.netcracker.coctail.dao.RegistrationDao;
 import com.netcracker.coctail.model.CreateUser;
 import com.netcracker.coctail.validators.CreateUserValidator;
@@ -16,7 +17,8 @@ import javax.validation.Valid;
 public class RegistrationController {
 
     @Resource
-    RegistrationDao RegistrationDao;
+    RegistrationDao registrationDao;
+    CreateModeratorDao createModeratorDao;
 
 
     private final CreateUserValidator createUserValidator;
@@ -27,14 +29,14 @@ public class RegistrationController {
     }
 
     @GetMapping("/activation/{code}")
-    public String activate(@PathVariable String code) {
-        RegistrationDao.activateUser(code);
+    public String activateUser(@PathVariable String code) {
+        registrationDao.activateUser(code);
         return "Account is activated!";
     }
 
     @PostMapping
     public String create(@RequestBody @Valid CreateUser user) {
-        return RegistrationDao.create(user);
+        return registrationDao.create(user);
     }
 
 }
