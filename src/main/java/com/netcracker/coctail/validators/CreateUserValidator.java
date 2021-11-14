@@ -6,7 +6,9 @@ import com.netcracker.coctail.exceptions.InvalidEmailException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
 import com.netcracker.coctail.model.CreateUser;
 import com.netcracker.coctail.model.ReadUser;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -16,20 +18,23 @@ import org.springframework.validation.Validator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Component
+
 @RequiredArgsConstructor
+@Component
+@Data
 public class CreateUserValidator implements Validator {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    @Value("${emailSelect}")
+    private String emailSelection;
 
     public boolean getByEmail(String email) {
-        String SELECT_EMAIL = "SELECT userid, email FROM users WHERE email = '%s'";
         RowMapper<ReadUser> rowMapper = (rs, rownum) ->
                 new ReadUser(
                         rs.getInt("userid"),
                         rs.getString("email")
                 );
-        List<ReadUser> query = jdbcTemplate.query(String.format(SELECT_EMAIL, email), rowMapper);
+        List<ReadUser> query = jdbcTemplate.query(String.format(emailSelection, email), rowMapper);
         if (query.isEmpty()) {
             return true;
         }
