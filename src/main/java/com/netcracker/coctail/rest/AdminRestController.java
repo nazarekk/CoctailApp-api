@@ -51,4 +51,9 @@ public class AdminRestController {
     public String createModerator(@RequestBody @Valid Moderator user) {
         return createModeratorDao.create(user);
     }
+
+    @GetMapping("moderators")
+    public String moderatorList() {
+        return "";
+    }
 }

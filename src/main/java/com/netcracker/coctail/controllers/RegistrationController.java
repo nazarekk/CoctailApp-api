@@ -1,6 +1,5 @@
 package com.netcracker.coctail.controllers;
 
-import com.netcracker.coctail.dao.CreateModeratorDao;
 import com.netcracker.coctail.dao.RegistrationDao;
 import com.netcracker.coctail.model.CreateUser;
 import com.netcracker.coctail.validators.CreateUserValidator;
@@ -18,7 +17,6 @@ public class RegistrationController {
 
     @Resource
     RegistrationDao registrationDao;
-    CreateModeratorDao createModeratorDao;
 
 
     private final CreateUserValidator createUserValidator;

@@ -1,11 +1,14 @@
 package com.netcracker.coctail.rest;
 
 import com.netcracker.coctail.dao.CreateModeratorDao;
-import com.netcracker.coctail.model.ModeratorConfirmation;
+import com.netcracker.coctail.model.ActivateModerator;
+import com.netcracker.coctail.model.Moderator;
 import lombok.Data;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -13,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Data
 public class ModeratorRestController {
 
-  CreateModeratorDao createModeratorDao;
+  private final CreateModeratorDao createModeratorDao;
 
-  @PostMapping("activation/{code}")
-  public String activateModerator(@PathVariable String code, ModeratorConfirmation user) {
-    createModeratorDao.activateModerator(code, user);
+  @PostMapping("activation")
+  public String activateModerator(@RequestBody ActivateModerator moderator) {
+    createModeratorDao.activateModerator(moderator);
     return "Account is activated!";
   }
 }

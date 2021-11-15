@@ -5,10 +5,8 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties
-public class ModeratorConfirmation {
+public class ModeratorInformation {
   private final Long userid;
   private final String email;
-  private final String activation;
-  private String password;
-  private int roleId;
+  private final String Nickname;
 }
