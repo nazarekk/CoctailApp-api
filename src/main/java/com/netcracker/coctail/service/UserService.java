@@ -1,7 +1,7 @@
 package com.netcracker.coctail.service;
 
+import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
-
 import java.util.List;
 
 /**
@@ -10,12 +10,11 @@ import java.util.List;
 
 public interface UserService {
 
-    List<User> getAll();
+    User getUserByEmail(String email);
 
-    User findByEmail(String email);
+    String getRolenameByEmail(String email);
 
-    User findById(Long id);
-
-    void delete(Long id);
+    List<Role> getRolesByEmail(String email);
+    User getUserById(Long id);
 
 }

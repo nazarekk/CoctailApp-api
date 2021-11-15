@@ -8,7 +8,6 @@ import com.netcracker.coctail.security.jwt.JwtUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,15 +26,11 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userService.findByEmail(email);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User with email: " + email + " not found");
-        }
+    public UserDetails loadUserByUsername(String email) {
+        User user = userService.getUserByEmail(email);
 
         JwtUser jwtUser = JwtUserFactory.create(user);
-        log.info("IN loadUserByEmail - user with email: {} successfully loaded", email);
+        log.info("IN loadUserByUsername - user with username: {} successfully loaded", email);
         return jwtUser;
     }
 }

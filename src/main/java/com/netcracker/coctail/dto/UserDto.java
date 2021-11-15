@@ -8,26 +8,13 @@ import com.netcracker.coctail.model.User;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
+    private String nickname;
     private String email;
 
-    public User toUser() {
-        User user = new User();
-        user.setId(id);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-
-        return user;
-    }
 
     public static UserDto fromUser(User user) {
         UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
+        userDto.setNickname(user.getNickname());
         userDto.setEmail(user.getEmail());
 
         return userDto;
