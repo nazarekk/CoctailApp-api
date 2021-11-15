@@ -1,6 +1,6 @@
 package com.netcracker.coctail.service.impl;
 
-import com.netcracker.coctail.exception.InvalidEmailOrPasswordException;
+import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
 import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.repository.RoleDao;

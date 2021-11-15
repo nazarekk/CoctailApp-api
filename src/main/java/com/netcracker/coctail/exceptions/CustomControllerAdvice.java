@@ -19,5 +19,8 @@ public class CustomControllerAdvice {
     public ResponseEntity<String> handleInvalidPassword(InvalidPasswordException exception) {
         return new ResponseEntity<>(" Invalid Password Exception", HttpStatus.EXPECTATION_FAILED);
     }
-
+    @ExceptionHandler({InvalidEmailOrPasswordException.class})
+    public ResponseEntity<String> handleInvalidEmail(InvalidEmailOrPasswordException exception) {
+        return new ResponseEntity<>("Invalid email or password", HttpStatus.EXPECTATION_FAILED);
+    }
 }
