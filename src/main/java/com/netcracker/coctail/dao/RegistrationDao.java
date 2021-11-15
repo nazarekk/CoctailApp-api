@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RegistrationDao {
     String create(CreateUser user);
-    void activateUser(String code);
+    int activateUser(String code);
 }

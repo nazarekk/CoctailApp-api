@@ -1,16 +1,15 @@
-package com.netcracker.coctail.rest;
+package com.netcracker.coctail.controllers;
 
-import com.netcracker.coctail.dao.CreateModeratorDao;
-import com.netcracker.coctail.dao.RegistrationDao;
+import com.netcracker.coctail.dao.ModeratorDao;
 import com.netcracker.coctail.dto.AdminUserDto;
-import com.netcracker.coctail.model.CreateUser;
 import com.netcracker.coctail.model.Moderator;
+import com.netcracker.coctail.model.ModeratorInformation;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.service.UserService;
+import java.util.Collection;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +31,7 @@ public class AdminRestController {
     private final UserService userService;
 
     @Resource
-    CreateModeratorDao createModeratorDao;
+    ModeratorDao createModeratorDao;
 
     @GetMapping(value = "users/{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
@@ -48,12 +47,22 @@ public class AdminRestController {
     }
 
     @PostMapping("moderators")
-    public String createModerator(@RequestBody @Valid Moderator user) {
-        return createModeratorDao.create(user);
+    public ResponseEntity createModerator(@RequestBody @Valid Moderator user) {
+        return createModeratorDao.create(user) == 1 ? new ResponseEntity(HttpStatus.OK):
+            new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
 
     @GetMapping("moderators")
-    public String moderatorList() {
-        return "";
+    public Collection<ModeratorInformation> moderatorList() {
+        return createModeratorDao.ModeratorList();
+    }
+    @PostMapping("moderators/edit")
+    public void editModerator(@RequestBody @Valid ModeratorInformation user) {
+        createModeratorDao.editModerator(user);
+    }
+
+    @PostMapping("moderators/remove")
+    public void removeModerator(@RequestBody @Valid ModeratorInformation user) {
+        createModeratorDao.removeModerator(user);
     }
 }

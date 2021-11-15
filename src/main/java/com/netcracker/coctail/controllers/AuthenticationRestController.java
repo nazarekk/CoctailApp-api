@@ -1,4 +1,4 @@
-package com.netcracker.coctail.rest;
+package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dto.AuthenticationRequestDto;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;

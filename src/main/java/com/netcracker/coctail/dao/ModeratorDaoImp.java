@@ -2,11 +2,15 @@ package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.ActivateModerator;
 import com.netcracker.coctail.model.Moderator;
+import com.netcracker.coctail.model.ModeratorInformation;
 import com.netcracker.coctail.services.MailSender;
+import java.util.Collection;
 import java.util.UUID;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -18,14 +22,21 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-public class CreateModeratorDaoImp implements CreateModeratorDao {
+@PropertySource("classpath:SQLscripts.properties")
+public class ModeratorDaoImp implements ModeratorDao {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
   private final BCryptPasswordEncoder passwordEncoder;
   @Value("${moderatorCreation}")
   private String moderatorCreation;
-  @Value("${activateModerator}")
+  @Value("${ActivateModerator}")
   private String moderatorActivation;
+  @Value("${getModerators}")
+  private String getModerators;
+  @Value("${EditModerator}")
+  private String EditModerator;
+  @Value("${RemoveModerator}")
+  private String RemoveModerator;
 
   @Autowired
   private MailSender mailSender;
@@ -38,16 +49,15 @@ public class CreateModeratorDaoImp implements CreateModeratorDao {
   }
 
   @Override
-  public String create (Moderator moderator) {
+  public int create (Moderator moderator) {
     String activation = UUID.randomUUID().toString();
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("email", moderator.getEmail())
         .addValue("active",moderator.getIsActive())
         .addValue("activation", activation);
-    jdbcTemplate.update(moderatorCreation, param, holder);
     send(moderator.getEmail(), activation);
-    return "User created";
+    return jdbcTemplate.update(moderatorCreation, param, holder);
   }
 
   @Override
@@ -60,4 +70,33 @@ public class CreateModeratorDaoImp implements CreateModeratorDao {
     jdbcTemplate.update(moderatorActivation, param, holder);
   }
 
+  @Override
+  public Collection<ModeratorInformation> ModeratorList() {
+    RowMapper<ModeratorInformation> rowMapper = (rs, rowNum) ->
+        new ModeratorInformation(
+            rs.getLong("userid"),
+            rs.getString("email"),
+            rs.getString("nickname"),
+            rs.getBoolean("isactive"));
+    return jdbcTemplate.query(getModerators,rowMapper);
+  }
+
+  @Override
+  public void editModerator(ModeratorInformation moderator) {
+    KeyHolder holder = new GeneratedKeyHolder();
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("userid", moderator.getUserid())
+        .addValue("email", moderator.getEmail())
+        .addValue("nickname", moderator.getNickname())
+        .addValue("isactive", moderator.getIsActive());
+    jdbcTemplate.update(EditModerator, param, holder);
+  }
+
+  @Override
+  public void removeModerator (ModeratorInformation moderator) {
+    KeyHolder holder = new GeneratedKeyHolder();
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("userid", moderator.getUserid());
+    jdbcTemplate.update(RemoveModerator, param, holder);
+  }
 }
