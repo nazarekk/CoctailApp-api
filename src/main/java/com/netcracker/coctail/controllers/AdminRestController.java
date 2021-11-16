@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "${front_link}")
 @RequestMapping(value = "/api/admin/")
 @Data
 public class AdminRestController {

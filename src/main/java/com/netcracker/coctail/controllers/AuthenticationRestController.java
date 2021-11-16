@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/auth/")
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "${front_link}")
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
