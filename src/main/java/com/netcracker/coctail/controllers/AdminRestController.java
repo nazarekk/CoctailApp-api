@@ -78,4 +78,17 @@ public class AdminRestController {
         ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
         new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
   }
+
+  @GetMapping("moderators/filter")
+  public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam Boolean q) {
+    return createModeratorDao.filterModerator(q) == null
+        ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+        new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
+  }
+//  @GetMapping("me/info")
+//  public ResponseEntity<ModeratorInformation> adminInfo(@RequestParam Integer q) {
+//    return createModeratorDao.searchModerator(q) == null
+//        ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+//        new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
+//  }
 }
