@@ -131,6 +131,9 @@
                 <version>3.13.0</version>
                 <configuration>
                     <rulesetsTargetDirectory>pmd</rulesetsTargetDirectory>
+                    <rulesets>
+                        <ruleset>basic.xml</ruleset>
+                    </rulesets>
                     <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
                 </configuration>

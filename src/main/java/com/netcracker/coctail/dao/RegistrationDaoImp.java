@@ -1,14 +1,12 @@
 package com.netcracker.coctail.dao;
 
 
-import com.netcracker.coctail.model.ReadUser;
 import com.netcracker.coctail.model.CreateUser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -24,8 +22,9 @@ import java.util.UUID;
 
 @Repository
 @Data
-@Component
 @Slf4j
+@Component
+@PropertySource("classpath:SQLscripts.properties")
 public class RegistrationDaoImp implements RegistrationDao {
 
     private final BCryptPasswordEncoder passwordEncoder;
@@ -36,7 +35,7 @@ public class RegistrationDaoImp implements RegistrationDao {
 
     @Value("${regUser}")
     private String userCreation;
-    @Value("${activateUser}")
+    @Value("${ActivateUser}")
     private String userActivation;
 
     @Async
@@ -60,11 +59,10 @@ public class RegistrationDaoImp implements RegistrationDao {
     }
 
     @Override
-    public void activateUser(String code) {
-        KeyHolder holder = new GeneratedKeyHolder();
+    public int activateUser(String code) {
         SqlParameterSource param = new MapSqlParameterSource()
             .addValue("roleid", 2)
             .addValue("activation", code);
-        jdbcTemplate.update(userActivation, param);
+        return jdbcTemplate.update(userActivation, param);
     }
 }

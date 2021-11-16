@@ -9,4 +9,5 @@ public class ModeratorInformation {
   private final Long userid;
   private final String email;
   private final String Nickname;
+  private final Boolean IsActive;
 }

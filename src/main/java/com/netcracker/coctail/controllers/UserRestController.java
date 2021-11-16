@@ -1,4 +1,4 @@
-package com.netcracker.coctail.rest;
+package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.model.User;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping(value = "/api/user/")
+@RequestMapping(value = "/api/users/")
 public class UserRestController {
     private final UserService userService;
 
