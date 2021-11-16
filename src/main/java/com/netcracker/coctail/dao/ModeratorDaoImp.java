@@ -39,6 +39,8 @@ public class ModeratorDaoImp implements ModeratorDao {
   private String RemoveModerator;
   @Value("${SearchModerator}")
   private String SearchModerator;
+  @Value("${FilterModerator}")
+  private String FilterModerator;
 
   @Autowired
   private MailSender mailSender;
@@ -48,7 +50,6 @@ public class ModeratorDaoImp implements ModeratorDao {
     String message =
         "Hello! To finish registration visit http://localhost:8080/api/moderators/activation/'%s'";
     mailSender.send(email, "verification", String.format(message, code));
-
   }
 
   @Override
@@ -114,4 +115,16 @@ public class ModeratorDaoImp implements ModeratorDao {
             rs.getBoolean("isactive"));
     return jdbcTemplate.query(String.format(SearchModerator, value), rowMapper).get(0);
   }
+
+  @Override
+  public ModeratorInformation filterModerator(Boolean isactive) {
+    RowMapper<ModeratorInformation> rowMapper = (rs, rowNum) ->
+        new ModeratorInformation(
+            rs.getLong("userid"),
+            rs.getString("email"),
+            rs.getString("nickname"),
+            rs.getBoolean("isactive"));
+    return jdbcTemplate.query(String.format(FilterModerator, isactive), rowMapper).get(0);
+  }
+
 }

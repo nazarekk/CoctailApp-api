@@ -52,9 +52,9 @@ public class AdminRestController {
   }
 
   @PostMapping("moderators")
-  public ResponseEntity createModerator(@RequestBody @Valid Moderator user) {
-    return createModeratorDao.create(user) == 1 ? new ResponseEntity(HttpStatus.OK) :
-        new ResponseEntity(HttpStatus.NOT_MODIFIED);
+  public ResponseEntity<Moderator> createModerator(@RequestBody @Valid Moderator user) {
+    return createModeratorDao.create(user) == 1 ? new ResponseEntity<>(HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @GetMapping("moderators")
@@ -83,12 +83,6 @@ public class AdminRestController {
   public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam Boolean q) {
     return createModeratorDao.filterModerator(q) == null
         ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-        new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
+        new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
   }
-//  @GetMapping("me/info")
-//  public ResponseEntity<ModeratorInformation> adminInfo(@RequestParam Integer q) {
-//    return createModeratorDao.searchModerator(q) == null
-//        ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-//        new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
-//  }
 }
