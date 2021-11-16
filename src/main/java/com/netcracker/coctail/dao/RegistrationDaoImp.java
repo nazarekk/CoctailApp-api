@@ -60,7 +60,6 @@ public class RegistrationDaoImp implements RegistrationDao {
 
     @Override
     public int activateUser(String code) {
-        KeyHolder holder = new GeneratedKeyHolder();
         SqlParameterSource param = new MapSqlParameterSource()
             .addValue("roleid", 2)
             .addValue("activation", code);

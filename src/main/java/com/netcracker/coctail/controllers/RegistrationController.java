@@ -31,7 +31,7 @@ public class RegistrationController {
 
     @GetMapping("/activation/{code}")
     public ResponseEntity activateUser(@PathVariable String code) {
-        return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK):
+        return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK) :
             new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
 

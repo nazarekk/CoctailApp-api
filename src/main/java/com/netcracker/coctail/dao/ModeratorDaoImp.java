@@ -45,18 +45,19 @@ public class ModeratorDaoImp implements ModeratorDao {
 
   @Async
   public void send(String email, String code) {
-    String message = "Hello! To finish registration visit http://localhost:8080/api/moderators/activation/'%s'";
+    String message =
+        "Hello! To finish registration visit http://localhost:8080/api/moderators/activation/'%s'";
     mailSender.send(email, "verification", String.format(message, code));
 
   }
 
   @Override
-  public int create (Moderator moderator) {
+  public int create(Moderator moderator) {
     String activation = UUID.randomUUID().toString();
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("email", moderator.getEmail())
-        .addValue("isactive",moderator.getIsactive())
+        .addValue("isactive", moderator.getIsactive())
         .addValue("activation", activation);
     send(moderator.getEmail(), activation);
     return jdbcTemplate.update(moderatorCreation, param, holder);
@@ -74,14 +75,14 @@ public class ModeratorDaoImp implements ModeratorDao {
   }
 
   @Override
-  public Collection<ModeratorInformation> ModeratorList() {
+  public Collection<ModeratorInformation> moderatorList() {
     RowMapper<ModeratorInformation> rowMapper = (rs, rowNum) ->
         new ModeratorInformation(
             rs.getLong("userid"),
             rs.getString("email"),
             rs.getString("nickname"),
             rs.getBoolean("isactive"));
-    return jdbcTemplate.query(getModerators,rowMapper);
+    return jdbcTemplate.query(getModerators, rowMapper);
   }
 
   @Override
@@ -96,7 +97,7 @@ public class ModeratorDaoImp implements ModeratorDao {
   }
 
   @Override
-  public void removeModerator (ModeratorInformation moderator) {
+  public void removeModerator(ModeratorInformation moderator) {
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("userid", moderator.getUserid());
@@ -104,7 +105,7 @@ public class ModeratorDaoImp implements ModeratorDao {
   }
 
   @Override
-  public ModeratorInformation SearchModerator (String value) {
+  public ModeratorInformation searchModerator(String value) {
     RowMapper<ModeratorInformation> rowMapper = (rs, rowNum) ->
         new ModeratorInformation(
             rs.getLong("userid"),

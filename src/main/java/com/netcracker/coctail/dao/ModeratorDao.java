@@ -7,9 +7,14 @@ import java.util.Collection;
 
 public interface ModeratorDao {
   int create(Moderator moderator);
+
   void activateModerator(ActivateModerator moderator);
-  Collection<ModeratorInformation> ModeratorList();
+
+  Collection<ModeratorInformation> moderatorList();
+
   void editModerator(ModeratorInformation moderator);
-  void removeModerator (ModeratorInformation moderator);
-  ModeratorInformation SearchModerator (String value);
+
+  void removeModerator(ModeratorInformation moderator);
+
+  ModeratorInformation searchModerator(String value);
 }
