@@ -37,6 +37,8 @@ public class ModeratorDaoImp implements ModeratorDao {
   private String EditModerator;
   @Value("${RemoveModerator}")
   private String RemoveModerator;
+  @Value("${SearchModerator}")
+  private String SearchModerator;
 
   @Autowired
   private MailSender mailSender;
@@ -54,7 +56,7 @@ public class ModeratorDaoImp implements ModeratorDao {
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("email", moderator.getEmail())
-        .addValue("active",moderator.getIsActive())
+        .addValue("isactive",moderator.getIsactive())
         .addValue("activation", activation);
     send(moderator.getEmail(), activation);
     return jdbcTemplate.update(moderatorCreation, param, holder);
@@ -66,6 +68,7 @@ public class ModeratorDaoImp implements ModeratorDao {
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("roleid", 4)
         .addValue("activation", moderator.getCode())
+        .addValue("nickname", moderator.getNickname())
         .addValue("password", passwordEncoder.encode(moderator.getPassword()));
     jdbcTemplate.update(moderatorActivation, param, holder);
   }
@@ -98,5 +101,16 @@ public class ModeratorDaoImp implements ModeratorDao {
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("userid", moderator.getUserid());
     jdbcTemplate.update(RemoveModerator, param, holder);
+  }
+
+  @Override
+  public ModeratorInformation SearchModerator (String value) {
+    RowMapper<ModeratorInformation> rowMapper = (rs, rowNum) ->
+        new ModeratorInformation(
+            rs.getLong("userid"),
+            rs.getString("email"),
+            rs.getString("nickname"),
+            rs.getBoolean("isactive"));
+    return jdbcTemplate.query(String.format(SearchModerator, value), rowMapper).get(0);
   }
 }
