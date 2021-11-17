@@ -1,4 +1,4 @@
-package com.netcracker.coctail.rest;
+package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dto.AuthenticationRequestDto;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
@@ -36,18 +36,18 @@ public class AuthenticationRestController {
         this.userService = userService;
     }
 
+
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
-            String email = requestDto.getEmail();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
-            userService.getUserByEmail(email);
+        String email = requestDto.getEmail();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-            String token = jwtTokenProvider.createToken(email, userService.getRolesByEmail(email));
+        String token = jwtTokenProvider.createToken(email, userService.getRolesByEmail(email));
 
-            Map<Object, Object> response = new HashMap<>();
-            response.put("email", email);
-            response.put("token", token);
+        Map<Object, Object> response = new HashMap<>();
+        response.put("email", email);
+        response.put("token", token);
 
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
     }
 }

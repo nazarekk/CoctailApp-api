@@ -1,7 +1,6 @@
 package com.netcracker.coctail.security.jwt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,7 +11,6 @@ import java.util.Date;
  * Spring Security wrapper for class {User}.
  */
 
-@AllArgsConstructor
 public class JwtUser implements UserDetails {
 
     private final Long id;
@@ -22,6 +20,17 @@ public class JwtUser implements UserDetails {
     private final Long roleid;
     private final boolean isactive;
     private final Collection<? extends GrantedAuthority> authorities;
+
+    public JwtUser(Long id, String nickname, String password, String email,
+                   Long roleid, boolean isactive, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.nickname = nickname;
+        this.password = password;
+        this.email = email;
+        this.roleid = roleid;
+        this.isactive = isactive;
+        this.authorities = authorities;
+    }
 
     @JsonIgnore
     public Long getId() {
@@ -51,7 +60,21 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
-    @JsonIgnore
+    public boolean isIsactive() {
+        return isactive;
+    }
+    public String getNickname() {
+        return nickname;
+    }
+
+    public Long getRoleid() {
+        return roleid;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public String getPassword() {
         return password;
@@ -63,6 +86,7 @@ public class JwtUser implements UserDetails {
     }
 
     @JsonIgnore
+    @Override
     public boolean isEnabled() {
         return true;
     }
@@ -71,5 +95,6 @@ public class JwtUser implements UserDetails {
     public Date getLastPasswordResetDate() {
         return getLastPasswordResetDate();
     }
+
 }
 

@@ -19,6 +19,8 @@ public class AdminUserDto {
         adminUserDto.setId(user.getId());
         adminUserDto.setNickname(user.getNickname());
         adminUserDto.setEmail(user.getEmail());
+        adminUserDto.setRoleid(user.getRoleid());
+        adminUserDto.setActive(user.isIsactive());
         return adminUserDto;
     }
 }

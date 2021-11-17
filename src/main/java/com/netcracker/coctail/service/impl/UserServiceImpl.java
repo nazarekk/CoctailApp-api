@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
 
     public User getUserByEmail(String email) {
-        List<User> result = userDao.findByEmailRequest(email);
+        List<User> result = userDao.findUserByEmail(email);
         if (result.isEmpty()) {
             throw new InvalidEmailOrPasswordException();
         }
@@ -39,21 +39,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getRolenameByEmail(String email) {
-        Role result = roleDao.findRolenameByEmail(email).get(0);
-        log.info("IN getRolenameByEmail - role: {} found by email: {}", result.getRolename(), email);
-        return result.getRolename();
-    }
-
-    @Override
     public List<Role> getRolesByEmail(String email) {
-        List<Role> name = roleDao.findRolenameByEmail(email);
+        List<Role> name = roleDao.findRoleNameByEmail(email);
         return name;
     }
 
     @Override
     public User getUserById(Long id) {
-        User result = userDao.findByIdRequest(id).get(0);
+        User result = userDao.findUserById(id).get(0);
 
         if (result == null) {
             log.warn("IN getUserById - no user found by id: {}", id);
