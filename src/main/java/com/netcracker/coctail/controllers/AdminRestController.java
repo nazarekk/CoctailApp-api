@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@CrossOrigin(origins = "${front_link}")
 @RequestMapping(value = "/api/admin/")
 @Data
 public class AdminRestController {
@@ -38,6 +37,8 @@ public class AdminRestController {
   @Resource
   ModeratorDao createModeratorDao;
 
+
+  @CrossOrigin(origins = "${front_link}")
   @GetMapping(value = "users/{id}")
   public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
     User user = userService.getUserById(id);
@@ -51,27 +52,32 @@ public class AdminRestController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @CrossOrigin(origins = "${front_link}")
   @PostMapping("moderators")
   public ResponseEntity<Moderator> createModerator(@RequestBody @Valid Moderator user) {
     return createModeratorDao.create(user) == 1 ? new ResponseEntity<>(HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
+  @CrossOrigin(origins = "${front_link}")
   @GetMapping("moderators")
   public Collection<ModeratorInformation> moderatorList() {
     return createModeratorDao.moderatorList();
   }
 
+  @CrossOrigin(origins = "${front_link}")
   @PatchMapping("moderators/edit")
   public void editModerator(@RequestBody @Valid ModeratorInformation user) {
     createModeratorDao.editModerator(user);
   }
 
+  @CrossOrigin(origins = "${front_link}")
   @DeleteMapping("moderators/remove")
   public void removeModerator(@RequestBody @Valid ModeratorInformation user) {
     createModeratorDao.removeModerator(user);
   }
 
+  @CrossOrigin(origins = "${front_link}")
   @GetMapping("moderators/search")
   public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam String q) {
     return createModeratorDao.searchModerator(q) == null
@@ -79,6 +85,7 @@ public class AdminRestController {
         new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
   }
 
+  @CrossOrigin(origins = "${front_link}")
   @GetMapping("moderators/filter")
   public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam Boolean q) {
     return createModeratorDao.filterModerator(q) == null

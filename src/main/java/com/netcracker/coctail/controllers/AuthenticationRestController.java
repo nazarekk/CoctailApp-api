@@ -22,7 +22,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/auth/")
-@CrossOrigin(origins = "${front_link}")
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
@@ -38,6 +37,7 @@ public class AuthenticationRestController {
         this.userService = userService;
     }
 
+    @CrossOrigin(origins = "${front_link}")
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
             String email = requestDto.getEmail();

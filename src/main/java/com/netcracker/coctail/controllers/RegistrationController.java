@@ -14,7 +14,6 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "${front_link}")
 @RequiredArgsConstructor
 public class RegistrationController {
 
@@ -29,12 +28,14 @@ public class RegistrationController {
         dataBinder.setValidator(createUserValidator);
     }
 
+    @CrossOrigin(origins = "${front_link}")
     @GetMapping("/activation/{code}")
     public ResponseEntity activateUser(@PathVariable String code) {
         return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK) :
             new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
 
+    @CrossOrigin(origins = "${front_link}")
     @PostMapping
     public String create(@RequestBody @Valid CreateUser user) {
         return registrationDao.create(user);
