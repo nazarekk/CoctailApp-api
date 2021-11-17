@@ -4,6 +4,8 @@ import com.netcracker.coctail.dao.RegistrationDao;
 import com.netcracker.coctail.model.CreateUser;
 import com.netcracker.coctail.validators.CreateUserValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +28,14 @@ public class RegistrationController {
         dataBinder.setValidator(createUserValidator);
     }
 
+    @CrossOrigin(origins = "${front_link}")
     @GetMapping("/activation/{code}")
-    public String activateUser(@PathVariable String code) {
-        registrationDao.activateUser(code);
-        return "Account is activated!";
+    public ResponseEntity activateUser(@PathVariable String code) {
+        return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK) :
+            new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
 
+    @CrossOrigin(origins = "${front_link}")
     @PostMapping
     public String create(@RequestBody @Valid CreateUser user) {
         return registrationDao.create(user);
