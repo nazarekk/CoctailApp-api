@@ -1,13 +1,10 @@
 package com.netcracker.coctail.security.jwt;
 
-import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
+
 
 /**
  * Implementation of Factory Method for class {JwtUser}.
@@ -15,10 +12,7 @@ import java.util.stream.Collectors;
 
 public final class JwtUserFactory {
 
-    public JwtUserFactory() {
-    }
-
-    public static JwtUser create(User user) {
+    public static JwtUser create(User user, String roleName) {
         return new JwtUser(
                 user.getId(),
                 user.getNickname(),
@@ -26,14 +20,8 @@ public final class JwtUserFactory {
                 user.getEmail(),
                 user.getRoleid(),
                 user.isIsactive(),
-                mapToGrantedAuthorities(new ArrayList<Role>())
+                Collections.singletonList(new SimpleGrantedAuthority(roleName))
         );
     }
-
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Role> userRoles) {
-        return userRoles.stream()
-                .map(role ->
-                        new SimpleGrantedAuthority(role.getRolename())
-                ).collect(Collectors.toList());
-    }
 }
+

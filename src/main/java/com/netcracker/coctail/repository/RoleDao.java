@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface RoleDao {
-    List<Role> findRolenameByEmail(String email);
+    List<Role> findRoleNameByEmail(String email);
 }

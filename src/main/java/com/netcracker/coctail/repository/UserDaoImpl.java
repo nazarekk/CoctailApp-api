@@ -28,12 +28,12 @@ public class UserDaoImpl implements UserDao {
                     rs.getBoolean("isactive"));
 
     @Override
-    public List<User> findByEmailRequest(String email) {
+    public List<User> findUserByEmail(String email) {
         return jdbcTemplate.query(String.format(FIND_BY_EMAIL, email), rowMapper);
     }
 
     @Override
-    public List<User> findByIdRequest(Long id) {
+    public List<User> findUserById(Long id) {
         return jdbcTemplate.query(String.format(FIND_BY_ID, id), rowMapper);
     }
 }

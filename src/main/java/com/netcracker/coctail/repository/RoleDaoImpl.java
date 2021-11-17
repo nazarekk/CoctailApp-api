@@ -23,10 +23,9 @@ public class RoleDaoImpl implements RoleDao {
                     rs.getString("rolename"));
 
     @Override
-    public List<Role> findRolenameByEmail(String email) {
+    public List<Role> findRoleNameByEmail(String email) {
         return jdbcTemplate.query(String.format(FIND_ROLE_BY_EMAIL, email), rowMapper);
 
     }
-
 
 }

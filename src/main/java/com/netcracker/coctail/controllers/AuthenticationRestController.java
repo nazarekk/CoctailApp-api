@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,19 +36,18 @@ public class AuthenticationRestController {
         this.userService = userService;
     }
 
-    @CrossOrigin(origins = "${front_link}")
+
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
-            String email = requestDto.getEmail();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
-            userService.getUserByEmail(email);
+        String email = requestDto.getEmail();
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
-            String token = jwtTokenProvider.createToken(email, userService.getRolesByEmail(email));
+        String token = jwtTokenProvider.createToken(email, userService.getRolesByEmail(email));
 
-            Map<Object, Object> response = new HashMap<>();
-            response.put("email", email);
-            response.put("token", token);
+        Map<Object, Object> response = new HashMap<>();
+        response.put("email", email);
+        response.put("token", token);
 
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
     }
 }

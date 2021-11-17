@@ -9,6 +9,6 @@ import java.util.List;
  */
 
 public interface UserDao {
-    List<User> findByEmailRequest(String email);
-    List<User> findByIdRequest(Long id);
+    List<User> findUserByEmail(String email);
+    List<User> findUserById(Long id);
 }
