@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "${front_link}")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class RegistrationController {

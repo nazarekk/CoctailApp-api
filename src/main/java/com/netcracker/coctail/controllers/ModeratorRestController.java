@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/moderator/")
-@CrossOrigin(origins = "${front_link}")
+@CrossOrigin(origins = "*")
 @Data
 public class ModeratorRestController {
 

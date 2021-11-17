@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/admin/")
 @Data
-@CrossOrigin(origins = "${front_link}")
+@CrossOrigin(origins = "*")
 public class AdminRestController {
 
     private final UserService userService;
