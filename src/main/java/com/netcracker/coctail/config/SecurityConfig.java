@@ -23,8 +23,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
   private static final String ADMIN_ENDPOINT = "/api/admin/**";
   private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
+  //private static final String ALL_ENDPOINT = "/**";
   private static final String LOGIN_ENDPOINT = "/api/auth/login";
-  private static final String REG_ENDPOINT = "/api/users/**";
+  //private static final String REG_ENDPOINT = "/api/users/**";
   private static final String front_link = "${front_link}";
 
   @Autowired
@@ -47,7 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         .and()
         .authorizeRequests()
         .antMatchers(LOGIN_ENDPOINT).permitAll()
-        .antMatchers(REG_ENDPOINT).permitAll()
         .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
         .antMatchers(MODERATOR_ENDPOINT).permitAll()
         .anyRequest().authenticated()

@@ -62,7 +62,7 @@ public class AdminRestController {
         return createModeratorDao.moderatorList();
     }
 
-    @PatchMapping("moderators/edit")
+    @PatchMapping("moderator/edit")
     public void editModerator(@RequestBody @Valid ModeratorInformation user) {
         createModeratorDao.editModerator(user);
     }

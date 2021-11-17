@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/moderators/")
-@Data
+@RequestMapping(value = "/api/moderator/")
 @CrossOrigin(origins = "${front_link}")
+@Data
 public class ModeratorRestController {
 
   private final ModeratorDao createModeratorDao;
