@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
   private final JwtTokenProvider jwtTokenProvider;
 
   private static final String ADMIN_ENDPOINT = "/api/admin/**";
-  private static final String FULL_ACCESS = "/api/**";
+  private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
   private static final String LOGIN_ENDPOINT = "/api/auth/login";
   private static final String REG_ENDPOINT = "/api/users/**";
   private static final String front_link = "${front_link}";
@@ -48,9 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         .authorizeRequests()
         .antMatchers(LOGIN_ENDPOINT).permitAll()
         .antMatchers(REG_ENDPOINT).permitAll()
-        .antMatchers(ADMIN_ENDPOINT).permitAll()
-        .antMatchers(FULL_ACCESS).permitAll()
-        //.antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+        .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+        .antMatchers(MODERATOR_ENDPOINT).permitAll()
         .anyRequest().authenticated()
         .and()
         .apply(new JwtConfigurer(jwtTokenProvider));
