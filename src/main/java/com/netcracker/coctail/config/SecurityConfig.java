@@ -9,13 +9,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Security configuration class for JWT based Spring Security application.
  */
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
   private final JwtTokenProvider jwtTokenProvider;
 
@@ -23,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private static final String FULL_ACCESS = "/api/**";
   private static final String LOGIN_ENDPOINT = "/api/auth/login";
   private static final String REG_ENDPOINT = "/api/users/**";
+  private static final String front_link = "${front_link}";
 
   @Autowired
   public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -51,5 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .anyRequest().authenticated()
         .and()
         .apply(new JwtConfigurer(jwtTokenProvider));
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**")
+        .allowedOrigins(front_link)
+        .allowedMethods("*");
   }
 }

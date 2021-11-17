@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/moderators/")
 @Data
+@CrossOrigin(origins = "${front_link}")
 public class ModeratorRestController {
 
   private final ModeratorDao createModeratorDao;
 
-  @CrossOrigin(origins = "${front_link}")
   @PostMapping("activation")
   public String activateModerator(@RequestBody ActivateModerator moderator) {
     createModeratorDao.activateModerator(moderator);

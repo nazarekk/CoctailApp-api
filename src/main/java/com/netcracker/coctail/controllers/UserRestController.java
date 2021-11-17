@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/users/")
+@CrossOrigin(origins = "${front_link}")
 public class UserRestController {
     private final UserService userService;
 
@@ -26,7 +27,6 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @CrossOrigin(origins = "${front_link}")
     @GetMapping(value = "{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
         User user = userService.getUserById(id);

@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "${front_link}")
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class RegistrationController {
@@ -28,14 +29,12 @@ public class RegistrationController {
         dataBinder.setValidator(createUserValidator);
     }
 
-    @CrossOrigin(origins = "${front_link}")
     @GetMapping("/activation/{code}")
     public ResponseEntity activateUser(@PathVariable String code) {
         return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK) :
             new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
 
-    @CrossOrigin(origins = "${front_link}")
     @PostMapping
     public String create(@RequestBody @Valid CreateUser user) {
         return registrationDao.create(user);
