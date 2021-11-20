@@ -61,8 +61,8 @@ public class RegistrationDaoImp implements RegistrationDao {
     @Override
     public int activateUser(String code) {
         SqlParameterSource param = new MapSqlParameterSource()
-            .addValue("roleid", 2)
-            .addValue("activation", code);
+                .addValue("roleid", 2)
+                .addValue("activation", code);
         return jdbcTemplate.update(userActivation, param);
     }
 }

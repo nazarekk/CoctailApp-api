@@ -1,6 +1,8 @@
-package com.netcracker.coctail.repository;
+package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.Role;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -8,9 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@PropertySource("classpath:SQLscripts.properties")
 public class RoleDaoImpl implements RoleDao {
 
-    private static final String FIND_ROLE_BY_EMAIL = "SELECT id, rolename FROM role INNER JOIN users ON role.id = users.roleid WHERE email = '%s'";
+    @Value("${findRoleByEmail}")
+    private String findRoleByEmail;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -24,7 +28,7 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public List<Role> findRoleNameByEmail(String email) {
-        return jdbcTemplate.query(String.format(FIND_ROLE_BY_EMAIL, email), rowMapper);
+        return jdbcTemplate.query(String.format(findRoleByEmail, email), rowMapper);
 
     }
 
