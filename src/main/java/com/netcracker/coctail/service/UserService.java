@@ -17,4 +17,8 @@ public interface UserService {
 
     User getUserById(Long id);
 
+    String getRolenameByEmail(String email);
+
+    String changeUserPassword(User user, String password);
+
 }

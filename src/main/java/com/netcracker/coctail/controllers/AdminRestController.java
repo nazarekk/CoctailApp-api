@@ -6,9 +6,11 @@ import com.netcracker.coctail.model.Moderator;
 import com.netcracker.coctail.model.ModeratorInformation;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.service.UserService;
+
 import java.util.Collection;
 import javax.annotation.Resource;
 import javax.validation.Valid;
+
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +56,7 @@ public class AdminRestController {
     @PostMapping("moderators")
     public ResponseEntity<Moderator> createModerator(@RequestBody @Valid Moderator user) {
         return createModeratorDao.create(user) == 1 ? new ResponseEntity<>(HttpStatus.OK) :
-            new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
     @GetMapping("moderators")
@@ -75,14 +77,14 @@ public class AdminRestController {
     @GetMapping("moderators/search")
     public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam String q) {
         return createModeratorDao.searchModerator(q) == null
-            ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-            new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+                new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
     }
 
     @GetMapping("moderators/filter")
     public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam Boolean q) {
         return createModeratorDao.filterModerator(q) == null
-            ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-            new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+                new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
     }
 }

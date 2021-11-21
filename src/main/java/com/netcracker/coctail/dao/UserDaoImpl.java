@@ -1,5 +1,7 @@
-package com.netcracker.coctail.repository;
+package com.netcracker.coctail.dao;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
 import com.netcracker.coctail.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,10 +10,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@PropertySource("classpath:SQLscripts.properties")
 public class UserDaoImpl implements UserDao {
 
-    private static final String FIND_BY_EMAIL = "SELECT userid, nickname, email, password, roleid, isactive FROM users WHERE email = '%s'";
-    private static final String FIND_BY_ID = "SELECT userid, nickname, email, password, roleid, isactive FROM users WHERE userid = '%s'";
+    @Value("${findUserByEmail}")
+    private String findUserByEmail;
+    @Value("${findUserById}")
+    private String findUserById;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -29,11 +34,11 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> findUserByEmail(String email) {
-        return jdbcTemplate.query(String.format(FIND_BY_EMAIL, email), rowMapper);
+        return jdbcTemplate.query(String.format(findUserByEmail, email), rowMapper);
     }
 
     @Override
     public List<User> findUserById(Long id) {
-        return jdbcTemplate.query(String.format(FIND_BY_ID, id), rowMapper);
+        return jdbcTemplate.query(String.format(findUserById, id), rowMapper);
     }
 }

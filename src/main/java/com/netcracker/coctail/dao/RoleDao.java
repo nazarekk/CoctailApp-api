@@ -1,4 +1,4 @@
-package com.netcracker.coctail.repository;
+package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;

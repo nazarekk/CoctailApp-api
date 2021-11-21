@@ -1,5 +1,6 @@
 package com.netcracker.coctail.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  */
 
 @Data
+@AllArgsConstructor
 public class AuthenticationRequestDto {
     private String email;
     private String password;
