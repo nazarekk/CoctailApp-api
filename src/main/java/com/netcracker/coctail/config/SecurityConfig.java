@@ -23,8 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     private static final String ADMIN_ENDPOINT = "/api/admin/**";
     private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
-    //private static final String ALL_ENDPOINT = "/**";
-    private static final String AUTHENTICAL_ENDPOINT = "/api/auth/**";
+    private static final String ALL_ENDPOINT = "/**";
+    //private static final String AUTHENTICAL_ENDPOINT = "/api/auth/**";
     private static final String REG_ENDPOINT = "/api/users/**";
     //private static final String front_link = "${front_link}";
 
@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
+                .antMatchers(ALL_ENDPOINT).permitAll()
                 .antMatchers(REG_ENDPOINT).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).permitAll()
                 .antMatchers(MODERATOR_ENDPOINT).permitAll()
@@ -55,7 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
     }
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
