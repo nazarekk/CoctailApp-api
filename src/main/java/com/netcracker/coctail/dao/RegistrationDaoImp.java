@@ -37,10 +37,13 @@ public class RegistrationDaoImp implements RegistrationDao {
     private String userCreation;
     @Value("${ActivateUser}")
     private String userActivation;
+    @Value("${front_link}")
+    private String front_link;
 
     @Async
     public void send(String email, String code) {
-        String message = "Hello! To finish registration visit http://localhost:8080/api/users/activation/'%s'";
+        String message = "Hello! To finish registration visit "
+            + front_link + "/registration/verification?code=" + code;
         mailSender.send(email, "verification", String.format(message, code));
 
     }

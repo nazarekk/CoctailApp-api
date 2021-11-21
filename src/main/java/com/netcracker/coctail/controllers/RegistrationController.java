@@ -29,8 +29,8 @@ public class RegistrationController {
         dataBinder.setValidator(createUserValidator);
     }
 
-    @GetMapping("/activation/{code}")
-    public ResponseEntity activateUser(@PathVariable String code) {
+    @GetMapping("/activation")
+    public ResponseEntity activateUser(@RequestParam String code) {
         return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK) :
                 new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
