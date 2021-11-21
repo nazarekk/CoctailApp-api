@@ -82,7 +82,7 @@ public class AdminRestController {
     }
 
     @GetMapping("moderators/filter")
-    public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam Boolean q) {
+    public ResponseEntity<ModeratorInformation> filterModerator(@RequestParam Boolean q) {
         return createModeratorDao.filterModerator(q) == null
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
                 new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
