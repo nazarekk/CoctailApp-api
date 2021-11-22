@@ -1,7 +1,13 @@
 package com.netcracker.coctail.dao;
 
 
-public interface AdaptiveFriendlistDao {
+import com.netcracker.coctail.model.Friendlist;
+
+import java.util.List;
+
+public interface FriendlistDao {
+
+    List<Friendlist> findFriendlist(long ownerid, long friendid);
 
     int createFriendlist(long ownerid, long friendid, long statusid);
 

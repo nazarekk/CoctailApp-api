@@ -5,8 +5,9 @@ import com.netcracker.coctail.model.User;
 
 public interface FriendlistService {
     Friendlist getFriendlist(long ownerid, long friendid);
-
-
-
+    void addFriend(long ownerid, long friendid);
+    void acceptFriendRequest(long ownerid, long friendid);
+    void declineFriendRequest(long ownerid, long friendid);
+    void removeFriend(long ownerid, long friendid);
 
 }
