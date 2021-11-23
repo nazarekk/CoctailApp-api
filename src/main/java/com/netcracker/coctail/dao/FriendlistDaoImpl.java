@@ -1,6 +1,7 @@
 package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.Friendlist;
+import com.netcracker.coctail.model.FriendsStatus;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -28,6 +29,8 @@ public class FriendlistDaoImpl implements FriendlistDao {
     private String RemoveFriendlist;
     @Value("${FindFriendlist}")
     private String FindFriendlist;
+    @Value("${FindStatusId}")
+    private String FindStatusId;
 
     @Override
     public List<Friendlist> findFriendlist(long ownerid, long friendid) {
@@ -67,4 +70,13 @@ public class FriendlistDaoImpl implements FriendlistDao {
                 .addValue("friendid", friendid);
             jdbcTemplate.update(RemoveFriendlist, param, holder);
         }
+
+    @Override
+    public long getStatusId(String status) {
+        RowMapper<FriendsStatus> rowMapper = (rs, rownum) ->
+                new FriendsStatus(
+                        rs.getLong("id"),
+                        rs.getString("statusname"));
+        return jdbcTemplate.query(String.format(FindStatusId, status), rowMapper).get(0).getId();
+    }
 }

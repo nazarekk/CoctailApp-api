@@ -62,6 +62,13 @@ public class UserRestController {
         friendlistService.declineFriendRequest(ownerid, friendid);
     }
 
+    @PatchMapping("{ownerid}/subscribe/{friendid}")
+    public void subcribeTo(
+            @PathVariable(name = "ownerid") long ownerid,
+            @PathVariable(name = "friendid") long friendid) {
+        friendlistService.subscribeToFriend(ownerid, friendid);
+    }
+
     @DeleteMapping("{ownerid}/remove/{friendid}")
     public void removeFromFriends(
             @PathVariable(name = "ownerid") long ownerid,

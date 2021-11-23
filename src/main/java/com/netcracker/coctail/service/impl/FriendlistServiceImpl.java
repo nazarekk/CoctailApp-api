@@ -29,16 +29,17 @@ public class FriendlistServiceImpl implements FriendlistService {
     @Override
     public void addFriend(long ownerid, long friendid) {
         if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()) {
-            friendlistDao.createFriendlist(ownerid, friendid, 3);
-            friendlistDao.createFriendlist(friendid, ownerid, 2);
-        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == 1) {
-            friendlistDao.editFriendlist(ownerid, friendid, 3);
-            friendlistDao.editFriendlist(friendid, ownerid, 2);
-        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == 2) {
+            friendlistDao.createFriendlist(ownerid, friendid, friendlistDao.getStatusId("Waiting for response"));
+            friendlistDao.createFriendlist(friendid, ownerid, friendlistDao.getStatusId("Awaiting confirmation"));
+        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("None")) {
+            friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("Waiting for response"));
+            friendlistDao.editFriendlist(friendid, ownerid, friendlistDao.getStatusId("Awaiting confirmation"));
+        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Awaiting confirmation")) {
             throw new UserAlreadyAwaitsYourResponseException();
-        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == 3) {
+        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Waiting for response")) {
             throw new AwaitingConfirmationException();
-        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == 4) {
+        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Friends") ||
+                   friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Subscribed to")) {
             throw new AlreadyFriendsException();
         }
 
@@ -46,11 +47,11 @@ public class FriendlistServiceImpl implements FriendlistService {
 
     @Override
     public void acceptFriendRequest(long ownerid, long friendid) {
-        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != 2) {
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Awaiting confirmation")) {
             throw new FriendRequestNotFoundException();
         } else {
-            friendlistDao.editFriendlist(ownerid, friendid, 4);
-            friendlistDao.editFriendlist(friendid, ownerid, 4);
+            friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("Friends"));
+            friendlistDao.editFriendlist(friendid, ownerid, friendlistDao.getStatusId("Friends"));
         }
 
 
@@ -58,21 +59,32 @@ public class FriendlistServiceImpl implements FriendlistService {
 
     @Override
     public void declineFriendRequest(long ownerid, long friendid) {
-        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != 2) {
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Awaiting confirmation")) {
             throw new FriendRequestNotFoundException();
         } else {
-            friendlistDao.editFriendlist(ownerid, friendid, 1);
-            friendlistDao.editFriendlist(friendid, ownerid, 1);
+            friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("None"));
+            friendlistDao.editFriendlist(friendid, ownerid, friendlistDao.getStatusId("None"));
+        }
+    }
+
+    @Override
+    public void subscribeToFriend(long ownerid, long friendid) {
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Friends")) {
+            throw new NotInFriendlistException();
+        } else {
+            friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("Subscribed to"));
         }
     }
 
     @Override
     public void removeFriend(long ownerid, long friendid) {
-        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != 4) {
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()
+                || (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Friends")
+                && friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Subscribed to"))) {
             throw new NotInFriendlistException();
         } else {
-            friendlistDao.editFriendlist(ownerid, friendid, 1);
-            friendlistDao.editFriendlist(friendid, ownerid, 1);
+            friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("None"));
+            friendlistDao.editFriendlist(friendid, ownerid, friendlistDao.getStatusId("None"));
         }
     }
 

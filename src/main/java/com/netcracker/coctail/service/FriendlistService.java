@@ -8,5 +8,6 @@ public interface FriendlistService {
     void acceptFriendRequest(long ownerid, long friendid);
     void declineFriendRequest(long ownerid, long friendid);
     void removeFriend(long ownerid, long friendid);
+    void subscribeToFriend(long ownerid, long friendid);
 
 }
