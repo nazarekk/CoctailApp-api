@@ -60,8 +60,10 @@ public class ModeratorDaoImp implements ModeratorDao {
         .addValue("email", moderator.getEmail())
         .addValue("isactive", moderator.getIsactive())
         .addValue("activation", activation);
-    send(moderator.getEmail(), activation);
-    return jdbcTemplate.update(moderatorCreation, param, holder);
+    int res = jdbcTemplate.update(moderatorCreation, param, holder);
+    if (res == 1)
+      send(moderator.getEmail(), activation);
+    return res;
   }
 
   @Override

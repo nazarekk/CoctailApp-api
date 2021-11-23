@@ -23,9 +23,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     private static final String ADMIN_ENDPOINT = "/api/admin/**";
     private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
-    private static final String ALL_ENDPOINT = "/**";
-    //private static final String AUTHENTICAL_ENDPOINT = "/api/auth/**";
-    private static final String REG_ENDPOINT = "/api/users/**";
+    private static final String MODERACTIVATION_ENDPOINT = "/api/moderators/activation**";
+    private static final String USERACTIVATION_ENDPOINT = "/api/users/activation**";
+    private static final String AUTHENTICAL_ENDPOINT = "/api/auth/login";
+    private static final String REG_ENDPOINT = "/api/users";
     //private static final String front_link = "${front_link}";
 
     @Autowired
@@ -47,10 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(ALL_ENDPOINT).permitAll()
+                .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
                 .antMatchers(REG_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).permitAll()
-                .antMatchers(MODERATOR_ENDPOINT).permitAll()
+                .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+                .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
+                .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
+                .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
@@ -59,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("*");
+                .allowedMethods("*")
+                .allowedHeaders("*");
     }
 }
