@@ -1,6 +1,7 @@
 package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.model.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
@@ -11,4 +12,6 @@ import java.util.List;
 public interface UserDao {
     List<User> findUserByEmail(String email);
     List<User> findUserById(Long id);
+    UserInfo myInfo(String email);
+    int editInfo(String email, UserInfo user);
 }
