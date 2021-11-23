@@ -2,12 +2,15 @@ package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * REST controller user connected requests.
@@ -20,11 +23,13 @@ public class UserRestController {
 
     private final UserService userService;
     private final FriendlistService friendlistService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserRestController(UserService userService, FriendlistService friendlistService) {
+    public UserRestController(UserService userService, FriendlistService friendlistService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.friendlistService = friendlistService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping(value = "{id}")
@@ -41,38 +46,43 @@ public class UserRestController {
     }
 
 
-    @PostMapping("{ownerid}/add/{friendid}")
+    @PostMapping("add/{friendid}")
     public void addFriend(
-            @PathVariable(name = "ownerid") long ownerid,
-            @PathVariable(name = "friendid") long friendid) {
-        friendlistService.addFriend(ownerid, friendid);
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        friendlistService.addFriend(ownerEmail, friendid);
     }
 
-    @PatchMapping("{ownerid}/accept/{friendid}")
+    @PatchMapping("accept/{friendid}")
     public void acceptFriend(
-            @PathVariable(name = "ownerid") long ownerid,
-            @PathVariable(name = "friendid") long friendid) {
-        friendlistService.acceptFriendRequest(ownerid, friendid);
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        friendlistService.acceptFriendRequest(ownerEmail, friendid);
     }
 
-    @PatchMapping("{ownerid}/decline/{friendid}")
+    @PatchMapping("decline/{friendid}")
     public void declineFriend(
-            @PathVariable(name = "ownerid") long ownerid,
-            @PathVariable(name = "friendid") long friendid) {
-        friendlistService.declineFriendRequest(ownerid, friendid);
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        friendlistService.declineFriendRequest(ownerEmail, friendid);
     }
 
-    @PatchMapping("{ownerid}/subscribe/{friendid}")
+    @PatchMapping("subscribe/{friendid}")
     public void subcribeTo(
-            @PathVariable(name = "ownerid") long ownerid,
-            @PathVariable(name = "friendid") long friendid) {
-        friendlistService.subscribeToFriend(ownerid, friendid);
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        friendlistService.subscribeToFriend(ownerEmail, friendid);
     }
 
-    @DeleteMapping("{ownerid}/remove/{friendid}")
+    @DeleteMapping("remove/{friendid}")
     public void removeFromFriends(
-            @PathVariable(name = "ownerid") long ownerid,
-            @PathVariable(name = "friendid") long friendid) {
-        friendlistService.removeFriend(ownerid, friendid);
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        friendlistService.removeFriend(ownerEmail, friendid);
     }
 }

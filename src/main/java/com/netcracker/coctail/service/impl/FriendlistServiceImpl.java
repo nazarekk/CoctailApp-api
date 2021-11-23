@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -21,13 +22,16 @@ public class FriendlistServiceImpl implements FriendlistService {
     private final FriendlistDao friendlistDao;
 
     @Override
-    public Friendlist getFriendlist(long ownerid, long friendid) {
+    public Friendlist getFriendlist(String ownerEmail, long friendid) {
+        long ownerid = friendlistDao.getOwnerId(ownerEmail);
         List<Friendlist> result = friendlistDao.findFriendlist(ownerid, friendid);
         return result.get(0);
     }
 
     @Override
-    public void addFriend(long ownerid, long friendid) {
+    public void addFriend(String ownerEmail, long friendid) {
+        log.info("before owner id" + ownerEmail);
+        long ownerid = friendlistDao.getOwnerId(ownerEmail);
         if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()) {
             friendlistDao.createFriendlist(ownerid, friendid, friendlistDao.getStatusId("Waiting for response"));
             friendlistDao.createFriendlist(friendid, ownerid, friendlistDao.getStatusId("Awaiting confirmation"));
@@ -38,16 +42,19 @@ public class FriendlistServiceImpl implements FriendlistService {
             throw new UserAlreadyAwaitsYourResponseException();
         } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Waiting for response")) {
             throw new AwaitingConfirmationException();
-        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Friends") ||
-                   friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Subscribed to")) {
+        } else if (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Friends")
+                || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() == friendlistDao.getStatusId("Subscribed to")) {
             throw new AlreadyFriendsException();
         }
 
     }
 
     @Override
-    public void acceptFriendRequest(long ownerid, long friendid) {
-        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Awaiting confirmation")) {
+    public void acceptFriendRequest(String ownerEmail, long friendid) {
+        long ownerid = friendlistDao.getOwnerId(ownerEmail);
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()
+                || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid()
+                != friendlistDao.getStatusId("Awaiting confirmation")) {
             throw new FriendRequestNotFoundException();
         } else {
             friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("Friends"));
@@ -58,8 +65,11 @@ public class FriendlistServiceImpl implements FriendlistService {
     }
 
     @Override
-    public void declineFriendRequest(long ownerid, long friendid) {
-        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Awaiting confirmation")) {
+    public void declineFriendRequest(String ownerEmail, long friendid) {
+        long ownerid = friendlistDao.getOwnerId(ownerEmail);
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()
+                || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid()
+                != friendlistDao.getStatusId("Awaiting confirmation")) {
             throw new FriendRequestNotFoundException();
         } else {
             friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("None"));
@@ -68,8 +78,11 @@ public class FriendlistServiceImpl implements FriendlistService {
     }
 
     @Override
-    public void subscribeToFriend(long ownerid, long friendid) {
-        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty() || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Friends")) {
+    public void subscribeToFriend(String ownerEmail, long friendid) {
+        long ownerid = friendlistDao.getOwnerId(ownerEmail);
+        if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()
+                || friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid()
+                != friendlistDao.getStatusId("Friends")) {
             throw new NotInFriendlistException();
         } else {
             friendlistDao.editFriendlist(ownerid, friendid, friendlistDao.getStatusId("Subscribed to"));
@@ -77,7 +90,8 @@ public class FriendlistServiceImpl implements FriendlistService {
     }
 
     @Override
-    public void removeFriend(long ownerid, long friendid) {
+    public void removeFriend(String ownerEmail, long friendid) {
+        long ownerid = friendlistDao.getOwnerId(ownerEmail);
         if (friendlistDao.findFriendlist(ownerid, friendid).isEmpty()
                 || (friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Friends")
                 && friendlistDao.findFriendlist(ownerid, friendid).get(0).getStatusid() != friendlistDao.getStatusId("Subscribed to"))) {

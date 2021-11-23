@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ReadUser {
-    private final int id;
+    private final long userid;
     private final String email;
-    private int roleId;
+    private final long roleId;
 }

@@ -16,4 +16,6 @@ public interface FriendlistDao {
     void removeFriendlist(long ownerid, long friendid);
 
     long getStatusId(String status);
+
+    long getOwnerId(String email);
 }

@@ -2,6 +2,7 @@ package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.Friendlist;
 import com.netcracker.coctail.model.FriendsStatus;
+import com.netcracker.coctail.model.ReadUser;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -31,6 +32,8 @@ public class FriendlistDaoImpl implements FriendlistDao {
     private String FindFriendlist;
     @Value("${FindStatusId}")
     private String FindStatusId;
+    @Value("${FindIdByEmail}")
+    private String FindIdByEmail;
 
     @Override
     public List<Friendlist> findFriendlist(long ownerid, long friendid) {
@@ -64,12 +67,12 @@ public class FriendlistDaoImpl implements FriendlistDao {
 
     @Override
     public void removeFriendlist(long ownerid, long friendid) {
-            KeyHolder holder = new GeneratedKeyHolder();
-            SqlParameterSource param = new MapSqlParameterSource()
+        KeyHolder holder = new GeneratedKeyHolder();
+        SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("ownerid", ownerid)
                 .addValue("friendid", friendid);
-            jdbcTemplate.update(RemoveFriendlist, param, holder);
-        }
+        jdbcTemplate.update(RemoveFriendlist, param, holder);
+    }
 
     @Override
     public long getStatusId(String status) {
@@ -78,5 +81,16 @@ public class FriendlistDaoImpl implements FriendlistDao {
                         rs.getLong("id"),
                         rs.getString("statusname"));
         return jdbcTemplate.query(String.format(FindStatusId, status), rowMapper).get(0).getId();
+    }
+
+    @Override
+    public long getOwnerId(String email) {
+        System.out.println("in get owner by id" + email);
+        RowMapper<ReadUser> rowMapper = (rs, rownum) ->
+                new ReadUser(
+                        rs.getLong("userid"),
+                        rs.getString("email"),
+                        rs.getLong("roleid"));
+        return jdbcTemplate.query(String.format(FindIdByEmail, email), rowMapper).get(0).getUserid();
     }
 }
