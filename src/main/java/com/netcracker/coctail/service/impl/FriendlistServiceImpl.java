@@ -1,9 +1,9 @@
 package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.FriendlistDao;
+import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.exceptions.*;
 import com.netcracker.coctail.model.Friendlist;
-import com.netcracker.coctail.repository.UserDao;
 import com.netcracker.coctail.service.FriendlistService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

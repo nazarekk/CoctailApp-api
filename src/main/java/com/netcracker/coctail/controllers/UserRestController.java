@@ -5,6 +5,7 @@ import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
+import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ public class UserRestController {
   private final UserService userService;
   private final JwtTokenProvider jwtTokenProvider;
   private final UserDao userDao;
+  private final FriendlistService friendlistService;
 
     @GetMapping(value = "{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
