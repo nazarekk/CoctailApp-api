@@ -31,8 +31,9 @@ public class CreateUserValidator implements Validator {
     public boolean getByEmail(String email) {
         RowMapper<ReadUser> rowMapper = (rs, rownum) ->
                 new ReadUser(
-                        rs.getInt("userid"),
-                        rs.getString("email")
+                        rs.getLong("id"),
+                        rs.getString("email"),
+                        rs.getLong("roleid")
                 );
         List<ReadUser> query = jdbcTemplate.query(String.format(emailSelection, email), rowMapper);
         if (query.isEmpty()) {
