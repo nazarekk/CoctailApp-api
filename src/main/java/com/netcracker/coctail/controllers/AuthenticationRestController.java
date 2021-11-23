@@ -2,15 +2,19 @@ package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.ForgotPasswordDao;
 import com.netcracker.coctail.dto.AuthenticationRequestDto;
+import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
 import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,28 +26,24 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/api/auth/")
 @CrossOrigin(origins = "*")
+@Data
+@AllArgsConstructor
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final ForgotPasswordDao forgotPasswordDao;
-
-    @Autowired
-    public AuthenticationRestController(AuthenticationManager authenticationManager,
-                                        JwtTokenProvider jwtTokenProvider,
-                                        UserService userService,
-                                        ForgotPasswordDao forgotPasswordDao) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
-        this.forgotPasswordDao = forgotPasswordDao;
-    }
+    private final BCryptPasswordEncoder passwordEncoder;
 
 
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
         String email = requestDto.getEmail();
+        User user = userService.getUserByEmail(email);
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            throw new InvalidEmailOrPasswordException();
+        }
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
         List<Role> roles = userService.getRolesByEmail(email);
         String token = jwtTokenProvider.createToken(email, roles);

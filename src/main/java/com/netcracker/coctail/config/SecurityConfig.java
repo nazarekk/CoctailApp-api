@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
                 .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
                 .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
-                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
+                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED") // Баг: админ и модератор не имеют доступа
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
