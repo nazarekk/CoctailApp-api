@@ -4,7 +4,6 @@ import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
