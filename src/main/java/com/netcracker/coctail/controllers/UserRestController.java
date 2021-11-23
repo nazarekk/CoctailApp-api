@@ -3,6 +3,7 @@ package com.netcracker.coctail.controllers;
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.service.UserService;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/users/")
 @CrossOrigin(origins = "*")
+@Data
 public class UserRestController {
     private final UserService userService;
-
-    @Autowired
-    public UserRestController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping(value = "{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {

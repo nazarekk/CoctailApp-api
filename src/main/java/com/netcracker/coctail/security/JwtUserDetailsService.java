@@ -3,6 +3,7 @@ package com.netcracker.coctail.security;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtUserFactory;
 import com.netcracker.coctail.service.UserService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import com.netcracker.coctail.security.jwt.JwtUser;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,13 +17,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@Data
 public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
-
-    public JwtUserDetailsService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
