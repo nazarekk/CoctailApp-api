@@ -9,7 +9,7 @@ public interface FriendlistDao {
 
     List<Friendlist> findFriendlist(long ownerid, long friendid);
 
-    int createFriendlist(long ownerid, long friendid, long statusid);
+    void createFriendlist(long ownerid, long friendid, long statusid);
 
     void editFriendlist(long ownerid, long friendid, long statusid);
 
@@ -18,4 +18,6 @@ public interface FriendlistDao {
     long getStatusId(String status);
 
     long getOwnerId(String email);
+
+    long [] getOwnerByNickname(String nickname);
 }

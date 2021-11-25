@@ -3,6 +3,7 @@ package com.netcracker.coctail.dao;
 import com.netcracker.coctail.model.Friendlist;
 import com.netcracker.coctail.model.FriendsStatus;
 import com.netcracker.coctail.model.ReadUser;
+import com.netcracker.coctail.model.User;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -34,6 +35,8 @@ public class FriendlistDaoImpl implements FriendlistDao {
     private String FindStatusId;
     @Value("${FindIdByEmail}")
     private String FindIdByEmail;
+    @Value("${FindIdsByNickname}")
+    private String FindIdsByNickname;
 
     @Override
     public List<Friendlist> findFriendlist(long ownerid, long friendid) {
@@ -46,13 +49,13 @@ public class FriendlistDaoImpl implements FriendlistDao {
     }
 
     @Override
-    public int createFriendlist(long ownerid, long friendid, long statusid) {
+    public void createFriendlist(long ownerid, long friendid, long statusid) {
         KeyHolder holder = new GeneratedKeyHolder();
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("ownerid", ownerid)
                 .addValue("friendid", friendid)
                 .addValue("statusid", statusid);
-        return jdbcTemplate.update(friendlistCreation, param, holder);
+        jdbcTemplate.update(friendlistCreation, param, holder);
     }
 
     @Override
@@ -85,12 +88,29 @@ public class FriendlistDaoImpl implements FriendlistDao {
 
     @Override
     public long getOwnerId(String email) {
-        System.out.println("in get owner by id" + email);
         RowMapper<ReadUser> rowMapper = (rs, rownum) ->
                 new ReadUser(
                         rs.getLong("userid"),
                         rs.getString("email"),
                         rs.getLong("roleid"));
         return jdbcTemplate.query(String.format(FindIdByEmail, email), rowMapper).get(0).getUserid();
+    }
+
+    @Override
+    public long[] getOwnerByNickname(String nickname) {
+        RowMapper<User> rowMapper = (rs, rownum) ->
+                new User(rs.getLong("userid"),
+                        rs.getString("nickname"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getLong("roleid"),
+                        rs.getBoolean("isactive"));
+        List<User> list = jdbcTemplate.query(String.format(FindIdsByNickname, nickname + "%"), rowMapper);
+        int count = list.size();
+        long[] ids = new long[count];
+        for (int i = 0; i < count; i++) {
+            ids[i] = list.get(i).getId();
+        }
+        return ids;
     }
 }
