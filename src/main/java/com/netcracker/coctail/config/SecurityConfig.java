@@ -2,14 +2,16 @@ package com.netcracker.coctail.config;
 
 import com.netcracker.coctail.security.jwt.JwtConfigurer;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -43,11 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.csrf().disable()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
                 .antMatchers(REG_ENDPOINT).permitAll()
@@ -55,15 +56,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
                 .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
                 .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
-                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED") // Баг: админ и модератор не имеют доступа
+                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
     }
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("*");
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

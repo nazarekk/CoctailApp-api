@@ -38,7 +38,6 @@ public class UserRestController {
         }
 
         UserDto result = UserDto.fromUser(user);
-
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -59,13 +58,14 @@ public class UserRestController {
     public ResponseEntity changePassword(HttpServletRequest request,
                                          @RequestBody @Valid UserPasswords userPasswords) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        System.out.println(userPasswords);
         User user = userService.getUserByEmail(email);
         if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
             throw new InvalidPasswordException();
-        } else if (!userPasswords.getNewPassword().equals(userPasswords.getNewDoublePassword())) {
+        } else if (!userPasswords.getPassword().equals(userPasswords.getDoubleCheckPass())) {
             throw new DuplicatePasswordException();
         } else {
-            userService.changeUserPassword(user, userPasswords.getNewPassword());
+            userService.changeUserPassword(user, userPasswords.getPassword());
             return new ResponseEntity(HttpStatus.OK);
         }
     }

@@ -49,7 +49,7 @@ public class AuthenticationRestController {
         String token = jwtTokenProvider.createToken(email, roles);
 
         Map<Object, Object> response = new HashMap<>();
-        response.put("role", roles.get(0).getRolename());
+        response.put("role", userService.getRolenameByEmail(email));
         response.put("token", token);
 
         return ResponseEntity.ok(response);
@@ -64,7 +64,7 @@ public class AuthenticationRestController {
 
     @PostMapping("restore-password/change-password/{code}")
     public String changePasswordUser(@RequestBody Map<String, String> passwordMap, @PathVariable String code) {
-        User user = userService.getUserByEmail(forgotPasswordDao.findByActivationCode(code.replaceAll("\'", "")).getEmail());
+        User user = userService.getUserByEmail(forgotPasswordDao.findByActivationCode(code).getEmail());
         return userService.changeUserPassword(user, passwordMap.get("password"));
     }
 }
