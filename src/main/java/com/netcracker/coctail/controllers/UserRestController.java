@@ -55,18 +55,17 @@ public class UserRestController {
         friendlistService.addFriend(ownerEmail, friendid);
     }
 
-    @GetMapping( "find/{nickname}")
-    public List<ResponseEntity<UserDto>> getUserByNickname(@PathVariable(name = "nickname") String nickname) {
+    @GetMapping("find")
+    public ResponseEntity<List<UserDto>> getUserByNickname(@RequestParam String nickname) {
         List<User> users = friendlistService.getUserByNickname(nickname);
-        List<ResponseEntity<UserDto>> list = new ArrayList();
+        List<UserDto> list = new ArrayList();
         if (users.isEmpty()) {
-            list.add(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-            return list;
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        for(int i=0; i<users.size(); i++){
-            list.add(new ResponseEntity<>(UserDto.fromUser(users.get(i)), HttpStatus.OK));
+        for (int i = 0; i < users.size(); i++) {
+            list.add(UserDto.fromUser(users.get(i)));
         }
-        return list;
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PatchMapping("accept/{friendid}")

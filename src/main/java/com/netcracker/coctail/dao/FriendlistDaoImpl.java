@@ -106,12 +106,6 @@ public class FriendlistDaoImpl implements FriendlistDao {
                         rs.getLong("roleid"),
                         rs.getBoolean("isactive"));
         List<User> list = jdbcTemplate.query(String.format(FindIdsByNickname, nickname + "%"), rowMapper);
-        System.out.println(list.get(0).getNickname());
-        /*int count = list.size();
-        long[] ids = new long[count];
-        for (int i = 0; i < count; i++) {
-            ids[i] = list.get(i).getId();
-        }*/
         return list;
     }
 }

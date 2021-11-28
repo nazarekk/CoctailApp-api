@@ -145,7 +145,7 @@ public class FriendlistServiceImpl implements FriendlistService {
     }
 
     @Override
-    public List<User> getUserByNickname(String nickname){
+    public List<User> getUserByNickname(String nickname) {
         log.info("calling dao with input " + nickname);
         return friendlistDao.getOwnerByNickname(nickname);
     }
