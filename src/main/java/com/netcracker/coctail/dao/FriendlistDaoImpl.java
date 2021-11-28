@@ -97,7 +97,7 @@ public class FriendlistDaoImpl implements FriendlistDao {
     }
 
     @Override
-    public long[] getOwnerByNickname(String nickname) {
+    public List<User> getOwnerByNickname(String nickname) {
         RowMapper<User> rowMapper = (rs, rownum) ->
                 new User(rs.getLong("userid"),
                         rs.getString("nickname"),
@@ -106,11 +106,12 @@ public class FriendlistDaoImpl implements FriendlistDao {
                         rs.getLong("roleid"),
                         rs.getBoolean("isactive"));
         List<User> list = jdbcTemplate.query(String.format(FindIdsByNickname, nickname + "%"), rowMapper);
-        int count = list.size();
+        System.out.println(list.get(0).getNickname());
+        /*int count = list.size();
         long[] ids = new long[count];
         for (int i = 0; i < count; i++) {
             ids[i] = list.get(i).getId();
-        }
-        return ids;
+        }*/
+        return list;
     }
 }

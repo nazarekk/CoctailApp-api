@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * REST controller user connected requests.
@@ -52,6 +53,20 @@ public class UserRestController {
             HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.addFriend(ownerEmail, friendid);
+    }
+
+    @GetMapping( "find/{nickname}")
+    public List<ResponseEntity<UserDto>> getUserByNickname(@PathVariable(name = "nickname") String nickname) {
+        List<User> users = friendlistService.getUserByNickname(nickname);
+        List<ResponseEntity<UserDto>> list = new ArrayList();
+        if (users.isEmpty()) {
+            list.add(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+            return list;
+        }
+        for(int i=0; i<users.size(); i++){
+            list.add(new ResponseEntity<>(UserDto.fromUser(users.get(i)), HttpStatus.OK));
+        }
+        return list;
     }
 
     @PatchMapping("accept/{friendid}")

@@ -2,6 +2,7 @@ package com.netcracker.coctail.dao;
 
 
 import com.netcracker.coctail.model.Friendlist;
+import com.netcracker.coctail.model.User;
 
 import java.util.List;
 
@@ -19,5 +20,5 @@ public interface FriendlistDao {
 
     long getOwnerId(String email);
 
-    long [] getOwnerByNickname(String nickname);
+    List<User> getOwnerByNickname(String nickname);
 }

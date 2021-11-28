@@ -3,6 +3,7 @@ package com.netcracker.coctail.service.impl;
 import com.netcracker.coctail.dao.FriendlistDao;
 import com.netcracker.coctail.exceptions.*;
 import com.netcracker.coctail.model.Friendlist;
+import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.repository.UserDao;
 import com.netcracker.coctail.service.FriendlistService;
 import lombok.Data;
@@ -141,6 +142,12 @@ public class FriendlistServiceImpl implements FriendlistService {
             friendlistDao.editFriendlist(ownerId, friendId, notFriends);
             friendlistDao.editFriendlist(friendId, ownerId, notFriends);
         }
+    }
+
+    @Override
+    public List<User> getUserByNickname(String nickname){
+        log.info("calling dao with input " + nickname);
+        return friendlistDao.getOwnerByNickname(nickname);
     }
 
 }
