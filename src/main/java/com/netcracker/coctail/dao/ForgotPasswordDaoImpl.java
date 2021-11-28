@@ -41,7 +41,7 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
 
     @Override
     public String sendCode(User user) {
-        String activation = UUID.randomUUID().toString();
+        String activation = UUID.randomUUID().toString().replaceAll("\'", "");
         jdbcTemplate.update(updateActivation, activation, user.getEmail());
         send(user.getEmail(), activation);
         return "Mail send";

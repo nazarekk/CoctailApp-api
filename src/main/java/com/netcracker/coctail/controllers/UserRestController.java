@@ -8,10 +8,11 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPasswords;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
-import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,19 +39,18 @@ public class UserRestController {
   private final FriendlistService friendlistService;
   private final BCryptPasswordEncoder passwordEncoder;
 
+    @GetMapping(value = "{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
+        User user = userService.getUserById(id);
 
-  @GetMapping(value = "{id}")
-  public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
-    User user = userService.getUserById(id);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
 
-    if (user == null) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        UserDto result = UserDto.fromUser(user);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-    UserDto result = UserDto.fromUser(user);
-
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
 
     @PostMapping("add/{friendid}")
     public void addFriend(
@@ -112,10 +112,10 @@ public class UserRestController {
         User user = userService.getUserByEmail(email);
         if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
             throw new InvalidPasswordException();
-        } else if (!userPasswords.getNewPassword().equals(userPasswords.getNewDoublePassword())) {
+        } else if (!userPasswords.getPassword().equals(userPasswords.getDoubleCheckPass())) {
             throw new DuplicatePasswordException();
         } else {
-            userService.changeUserPassword(user, userPasswords.getNewPassword());
+            userService.changeUserPassword(user, userPasswords.getPassword());
             return new ResponseEntity(HttpStatus.OK);
         }
     }
