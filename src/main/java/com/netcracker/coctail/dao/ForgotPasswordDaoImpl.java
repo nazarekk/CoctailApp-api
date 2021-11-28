@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Repository
 @Data
 @Slf4j
+@Component
 @PropertySource("classpath:SQLscripts.properties")
 public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
     private final MailSender mailSender;
