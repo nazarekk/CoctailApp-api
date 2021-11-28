@@ -8,6 +8,7 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPasswords;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
+import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
