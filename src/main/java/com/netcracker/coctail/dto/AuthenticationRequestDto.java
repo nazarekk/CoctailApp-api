@@ -8,8 +8,7 @@ import lombok.Data;
  */
 
 @Data
-@AllArgsConstructor
 public class AuthenticationRequestDto {
-    private String email;
-    private String password;
+    private final String email;
+    private final String password;
 }
