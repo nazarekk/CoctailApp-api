@@ -1,6 +1,5 @@
 package com.netcracker.coctail.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
