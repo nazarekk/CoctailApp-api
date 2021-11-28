@@ -9,6 +9,7 @@ import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final RoleDao roleDao;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final JdbcTemplate jdbcTemplate;
     private final ForgotPasswordDao forgotPasswordDao;
-
 
     public User getUserByEmail(String email) {
         List<User> result = userDao.findUserByEmail(email);
