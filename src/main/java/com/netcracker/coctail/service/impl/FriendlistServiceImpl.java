@@ -1,7 +1,11 @@
 package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.FriendlistDao;
-import com.netcracker.coctail.exceptions.*;
+import com.netcracker.coctail.exceptions.AlreadyFriendsException;
+import com.netcracker.coctail.exceptions.AwaitingConfirmationException;
+import com.netcracker.coctail.exceptions.FriendRequestNotFoundException;
+import com.netcracker.coctail.exceptions.NotInFriendlistException;
+import com.netcracker.coctail.exceptions.UserAlreadyAwaitsYourResponseException;
 import com.netcracker.coctail.model.Friendlist;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.repository.UserDao;
@@ -20,7 +24,6 @@ public class FriendlistServiceImpl implements FriendlistService {
 
     private final UserDao userDao;
     private final JdbcTemplate jdbcTemplate;
-
     private final FriendlistDao friendlistDao;
 
     private boolean check(long ownerId, long friendId, long status) {
