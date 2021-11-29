@@ -8,7 +8,7 @@ import com.netcracker.coctail.exceptions.NotInFriendlistException;
 import com.netcracker.coctail.exceptions.UserAlreadyAwaitsYourResponseException;
 import com.netcracker.coctail.model.Friendlist;
 import com.netcracker.coctail.model.User;
-import com.netcracker.coctail.repository.UserDao;
+import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.service.FriendlistService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

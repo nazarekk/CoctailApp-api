@@ -70,7 +70,7 @@ public class AdminRestController {
     }
 
     @DeleteMapping("moderators/remove")
-    public void removeModerator(@RequestBody @Valid ModeratorInformation user) {
+    public void removeModerator(@RequestBody ModeratorInformation user) {
         createModeratorDao.removeModerator(user);
     }
 
