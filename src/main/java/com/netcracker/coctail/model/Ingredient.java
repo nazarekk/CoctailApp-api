@@ -10,7 +10,7 @@ public class Ingredient {
     private String name;
     private String type;
     private String category;
-    private boolean isactive;
+    private boolean isActive;
 
 
 }

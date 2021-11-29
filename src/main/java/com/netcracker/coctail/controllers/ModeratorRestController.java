@@ -22,4 +22,5 @@ public class ModeratorRestController {
     createModeratorDao.activateModerator(moderator);
     return "Account is activated!";
   }
+
 }

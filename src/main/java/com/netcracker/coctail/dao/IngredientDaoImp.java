@@ -6,17 +6,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.Collection;
 import java.util.List;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
 
 
 @Data
@@ -33,12 +29,12 @@ public class IngredientDaoImp implements IngredientDao {
     private String filterIngredient;
     @Value  ("INSERT INTO ingredients (id, name,type,category, isactive) values (:id, :nickname,:type,:category,:isactive")
     private String createIngredient;
-    @Value  ("UPDATE ingredients set name = :name, isactive = :isactive WHERE userid = :userid")
+    @Value  ("UPDATE ingredients set name = :name, isactive = :isactive WHERE userid = :ingredientid")
     private String editIngredient;
     @Value  ("SELECT ingredientid, name, type, category, isactive FROM ingredients")
     private String getIngredients;
-    @Value  ("UPDATE ingredients set  isactive = FALSE WHERE userid = :userid")
-
+    @Value  ("DELETE FROM Ingredients WHERE ingredientid = :ingredientid")
+    private String removeIngredient;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -57,13 +53,25 @@ public class IngredientDaoImp implements IngredientDao {
                 .addValue("ingredientid", ingredient.getId())
                 .addValue("name", ingredient.getName())
                 .addValue("type", ingredient.getType())
-                .addValue("category", ingredient.getCategory());
-                //.addValue("isactive", ingredient.getisactive);
+                .addValue("category", ingredient.getCategory())
+                .addValue("isactive", ingredient.isActive());
 
         return jdbcTemplate.update(createIngredient, param);
     }
 
     public Collection<Ingredient> IngredientList() {
+        RowMapper<Ingredient> rowMapper = (rs, rowNum) ->
+                new Ingredient(
+                        rs.getLong("ingredientid"),
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getString("category"),
+                        rs.getBoolean("isactive"));
+        return jdbcTemplate.query(getIngredients, rowMapper);
+        }
+
+    @Override
+    public Collection<Ingredient> getIngredients(){
         RowMapper<Ingredient> rowMapper = (rs, rowNum) ->
                 new Ingredient(
                         rs.getLong("ingredientid"),
@@ -86,14 +94,12 @@ public class IngredientDaoImp implements IngredientDao {
 
     @Override
     public void editIngredient(Ingredient ingredient) {
-
-
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("ingredientid", ingredient.getId())
                 .addValue("name", ingredient.getName())
                 .addValue("type", ingredient.getType())
-                .addValue("category", ingredient.getCategory());
-                //.addValue("isactive", ingredient.getIsActive());
+                .addValue("category", ingredient.getCategory())
+                .addValue("isactive", ingredient.isActive());
         jdbcTemplate.update(editIngredient, param);
     }
 
@@ -101,7 +107,7 @@ public class IngredientDaoImp implements IngredientDao {
     public void removeIngredient(Ingredient ingredient) {
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("ingredientid", ingredient.getId());
-        //jdbcTemplate.update(ingredient.IsActive(), param);
+        jdbcTemplate.update(removeIngredient, param);
     }
 
 
@@ -113,7 +119,7 @@ public class IngredientDaoImp implements IngredientDao {
                         rs.getString("type"),
                         rs.getString("category"),
                         rs.getBoolean("isactive"));
-        return jdbcTemplate.query(String.format(filterIngredient, IsActive), rowMapper).get(0);
+       return jdbcTemplate.query(String.format(filterIngredient, IsActive), rowMapper).get(0);
     }
 
 

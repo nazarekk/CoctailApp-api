@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Kitchenware {
-    private final Long id;;
-    private String nickname;
+    private final Long id;
+    private String name;
     private String type;
     private String category;
-    private boolean isactive;
+    private boolean isActive;
 }

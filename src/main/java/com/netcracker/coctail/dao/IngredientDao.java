@@ -10,6 +10,8 @@ import java.util.List;
 public interface IngredientDao {
     int create(Ingredient ingredient);
 
+    Collection<Ingredient> getIngredients();
+
     List<Ingredient> findIngredientByName(String name);
 
     List<Ingredient> findIngredientById(Long id);
