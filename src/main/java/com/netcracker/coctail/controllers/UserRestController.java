@@ -17,17 +17,14 @@ import javax.validation.Valid;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+/**
+ * REST controller user connected requests.
+ */
 
 @RestController
 @RequestMapping(value = "/api/users/")
@@ -53,12 +50,26 @@ public class UserRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
     @PostMapping("add/{friendid}")
     public void addFriend(
         @PathVariable(name = "friendid") long friendid,
         HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.addFriend(ownerEmail, friendid);
+    }
+
+    @GetMapping("find")
+    public ResponseEntity<List<UserDto>> getUserByNickname(@RequestParam String nickname) {
+        List<User> users = friendlistService.getUserByNickname(nickname);
+        List<UserDto> list = new ArrayList();
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        for (int i = 0; i < users.size(); i++) {
+            list.add(UserDto.fromUser(users.get(i)));
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PatchMapping("accept/{friendid}")
