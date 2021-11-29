@@ -6,6 +6,7 @@ import com.netcracker.coctail.exceptions.AwaitingConfirmationException;
 import com.netcracker.coctail.exceptions.FriendRequestNotFoundException;
 import com.netcracker.coctail.exceptions.NotInFriendlistException;
 import com.netcracker.coctail.exceptions.UserAlreadyAwaitsYourResponseException;
+import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.Friendlist;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.repository.UserDao;
@@ -14,7 +15,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,7 +34,6 @@ public class FriendlistServiceImpl implements FriendlistService {
     private long status(String statusName) {
         return friendlistDao.getStatusId(statusName);
     }
-
     private enum Id {
         NONE("None"),
         CONFIRM("Awaiting confirmation"),
@@ -148,9 +148,30 @@ public class FriendlistServiceImpl implements FriendlistService {
     }
 
     @Override
-    public List<User> getUserByNickname(String nickname) {
-        log.info("calling dao with input " + nickname);
-        return friendlistDao.getOwnerByNickname(nickname);
+    public List<FriendUser> getUserByNickname(String ownerEmail, String nickname) {
+        log.info("calling dao with input " + ownerEmail + " and " + nickname);
+        long notFriends = status(Id.NONE.getStatus());
+        List <User> users = friendlistDao.getOwnerByNickname(nickname);
+        List <FriendUser> friends = new ArrayList();
+        long ownerId = friendlistDao.getOwnerId(ownerEmail);
+        long friendId;
+            for (int i = 0; i < users.size(); i++) {
+                friendId = users.get(i).getId();
+                if(ownerId != friendId) {
+                    if (friendlistDao.findFriendlist(ownerId, friendId).isEmpty()) {
+                        friendlistDao.createFriendlist(ownerId, friendId, notFriends);
+                        friendlistDao.createFriendlist(friendId, ownerId, notFriends);
+                    }
+                    friends.add(
+                            new FriendUser(
+                                    users.get(i).getId(),
+                                    users.get(i).getNickname(),
+                                    users.get(i).getEmail(),
+                                    friendlistDao.findFriendlist(
+                                            ownerId, friendId).get(0).getStatusid()));
+                }
+                log.info("added friend wth frienId " + friendId);
+            }
+        return friends;
     }
-
 }

@@ -1,6 +1,7 @@
 package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dto.UserDto;
+import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
@@ -56,16 +57,15 @@ public class UserRestController {
     }
 
     @GetMapping("find")
-    public ResponseEntity<List<UserDto>> getUserByNickname(@RequestParam String nickname) {
-        List<User> users = friendlistService.getUserByNickname(nickname);
-        List<UserDto> list = new ArrayList();
+    public ResponseEntity<List<FriendUser>> getUserByNickname
+            (@RequestParam String nickname,
+             HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        List<FriendUser> users = friendlistService.getUserByNickname(ownerEmail, nickname);
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        for (int i = 0; i < users.size(); i++) {
-            list.add(UserDto.fromUser(users.get(i)));
-        }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PatchMapping("accept/{friendid}")
