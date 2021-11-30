@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class ModeratorDaoImp implements ModeratorDao {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
-  private final BCryptPasswordEncoder passwordEncoder;
+  private BCryptPasswordEncoder passwordEncoder;
   @Value("${moderatorCreation}")
   private String moderatorCreation;
   @Value("${ActivateModerator}")
