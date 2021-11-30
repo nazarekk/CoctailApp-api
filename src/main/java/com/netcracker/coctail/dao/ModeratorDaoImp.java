@@ -31,7 +31,7 @@ public class ModeratorDaoImp implements ModeratorDao {
   private BCryptPasswordEncoder passwordEncoder;
 
   @Autowired
-  ModeratorDaoImp(BCryptPasswordEncoder passwordEncoder,NamedParameterJdbcTemplate jdbcTemplate) {
+  ModeratorDaoImp(BCryptPasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
     this.passwordEncoder = passwordEncoder;
   }
@@ -59,8 +59,9 @@ public class ModeratorDaoImp implements ModeratorDao {
   @Async
   public void send(String email, String code) {
     String message =
-        "Hello! To finish registration visit " + front_link + "/moderator/verification?verificationCode=" + code;
-    mailSender.send(email, "verification", message );
+        "Hello! To finish registration visit " + front_link
+            + "/moderator/verification?verificationCode=" + code;
+    mailSender.send(email, "verification", message);
   }
 
   @Override
