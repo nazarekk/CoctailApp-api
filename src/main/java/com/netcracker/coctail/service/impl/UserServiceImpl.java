@@ -9,6 +9,7 @@ import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +24,20 @@ import java.util.List;
 @Data
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
-    private final RoleDao roleDao;
-    private final JdbcTemplate jdbcTemplate;
-    private final ForgotPasswordDao forgotPasswordDao;
+    private UserDao userDao;
+    private RoleDao roleDao;
+    private JdbcTemplate jdbcTemplate;
+    private ForgotPasswordDao forgotPasswordDao;
+
+    @Autowired
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao,
+                           JdbcTemplate jdbcTemplate,
+                           ForgotPasswordDao forgotPasswordDao) {
+        this.userDao = userDao;
+        this.roleDao = roleDao;
+        this.jdbcTemplate = jdbcTemplate;
+        this.forgotPasswordDao = forgotPasswordDao;
+    }
 
     public User getUserByEmail(String email) {
         List<User> result = userDao.findUserByEmail(email);
