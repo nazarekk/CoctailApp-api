@@ -1,6 +1,7 @@
 package com.netcracker.coctail.dao;
 
 
+import com.netcracker.coctail.model.ActivateUser;
 import com.netcracker.coctail.model.CreateUser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,13 @@ import java.util.UUID;
 public class RegistrationDaoImp implements RegistrationDao {
 
     private BCryptPasswordEncoder passwordEncoder;
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Autowired
+    RegistrationDaoImp(BCryptPasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
+        this.passwordEncoder = passwordEncoder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Autowired
     private MailSender mailSender;
@@ -44,8 +51,7 @@ public class RegistrationDaoImp implements RegistrationDao {
     public void send(String email, String code) {
         String message = "Hello! To finish registration visit "
             + front_link + "/registration/verification?code=" + code;
-        mailSender.send(email, "verification", String.format(message, code));
-
+        mailSender.send(email, "verification", message);
     }
 
     @Override
@@ -62,10 +68,11 @@ public class RegistrationDaoImp implements RegistrationDao {
     }
 
     @Override
-    public int activateUser(String code) {
+    public int activateUser(ActivateUser activateUser) {
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("roleid", 2)
-                .addValue("activation", code);
+                .addValue("activation", activateUser.getVerificationCode())
+                .addValue("nickname", activateUser.getNickname());
         return jdbcTemplate.update(userActivation, param);
     }
 }

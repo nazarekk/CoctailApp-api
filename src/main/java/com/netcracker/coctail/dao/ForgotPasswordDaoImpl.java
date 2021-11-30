@@ -5,6 +5,7 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.services.MailSender;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,9 +23,16 @@ import java.util.UUID;
 @Component
 @PropertySource("classpath:SQLscripts.properties")
 public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
-    private final MailSender mailSender;
-    private final JdbcTemplate jdbcTemplate;
+    private MailSender mailSender;
+    private JdbcTemplate jdbcTemplate;
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    ForgotPasswordDaoImpl (BCryptPasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate, MailSender mailSender) {
+        this.passwordEncoder = passwordEncoder;
+        this.mailSender = mailSender;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Value("${updateActivation}")
     private String updateActivation;

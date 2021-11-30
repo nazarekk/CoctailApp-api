@@ -7,6 +7,7 @@ import com.netcracker.coctail.services.MailSender;
 import java.util.Collection;
 import java.util.UUID;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -22,11 +23,19 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
+@Slf4j
 @PropertySource("classpath:SQLscripts.properties")
 public class ModeratorDaoImp implements ModeratorDao {
 
-  private final NamedParameterJdbcTemplate jdbcTemplate;
+  private NamedParameterJdbcTemplate jdbcTemplate;
   private BCryptPasswordEncoder passwordEncoder;
+
+  @Autowired
+  ModeratorDaoImp(BCryptPasswordEncoder passwordEncoder,NamedParameterJdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
+    this.passwordEncoder = passwordEncoder;
+  }
+
   @Value("${moderatorCreation}")
   private String moderatorCreation;
   @Value("${ActivateModerator}")
@@ -41,6 +50,8 @@ public class ModeratorDaoImp implements ModeratorDao {
   private String SearchModerator;
   @Value("${FilterModerator}")
   private String FilterModerator;
+  @Value("${front_link}")
+  private String front_link;
 
   @Autowired
   private MailSender mailSender;
@@ -48,8 +59,8 @@ public class ModeratorDaoImp implements ModeratorDao {
   @Async
   public void send(String email, String code) {
     String message =
-        "Hello! To finish registration visit http://localhost:8080/api/moderators/activation/'%s'";
-    mailSender.send(email, "verification", String.format(message, code));
+        "Hello! To finish registration visit " + front_link + "/moderator/verification?verificationCode=" + code;
+    mailSender.send(email, "verification", message );
   }
 
   @Override
@@ -70,9 +81,10 @@ public class ModeratorDaoImp implements ModeratorDao {
   @Override
   public void activateModerator(ActivateModerator moderator) {
     KeyHolder holder = new GeneratedKeyHolder();
+    log.info("Moderator " + moderator.getNickname() + " activated");
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("roleid", 4)
-        .addValue("activation", moderator.getCode())
+        .addValue("activation", moderator.getVerificationCode())
         .addValue("nickname", moderator.getNickname())
         .addValue("password", passwordEncoder.encode(moderator.getPassword()));
     jdbcTemplate.update(moderatorActivation, param, holder);

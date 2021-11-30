@@ -1,6 +1,7 @@
 package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.RegistrationDao;
+import com.netcracker.coctail.model.ActivateUser;
 import com.netcracker.coctail.model.CreateUser;
 import com.netcracker.coctail.validators.CreateUserValidator;
 import lombok.RequiredArgsConstructor;
@@ -18,26 +19,26 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class RegistrationController {
 
-    @Resource
-    RegistrationDao registrationDao;
+  @Resource
+  RegistrationDao registrationDao;
 
 
-    private final CreateUserValidator createUserValidator;
+//  private final CreateUserValidator createUserValidator;
+//
+//  @InitBinder
+//  public void initBinder(WebDataBinder dataBinder) {
+//    dataBinder.setValidator(createUserValidator);
+//  }
 
-    @InitBinder
-    public void initBinder(WebDataBinder dataBinder) {
-        dataBinder.setValidator(createUserValidator);
-    }
+  @PatchMapping("/activation")
+  public ResponseEntity activateUser(@RequestBody ActivateUser user) {
+    return registrationDao.activateUser(user) == 1 ? new ResponseEntity(HttpStatus.OK) :
+        new ResponseEntity(HttpStatus.NOT_MODIFIED);
+  }
 
-    @GetMapping("/activation")
-    public ResponseEntity activateUser(@RequestParam String code) {
-        return registrationDao.activateUser(code) == 1 ? new ResponseEntity(HttpStatus.OK) :
-                new ResponseEntity(HttpStatus.NOT_MODIFIED);
-    }
-
-    @PostMapping
-    public String create(@RequestBody @Valid CreateUser user) {
-        return registrationDao.create(user);
-    }
+  @PostMapping
+  public String create(@RequestBody @Valid CreateUser user) {
+    return registrationDao.create(user);
+  }
 
 }
