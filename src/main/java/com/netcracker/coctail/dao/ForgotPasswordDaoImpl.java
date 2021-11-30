@@ -43,7 +43,7 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
 
     @Override
     public String sendCode(User user) {
-        String activation = UUID.randomUUID().toString().replaceAll("\'", "");
+        String activation = UUID.randomUUID().toString().replaceAll("'", "");
         jdbcTemplate.update(updateActivation, activation, user.getEmail());
         send(user.getEmail(), activation);
         return "Mail send";
@@ -52,9 +52,9 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
     @Override
     public AuthenticationRequestDto findByActivationCode(String code) {
         RowMapper<AuthenticationRequestDto> rowMapper = (rs, rowNum) ->
-                new AuthenticationRequestDto(
-                        rs.getString("email"),
-                        rs.getString("password"));
+            new AuthenticationRequestDto(
+                rs.getString("email"),
+                rs.getString("password"));
         return jdbcTemplate.query(String.format(findByActivation, code), rowMapper).get(0);
     }
 
