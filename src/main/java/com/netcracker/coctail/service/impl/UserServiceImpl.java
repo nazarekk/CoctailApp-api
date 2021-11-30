@@ -63,7 +63,6 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
-    @Override
     public String changeUserPassword(User user, String password) {
         if (forgotPasswordDao.changePassword(user, password) != 1) {
             log.warn("Change user password by email: {}, not succsessful", user.getEmail());

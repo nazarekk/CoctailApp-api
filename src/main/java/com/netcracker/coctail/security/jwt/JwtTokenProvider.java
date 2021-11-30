@@ -36,15 +36,14 @@ public class JwtTokenProvider {
     @Value("${jwt.token.expired}")
     private long validityInMilliseconds;
 
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
         return bcryptPasswordEncoder;
     }
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @PostConstruct
     protected void init() {

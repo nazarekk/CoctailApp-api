@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
     private final MailSender mailSender;
     private final JdbcTemplate jdbcTemplate;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Value("${updateActivation}")
     private String updateActivation;

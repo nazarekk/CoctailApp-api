@@ -27,7 +27,7 @@ import java.util.UUID;
 @PropertySource("classpath:SQLscripts.properties")
 public class RegistrationDaoImp implements RegistrationDao {
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
