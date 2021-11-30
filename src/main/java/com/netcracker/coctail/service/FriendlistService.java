@@ -2,7 +2,6 @@ package com.netcracker.coctail.service;
 
 import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.Friendlist;
-import com.netcracker.coctail.model.User;
 
 import java.util.List;
 
