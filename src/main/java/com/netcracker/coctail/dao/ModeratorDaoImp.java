@@ -19,6 +19,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Data
@@ -28,10 +29,10 @@ import org.springframework.stereotype.Component;
 public class ModeratorDaoImp implements ModeratorDao {
 
   private NamedParameterJdbcTemplate jdbcTemplate;
-  private BCryptPasswordEncoder passwordEncoder;
+  private PasswordEncoder passwordEncoder;
 
   @Autowired
-  ModeratorDaoImp(BCryptPasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
+  ModeratorDaoImp(PasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
     this.passwordEncoder = passwordEncoder;
   }

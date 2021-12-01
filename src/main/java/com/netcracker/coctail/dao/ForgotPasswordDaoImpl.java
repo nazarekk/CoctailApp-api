@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -25,12 +26,14 @@ import java.util.UUID;
 public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
   private MailSender mailSender;
   private JdbcTemplate jdbcTemplate;
-  private BCryptPasswordEncoder passwordEncoder;
+  private PasswordEncoder passwordEncoder;
 
   @Autowired
-  ForgotPasswordDaoImpl(BCryptPasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate) {
+  ForgotPasswordDaoImpl(PasswordEncoder passwordEncoder,
+                        JdbcTemplate jdbcTemplate,
+                        MailSender mailSender) {
     this.passwordEncoder = passwordEncoder;
-    this.mailSender = new MailSender();
+    this.mailSender = mailSender;
     this.jdbcTemplate = jdbcTemplate;
   }
 

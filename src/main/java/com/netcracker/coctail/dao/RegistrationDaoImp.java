@@ -15,6 +15,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import com.netcracker.coctail.services.MailSender;
@@ -28,11 +29,11 @@ import java.util.UUID;
 @PropertySource("classpath:SQLscripts.properties")
 public class RegistrationDaoImp implements RegistrationDao {
 
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Autowired
-    RegistrationDaoImp(BCryptPasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
+    RegistrationDaoImp(PasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
         this.passwordEncoder = passwordEncoder;
         this.jdbcTemplate = jdbcTemplate;
     }
