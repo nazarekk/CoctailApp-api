@@ -30,6 +30,9 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Value("${jwt.token.secret}")
     private String secret;
 
@@ -42,8 +45,6 @@ public class JwtTokenProvider {
         return bcryptPasswordEncoder;
     }
 
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @PostConstruct
     protected void init() {
@@ -90,7 +91,6 @@ public class JwtTokenProvider {
             if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
             }
-
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("JWT token is expired or invalid");
