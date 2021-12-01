@@ -4,6 +4,7 @@ import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
@@ -43,6 +44,18 @@ public class UserRestController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @GetMapping(value = "info")
+  public ResponseEntity<UserInfo> seeMyPersonalData(HttpServletRequest request) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    return new ResponseEntity<>(userDao.myInfo(email), HttpStatus.OK);
+  }
+
+  @PatchMapping(value = "edit")
+  public ResponseEntity editMyPersonalData(HttpServletRequest request,
+                                           @RequestBody UserInfo user) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    return new ResponseEntity(userDao.editInfo(email, user), HttpStatus.OK);
+  }
 
   @PostMapping("add/{friendid}")
   public void addFriend(
