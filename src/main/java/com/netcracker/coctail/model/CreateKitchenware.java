@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Ingredient {
-    private Long id;
+public class CreateKitchenware {
     private String name;
     private String type;
     private String category;

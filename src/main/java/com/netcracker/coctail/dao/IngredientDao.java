@@ -1,16 +1,14 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.*;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.netcracker.coctail.model.CreateIngredient;
+import com.netcracker.coctail.model.Ingredient;
 
-import java.util.Collection;
 import java.util.List;
 
 
 public interface IngredientDao {
-    int create(Ingredient ingredient);
 
-    Collection<Ingredient> getIngredients();
+    void create(CreateIngredient ingredient);
 
     List<Ingredient> findIngredientByName(String name);
 
@@ -19,6 +17,4 @@ public interface IngredientDao {
     void editIngredient(Ingredient ingredient);
 
     void removeIngredient(Ingredient ingredient);
-
-    Ingredient filterIngredients(Boolean isactive);
 }

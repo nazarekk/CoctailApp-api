@@ -1,10 +1,13 @@
 package com.netcracker.coctail.service;
+import com.netcracker.coctail.model.CreateKitchenware;
 import com.netcracker.coctail.model.Kitchenware;
 
-public interface KitchenwareService{
+import java.util.List;
+
+public interface KitchenwareService {
     Kitchenware getKitchenwareById(Long id);
-    Kitchenware getKitchenwareByName(String name);
-    void addKitchenware(Kitchenware kitchenware);
+    List<Kitchenware> getKitchenwareByName(String name);
+    void addKitchenware(CreateKitchenware kitchenware);
     void editKitchenware(Kitchenware kitchenware);
-    void removeKitchenware(Kitchenware kitchenware);
+    void removeKitchenware(long id);
 }

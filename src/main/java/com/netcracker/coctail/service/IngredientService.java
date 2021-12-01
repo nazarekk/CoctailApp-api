@@ -1,10 +1,13 @@
 package com.netcracker.coctail.service;
+import com.netcracker.coctail.model.CreateIngredient;
 import com.netcracker.coctail.model.Ingredient;
 
-public interface IngredientService{
+import java.util.List;
+
+public interface IngredientService {
     Ingredient getIngredientById(Long id);
-    Ingredient getIngredientByName(String name);
-    void addIngredient(Ingredient ingredient);
+    List<Ingredient> getIngredientByName(String name);
+    void addIngredient(CreateIngredient ingredient);
     void editIngredient(Ingredient ingredient);
-    void removeIngredient(Ingredient ingredient);
+    void removeIngredient(long id);
 }

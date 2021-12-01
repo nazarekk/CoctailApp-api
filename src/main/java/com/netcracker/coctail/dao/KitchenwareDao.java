@@ -1,16 +1,13 @@
 package com.netcracker.coctail.dao;
+import com.netcracker.coctail.model.CreateKitchenware;
+import com.netcracker.coctail.model.Kitchenware;
 
-import com.netcracker.coctail.model.*;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Collection;
 import java.util.List;
 
 
 public interface KitchenwareDao {
-    int create(Kitchenware kitchenware);
 
-    Collection<Kitchenware> getKitchenware();
+    void create(CreateKitchenware kitchenware);
 
     List<Kitchenware> findKitchenwareByName(String name);
 
@@ -20,5 +17,4 @@ public interface KitchenwareDao {
 
     void removeKitchenware(Kitchenware kitchenware);
 
-    Kitchenware filterKitchenware(Boolean isactive);
 }
