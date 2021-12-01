@@ -79,8 +79,8 @@ public class UserServiceImpl implements UserService {
             log.warn("Change user password by email: {}, not succsessful", user.getEmail());
             return null;
         } else {
-            log.warn("Change user password by email: {}, succsessfuly", user.getEmail());
-            return "Password changed succsessfuly";
+            log.warn("Change user password by email: {}, successfuly", user.getEmail());
+            return "Password changed successfuly";
         }
     }
 }
