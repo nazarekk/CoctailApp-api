@@ -1,14 +1,17 @@
 package com.netcracker.coctail.controllers;
-
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
+import com.netcracker.coctail.exceptions.DuplicatePasswordException;
+import com.netcracker.coctail.exceptions.InvalidPasswordException;
 import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
+import com.netcracker.coctail.model.UserPasswords;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +45,22 @@ public class UserRestController {
     UserDto result = UserDto.fromUser(user);
 
     return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  @PutMapping(value = "settings")
+  public ResponseEntity changePassword(HttpServletRequest request,
+                                       @RequestBody @Valid UserPasswords userPasswords) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    System.out.println(userPasswords);
+    User user = userService.getUserByEmail(email);
+    if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
+      throw new InvalidPasswordException();
+    } else if (!userPasswords.getPassword().equals(userPasswords.getDoubleCheckPass())) {
+      throw new DuplicatePasswordException();
+    } else {
+      userService.changeUserPassword(user, userPasswords.getPassword());
+      return new ResponseEntity(HttpStatus.OK);
+    }
   }
 
   @GetMapping(value = "info")
