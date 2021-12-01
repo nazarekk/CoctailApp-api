@@ -28,8 +28,7 @@ public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
   private BCryptPasswordEncoder passwordEncoder;
 
   @Autowired
-  ForgotPasswordDaoImpl(BCryptPasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate,
-                        MailSender mailSender) {
+  ForgotPasswordDaoImpl(BCryptPasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate) {
     this.passwordEncoder = passwordEncoder;
     this.mailSender = new MailSender();
     this.jdbcTemplate = jdbcTemplate;
