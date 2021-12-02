@@ -136,8 +136,9 @@ public class FriendlistServiceImpl implements FriendlistService {
 
     long notFriends = status(Id.NONE.getStatus());
     long friends = status(Id.FRIENDS.getStatus());
-    long subscribed = status(Id.SUBSCRIBED.name());
+    long subscribed = status(Id.SUBSCRIBED.getStatus());
     long ownerId = friendlistDao.getOwnerId(ownerEmail);
+    log.info("trying to remove friendid " + friendId + "from ownerId " + ownerId);
 
     if (friendlistDao.findFriendlist(ownerId, friendId).isEmpty()
         || (!check(ownerId, friendId, friends) && !check(ownerId, friendId, subscribed))) {
