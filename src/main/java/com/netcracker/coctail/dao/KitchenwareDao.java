@@ -9,6 +9,8 @@ public interface KitchenwareDao {
 
     void create(CreateKitchenware kitchenware);
 
+    List<Kitchenware> findAllKitchenwareByName(String name);
+
     List<Kitchenware> findKitchenwareByName(String name);
 
     List<Kitchenware> findKitchenwareById(Long id);
@@ -17,4 +19,5 @@ public interface KitchenwareDao {
 
     void removeKitchenware(Kitchenware kitchenware);
 
+    List<Kitchenware> findAllKitchenwareFiltered(String type, String category);
 }
