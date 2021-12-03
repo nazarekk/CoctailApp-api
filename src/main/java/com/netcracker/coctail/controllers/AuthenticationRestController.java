@@ -41,6 +41,7 @@ public class AuthenticationRestController {
                                UserService userService,
                                ForgotPasswordDao forgotPasswordDao,
                                BCryptPasswordEncoder passwordEncoder) {
+
     this.authenticationManager = authenticationManager;
     this.jwtTokenProvider = jwtTokenProvider;
     this.passwordEncoder = passwordEncoder;
