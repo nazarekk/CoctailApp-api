@@ -30,10 +30,14 @@ public class IngredientServiceImp implements IngredientService {
 
     @Override
     public List<Ingredient> getIngredientByName(String name) {
-        List<Ingredient> result = ingredientDao.findIngredientByName(name);
-        if (result.isEmpty()) {
-            throw new InvalidEmailOrPasswordException();
-        }
+        List<Ingredient> result = ingredientDao.findAllIngredientByName(name);
+        return result;
+    }
+
+    @Override
+    public List<Ingredient> getIngredientFiltered(String type, String category) {
+        log.info("Filtering");
+        List<Ingredient> result = ingredientDao.findAllIngredientFiltered(type, category);
         return result;
     }
 
@@ -52,22 +56,18 @@ public class IngredientServiceImp implements IngredientService {
     public void editIngredient(Ingredient ingredient) {
         log.info("Ingredient isActive = " + ingredient.isActive());
         long id = ingredient.getId();
+        String name = ingredient.getName();
         Ingredient result = ingredientDao.findIngredientById(id).get(0);
         if (result == null) {
             log.info("Ingredient with id " + id + " doesn't exists");
             throw new InvalidEmailOrPasswordException();
         }
-        if (ingredient.getName().equals("")) {
-            ingredient.setName(result.getName());
+        if (ingredientDao.findIngredientByName(name).isEmpty()) {
+            ingredientDao.editIngredient(ingredient);
+        } else {
+            log.info("Ingredient with name " + name + " already exists");
+            throw new InvalidEmailOrPasswordException();
         }
-        if (ingredient.getType().equals("")) {
-            ingredient.setType(result.getType());
-        }
-        if (ingredient.getCategory().equals("")) {
-            ingredient.setCategory(result.getCategory());
-        }
-        log.info("Ingredient isActive = " + ingredient.isActive());
-        ingredientDao.editIngredient(ingredient);
     }
 
     @Override

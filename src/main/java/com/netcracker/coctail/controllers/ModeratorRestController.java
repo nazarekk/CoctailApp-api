@@ -22,10 +22,8 @@ import java.util.List;
 public class ModeratorRestController {
 
     private final ModeratorDao createModeratorDao;
-
     private final IngredientService ingredientService;
     private final KitchenwareService kitchenwareService;
-
 
     @PostMapping("activation")
     public String activateModerator(@RequestBody ActivateModerator moderator) {
@@ -33,9 +31,19 @@ public class ModeratorRestController {
         return "Account is activated!";
     }
 
-    @GetMapping("ingredients/search")
+    @GetMapping("ingredients")
     public ResponseEntity<List<Ingredient>> getIngredientsByName(@RequestParam String name) {
         List<Ingredient> ingredients = ingredientService.getIngredientByName(name);
+        if (ingredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(ingredients, HttpStatus.OK);
+    }
+
+    @GetMapping("ingredients/filter")
+    public ResponseEntity<List<Ingredient>> getIngredientsFiltered(
+            @RequestParam String type, @RequestParam String category) {
+        List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category);
         if (ingredients.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -65,7 +73,7 @@ public class ModeratorRestController {
         ingredientService.addIngredient(ingredient);
     }
 
-    @PatchMapping(value = "ingredients/edit")
+    @PutMapping(value = "ingredients")
     void editIngredient(@RequestBody Ingredient ingredient) {
         ingredientService.editIngredient(ingredient);
     }
@@ -75,9 +83,19 @@ public class ModeratorRestController {
         ingredientService.removeIngredient(id);
     }
 
-    @GetMapping("kitchenware/search")
+    @GetMapping("kitchenware")
     public ResponseEntity<List<Kitchenware>> getKitchenwareByName(@RequestParam String name) {
         List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareByName(name);
+        if (kitchenware.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(kitchenware, HttpStatus.OK);
+    }
+
+    @GetMapping("kitchenware/filter")
+    public ResponseEntity<List<Kitchenware>> getKitchenwareFiltered(
+            @RequestParam String type, @RequestParam String category) {
+        List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareFiltered(type, category);
         if (kitchenware.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -107,7 +125,7 @@ public class ModeratorRestController {
         kitchenwareService.addKitchenware(kitchenware);
     }
 
-    @PatchMapping(value = "kitchenware/edit")
+    @PutMapping(value = "kitchenware")
     void editKitchenware(@RequestBody Kitchenware kitchenware) {
         kitchenwareService.editKitchenware(kitchenware);
     }
