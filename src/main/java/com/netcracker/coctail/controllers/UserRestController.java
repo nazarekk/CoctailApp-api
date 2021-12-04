@@ -13,9 +13,10 @@ import com.netcracker.coctail.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
@@ -28,11 +29,24 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 @Data
 public class UserRestController {
-  private final UserService userService;
-  private final JwtTokenProvider jwtTokenProvider;
-  private final UserDao userDao;
-  private final FriendlistService friendlistService;
-  private final BCryptPasswordEncoder passwordEncoder;
+  private UserService userService;
+  private JwtTokenProvider jwtTokenProvider;
+  private UserDao userDao;
+  private FriendlistService friendlistService;
+  private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  public UserRestController(UserService userService,
+                            JwtTokenProvider jwtTokenProvider,
+                            UserDao userDao,
+                            FriendlistService friendlistService,
+                            PasswordEncoder passwordEncoder) {
+    this.userService = userService;
+    this.jwtTokenProvider = jwtTokenProvider;
+    this.userDao = userDao;
+    this.friendlistService = friendlistService;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   @GetMapping(value = "{id}")
   public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
