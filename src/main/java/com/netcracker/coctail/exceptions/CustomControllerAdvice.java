@@ -31,4 +31,8 @@ public class CustomControllerAdvice {
     public ResponseEntity<String> handleInvalidPassword(InvalidPasswordException exception) {
         return new ResponseEntity<>(" Invalid Password ", HttpStatus.EXPECTATION_FAILED);
     }
+    @ExceptionHandler({InvalidNicknameException.class})
+    public ResponseEntity<String> handleInvalidNickname(InvalidNicknameException exception) {
+        return new ResponseEntity<>("This username is already taken", HttpStatus.EXPECTATION_FAILED);
+    }
 }

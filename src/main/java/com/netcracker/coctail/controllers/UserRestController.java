@@ -2,11 +2,10 @@ package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
-import com.netcracker.coctail.exceptions.DuplicatePasswordException;
-import com.netcracker.coctail.exceptions.InvalidPasswordException;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.UserPersonalInfo;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.UserService;
@@ -34,11 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @Data
 public class UserRestController {
-  private final UserService userService;
-  private final JwtTokenProvider jwtTokenProvider;
-  private final UserDao userDao;
-  private final FriendlistService friendlistService;
-  private final BCryptPasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserDao userDao;
+    private final FriendlistService friendlistService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping(value = "{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
@@ -55,40 +54,40 @@ public class UserRestController {
 
     @PostMapping("add/{friendid}")
     public void addFriend(
-        @PathVariable(name = "friendid") long friendid,
-        HttpServletRequest request) {
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.addFriend(ownerEmail, friendid);
     }
 
     @PatchMapping("accept/{friendid}")
     public void acceptFriend(
-        @PathVariable(name = "friendid") long friendid,
-        HttpServletRequest request) {
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.acceptFriendRequest(ownerEmail, friendid);
     }
 
     @PatchMapping("decline/{friendid}")
     public void declineFriend(
-        @PathVariable(name = "friendid") long friendid,
-        HttpServletRequest request) {
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.declineFriendRequest(ownerEmail, friendid);
     }
 
     @PatchMapping("subscribe/{friendid}")
     public void subcribeTo(
-        @PathVariable(name = "friendid") long friendid,
-        HttpServletRequest request) {
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.subscribeToFriend(ownerEmail, friendid);
     }
 
     @DeleteMapping("remove/{friendid}")
     public void removeFromFriends(
-        @PathVariable(name = "friendid") long friendid,
-        HttpServletRequest request) {
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         friendlistService.removeFriend(ownerEmail, friendid);
     }
@@ -99,11 +98,12 @@ public class UserRestController {
         return new ResponseEntity<>(userDao.myInfo(email), HttpStatus.OK);
     }
 
-    @PatchMapping(value = "settings/edit")
+    @PutMapping(value = "settings/edit")
     public ResponseEntity editMyPersonalData(HttpServletRequest request,
-                                             @RequestBody @Valid UserInfo user) {
+                                             @RequestBody @Valid UserPersonalInfo user) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        return new ResponseEntity(userDao.editInfo(email, user), HttpStatus.OK);
+        userService.changeInfo(email, user);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PutMapping(value = "settings")
@@ -111,13 +111,14 @@ public class UserRestController {
                                          @RequestBody @Valid UserPasswords userPasswords) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         User user = userService.getUserByEmail(email);
-        if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
-            throw new InvalidPasswordException();
-        } else if (!userPasswords.getPassword().equals(userPasswords.getDoubleCheckPass())) {
-            throw new DuplicatePasswordException();
-        } else {
-            userService.changeUserPassword(user, userPasswords.getPassword());
-            return new ResponseEntity(HttpStatus.OK);
-        }
+        userService.checkPassword(user, userPasswords);
+        return new ResponseEntity(HttpStatus.OK);
     }
+
+    @GetMapping(value = "settings/edit")
+    public ResponseEntity<UserPersonalInfo> getInformationInSettings(HttpServletRequest request) {
+        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        return new ResponseEntity(userDao.getInfo(email), HttpStatus.OK);
+    }
+
 }

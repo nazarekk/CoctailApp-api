@@ -2,14 +2,19 @@ package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.ForgotPasswordDao;
 import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
+import com.netcracker.coctail.exceptions.InvalidNicknameException;
+import com.netcracker.coctail.exceptions.InvalidPasswordException;
 import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.dao.RoleDao;
 import com.netcracker.coctail.dao.UserDao;
+import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.UserPersonalInfo;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final RoleDao roleDao;
     private final JdbcTemplate jdbcTemplate;
     private final ForgotPasswordDao forgotPasswordDao;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public User getUserByEmail(String email) {
         List<User> result = userDao.findUserByEmail(email);
@@ -70,6 +76,23 @@ public class UserServiceImpl implements UserService {
         } else {
             log.warn("Change user password by email: {}, succsessfuly", user.getEmail());
             return "Password changed succsessfuly";
+        }
+    }
+
+    public void checkPassword(User user, UserPasswords userPasswords) {
+        if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
+            log.warn("CheckPassword: user by email: {}, not succsessful", user.getEmail());
+            throw new InvalidPasswordException();
+        } else {
+            changeUserPassword(user, userPasswords.getPassword());
+        }
+    }
+
+    public void changeInfo(String email, UserPersonalInfo user) {
+        if (!userDao.findUsersByNickname(email, user).isEmpty()) {
+            throw new InvalidNicknameException();
+        } else {
+            log.warn("EditInfo: user by email: {}, change personal info succsessful", email);
         }
     }
 }

@@ -8,5 +8,4 @@ import lombok.Data;
 public class UserPasswords {
     private String oldPassword;
     private String password;
-    private String doubleCheckPass;
 }

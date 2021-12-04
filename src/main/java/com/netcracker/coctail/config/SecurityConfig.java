@@ -27,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
     private static final String MODERACTIVATION_ENDPOINT = "/api/moderators/activation**";
     private static final String USERACTIVATION_ENDPOINT = "/api/users/activation**";
-    private static final String AUTHENTICAL_ENDPOINT = "/api/auth/login";
+    private static final String AUTHENTICAL_ENDPOINT = "/api/auth/**";
     private static final String USER_ENDPOINT = "/api/users/**";
     private static final String REG_ENDPOINT = "/api/users";
     //private static final String front_link = "${front_link}";
@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
                 .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
                 .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
-                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED") // Баг: админ и модератор не имеют доступа
+                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
