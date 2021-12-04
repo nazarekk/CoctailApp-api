@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +37,7 @@ public class UserRestController {
   private PasswordEncoder passwordEncoder;
 
   @Autowired
+  @Lazy
   public UserRestController(UserService userService,
                             JwtTokenProvider jwtTokenProvider,
                             UserDao userDao,

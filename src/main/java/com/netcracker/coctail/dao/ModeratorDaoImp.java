@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @Slf4j
+@Lazy
 @PropertySource("classpath:SQLscripts.properties")
 public class ModeratorDaoImp implements ModeratorDao {
 

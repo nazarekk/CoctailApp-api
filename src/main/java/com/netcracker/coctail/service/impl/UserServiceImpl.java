@@ -10,6 +10,7 @@ import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private ForgotPasswordDao forgotPasswordDao;
 
     @Autowired
+    @Lazy
     public UserServiceImpl(UserDao userDao, RoleDao roleDao,
                            JdbcTemplate jdbcTemplate,
                            ForgotPasswordDao forgotPasswordDao) {
