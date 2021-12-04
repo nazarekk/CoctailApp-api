@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             log.warn("CheckPassword: user by email: {}, not succsessful", user.getEmail());
             throw new InvalidPasswordException();
         } else {
-            changeUserPassword(user, userPasswords.getPassword());
+            changeUserPassword(user, userPasswords.getNewPassword());
         }
     }
 
@@ -92,6 +92,7 @@ public class UserServiceImpl implements UserService {
         if (!userDao.findUsersByNickname(email, user).isEmpty()) {
             throw new InvalidNicknameException();
         } else {
+            userDao.editInfo(email, user);
             log.warn("EditInfo: user by email: {}, change personal info succsessful", email);
         }
     }
