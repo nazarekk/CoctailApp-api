@@ -60,7 +60,8 @@ public class IngredientDaoImp implements IngredientDao {
 
     @Override
     public List<Ingredient> findAllIngredientFiltered(String type, String category) {
-        return jdbcTemplate.query(String.format(findAllIngredientFiltered, type, category), rowMapper);
+        return jdbcTemplate.query(String.format(findAllIngredientFiltered, "%" + type + "%",
+            "%" + category + "%"), rowMapper);
     }
 
     @Override

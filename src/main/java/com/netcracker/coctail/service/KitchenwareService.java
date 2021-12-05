@@ -12,9 +12,9 @@ public interface KitchenwareService {
 
     List<Kitchenware> getKitchenwareFiltered(String type, String category);
 
-    void addKitchenware(CreateKitchenware kitchenware);
+    Boolean addKitchenware(CreateKitchenware kitchenware);
 
-    void editKitchenware(Kitchenware kitchenware);
+    Boolean editKitchenware(Kitchenware kitchenware);
 
-    void removeKitchenware(long id);
+    Boolean removeKitchenware(long id);
 }

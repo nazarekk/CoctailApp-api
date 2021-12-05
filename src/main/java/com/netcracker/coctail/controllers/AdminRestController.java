@@ -35,56 +35,56 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 public class AdminRestController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @Resource
-    ModeratorDao createModeratorDao;
+  @Resource
+  ModeratorDao createModeratorDao;
 
-    @GetMapping(value = "users/{id}")
-    public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
-        User user = userService.getUserById(id);
+  @GetMapping(value = "users/{id}")
+  public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
+    User user = userService.getUserById(id);
 
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
-        AdminUserDto result = AdminUserDto.fromUser(user);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    if (user == null) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("moderators")
-    public ResponseEntity<Moderator> createModerator(@RequestBody @Valid Moderator user) {
-        return createModeratorDao.create(user) == 1 ? new ResponseEntity<>(HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-    }
+    AdminUserDto result = AdminUserDto.fromUser(user);
 
-    @GetMapping("moderators")
-    public Collection<ModeratorInformation> moderatorList() {
-        return createModeratorDao.moderatorList();
-    }
+    return new ResponseEntity<>(result, HttpStatus.OK);
+  }
 
-    @PatchMapping("moderator/edit")
-    public void editModerator(@RequestBody @Valid ModeratorInformation user) {
-        createModeratorDao.editModerator(user);
-    }
+  @PostMapping("moderators")
+  public ResponseEntity<Moderator> createModerator(@RequestBody @Valid Moderator user) {
+    return createModeratorDao.create(user) == 1 ? new ResponseEntity<>(HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+  }
 
-    @DeleteMapping("moderators/remove")
-    public void removeModerator(@RequestBody ModeratorInformation user) {
-        createModeratorDao.removeModerator(user);
-    }
+  @GetMapping("moderators")
+  public Collection<ModeratorInformation> moderatorList() {
+    return createModeratorDao.moderatorList();
+  }
 
-    @GetMapping("moderators/search")
-    public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam String q) {
-        return createModeratorDao.searchModerator(q) == null
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-                new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
-    }
+  @PatchMapping("moderator/edit")
+  public void editModerator(@RequestBody @Valid ModeratorInformation user) {
+    createModeratorDao.editModerator(user);
+  }
 
-    @GetMapping("moderators/filter")
-    public ResponseEntity<ModeratorInformation> filterModerator(@RequestParam Boolean q) {
-        return createModeratorDao.filterModerator(q) == null
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-                new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
-    }
+  @DeleteMapping("moderators/remove")
+  public void removeModerator(@RequestBody ModeratorInformation user) {
+    createModeratorDao.removeModerator(user);
+  }
+
+  @GetMapping("moderators/search")
+  public ResponseEntity<ModeratorInformation> searchModerator(@RequestParam String q) {
+    return createModeratorDao.searchModerator(q) == null
+        ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+        new ResponseEntity<>(createModeratorDao.searchModerator(q), HttpStatus.OK);
+  }
+
+  @GetMapping("moderators/filter")
+  public ResponseEntity<ModeratorInformation> filterModerator(@RequestParam Boolean q) {
+    return createModeratorDao.filterModerator(q) == null
+        ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
+        new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
+  }
 }

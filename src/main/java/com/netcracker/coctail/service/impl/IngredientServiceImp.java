@@ -42,10 +42,12 @@ public class IngredientServiceImp implements IngredientService {
     }
 
     @Override
-    public void addIngredient(CreateIngredient ingredient) {
+    public Boolean addIngredient(CreateIngredient ingredient) {
         String name = ingredient.getName();
         if (ingredientDao.findIngredientByName(name).isEmpty()) {
             ingredientDao.create(ingredient);
+            log.info("Ingredient with name " + name + " created");
+            return Boolean.TRUE;
         } else {
             log.info("Ingredient with name " + name + " already exists");
             throw new InvalidEmailOrPasswordException();
@@ -53,7 +55,7 @@ public class IngredientServiceImp implements IngredientService {
     }
 
     @Override
-    public void editIngredient(Ingredient ingredient) {
+    public Boolean editIngredient(Ingredient ingredient) {
         log.info("Ingredient isActive = " + ingredient.isActive());
         long id = ingredient.getId();
         String name = ingredient.getName();
@@ -64,6 +66,7 @@ public class IngredientServiceImp implements IngredientService {
         }
         if (ingredientDao.findIngredientByName(name).isEmpty()) {
             ingredientDao.editIngredient(ingredient);
+            return Boolean.TRUE;
         } else {
             log.info("Ingredient with name " + name + " already exists");
             throw new InvalidEmailOrPasswordException();
@@ -71,13 +74,15 @@ public class IngredientServiceImp implements IngredientService {
     }
 
     @Override
-    public void removeIngredient(long id) {
+    public Boolean removeIngredient(long id) {
         Ingredient result = ingredientDao.findIngredientById(id).get(0);
         if (result == null) {
             log.info("Ingredient with id " + id + " doesn't exists");
             throw new InvalidEmailOrPasswordException();
         }
+        log.info("Ingredient with id " + id + " exists");
         ingredientDao.removeIngredient(result);
+        return Boolean.TRUE;
     }
 
 

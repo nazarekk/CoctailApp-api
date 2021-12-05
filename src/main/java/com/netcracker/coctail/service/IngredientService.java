@@ -12,9 +12,9 @@ public interface IngredientService {
 
     List<Ingredient> getIngredientFiltered(String type, String category);
 
-    void addIngredient(CreateIngredient ingredient);
+    Boolean addIngredient(CreateIngredient ingredient);
 
-    void editIngredient(Ingredient ingredient);
+    Boolean editIngredient(Ingredient ingredient);
 
-    void removeIngredient(long id);
+    Boolean removeIngredient(long id);
 }

@@ -93,11 +93,14 @@ public class UserRestController {
   }
 
   @PostMapping("add/{friendid}")
-  public void addFriend(
+  public ResponseEntity addFriend(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    friendlistService.addFriend(ownerEmail, friendid);
+    Boolean ret = friendlistService.addFriend(ownerEmail, friendid);
+    return ret == Boolean.TRUE
+        ? new ResponseEntity(ret,HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @GetMapping("find")
@@ -112,34 +115,46 @@ public class UserRestController {
   }
 
   @PatchMapping("accept/{friendid}")
-  public void acceptFriend(
+  public ResponseEntity acceptFriend(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    friendlistService.acceptFriendRequest(ownerEmail, friendid);
+    Boolean ret = friendlistService.acceptFriendRequest(ownerEmail, friendid);
+    return ret == Boolean.TRUE
+        ? new ResponseEntity(ret,HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @PatchMapping("decline/{friendid}")
-  public void declineFriend(
+  public ResponseEntity declineFriend(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    friendlistService.declineFriendRequest(ownerEmail, friendid);
+    Boolean ret = friendlistService.declineFriendRequest(ownerEmail, friendid);
+    return ret == Boolean.TRUE
+        ? new ResponseEntity(ret,HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @PatchMapping("subscribe/{friendid}")
-  public void subcribeTo(
+  public ResponseEntity subcribeTo(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    friendlistService.subscribeToFriend(ownerEmail, friendid);
+    Boolean ret = friendlistService.subscribeToFriend(ownerEmail, friendid);
+    return ret == Boolean.TRUE
+        ? new ResponseEntity(ret,HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @DeleteMapping("remove/{friendid}")
-  public void removeFromFriends(
+  public ResponseEntity removeFromFriends(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    friendlistService.removeFriend(ownerEmail, friendid);
+    Boolean ret = friendlistService.removeFriend(ownerEmail, friendid);
+    return ret == Boolean.TRUE
+        ? new ResponseEntity(ret, HttpStatus.OK) :
+        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 }

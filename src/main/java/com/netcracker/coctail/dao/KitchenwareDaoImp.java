@@ -60,7 +60,7 @@ public class KitchenwareDaoImp implements KitchenwareDao {
 
     @Override
     public List<Kitchenware> findAllKitchenwareFiltered(String type, String category) {
-        return jdbcTemplate.query(String.format(findAllKitchenwareFiltered, type, category), rowMapper);
+        return jdbcTemplate.query(String.format(findAllKitchenwareFiltered, "%" + type + "%", "%" + category + "%"), rowMapper);
     }
 
     @Override
