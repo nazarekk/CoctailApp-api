@@ -14,22 +14,24 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 
-
 @Data
 @Component
 @PropertySource("classpath:SQLscripts.properties")
 public class IngredientDaoImp implements IngredientDao {
 
-
+    @Value("${findAllIngredientByName}")
+    private String findAllIngredientByName;
+    @Value("${findAllIngredientFiltered}")
+    private String findAllIngredientFiltered;
     @Value("${findIngredientByName}")
     private String findIngredientByName;
     @Value("${findIngredientById}")
     private String findIngredientById;
-    @Value  ("${createIngredient}")
+    @Value("${createIngredient}")
     private String createIngredient;
-    @Value  ("${editIngredient}")
+    @Value("${editIngredient}")
     private String editIngredient;
-    @Value  ("${removeIngredient}")
+    @Value("${removeIngredient}")
     private String removeIngredient;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -52,8 +54,18 @@ public class IngredientDaoImp implements IngredientDao {
     }
 
     @Override
+    public List<Ingredient> findAllIngredientByName(String name) {
+        return jdbcTemplate.query(String.format(findAllIngredientByName, name + "%"), rowMapper);
+    }
+
+    @Override
+    public List<Ingredient> findAllIngredientFiltered(String type, String category) {
+        return jdbcTemplate.query(String.format(findAllIngredientFiltered, type, category), rowMapper);
+    }
+
+    @Override
     public List<Ingredient> findIngredientByName(String name) {
-        return jdbcTemplate.query(String.format(findIngredientByName, name + "%"), rowMapper);
+        return jdbcTemplate.query(String.format(findIngredientByName, name), rowMapper);
     }
 
     @Override

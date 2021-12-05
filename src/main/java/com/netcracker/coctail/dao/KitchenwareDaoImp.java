@@ -14,21 +14,24 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 
-
 @Data
 @Component
 @PropertySource("classpath:SQLscripts.properties")
 public class KitchenwareDaoImp implements KitchenwareDao {
 
+    @Value("${findAllKitchenwareByName}")
+    private String findAllKitchenwareByName;
+    @Value("${findAllKitchenwareFiltered}")
+    private String findAllKitchenwareFiltered;
     @Value("${findKitchenwareByName}")
     private String findKitchenwareByName;
     @Value("${findKitchenwareById}")
     private String findKitchenwareById;
-    @Value  ("${createKitchenware}")
+    @Value("${createKitchenware}")
     private String createKitchenware;
-    @Value  ("${editKitchenware}")
+    @Value("${editKitchenware}")
     private String editKitchenware;
-    @Value  ("${removeKitchenware}")
+    @Value("${removeKitchenware}")
     private String removeKitchenware;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -51,8 +54,18 @@ public class KitchenwareDaoImp implements KitchenwareDao {
     }
 
     @Override
+    public List<Kitchenware> findAllKitchenwareByName(String name) {
+        return jdbcTemplate.query(String.format(findAllKitchenwareByName, name + "%"), rowMapper);
+    }
+
+    @Override
+    public List<Kitchenware> findAllKitchenwareFiltered(String type, String category) {
+        return jdbcTemplate.query(String.format(findAllKitchenwareFiltered, type, category), rowMapper);
+    }
+
+    @Override
     public List<Kitchenware> findKitchenwareByName(String name) {
-        return jdbcTemplate.query(String.format(findKitchenwareByName, name + "%"), rowMapper);
+        return jdbcTemplate.query(String.format(findKitchenwareByName, name), rowMapper);
     }
 
     @Override
@@ -77,4 +90,5 @@ public class KitchenwareDaoImp implements KitchenwareDao {
                 .addValue("id", kitchenware.getId());
         jdbcTemplate.update(removeKitchenware, param);
     }
+
 }
