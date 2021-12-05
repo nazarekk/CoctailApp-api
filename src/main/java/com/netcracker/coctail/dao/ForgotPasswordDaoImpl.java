@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Data
 @Slf4j
 @Component
+@Lazy
 @PropertySource("classpath:SQLscripts.properties")
 public class ForgotPasswordDaoImpl implements ForgotPasswordDao {
   private MailSender mailSender;
