@@ -8,6 +8,7 @@ import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.model.Kitchenware;
 import com.netcracker.coctail.service.IngredientService;
 import com.netcracker.coctail.service.KitchenwareService;
+import com.netcracker.coctail.service.RecipeService;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class ModeratorRestController {
     private final ModeratorDao createModeratorDao;
     private final IngredientService ingredientService;
     private final KitchenwareService kitchenwareService;
+    private final RecipeService recipeService;
 
     @PostMapping("activation")
     public String activateModerator(@RequestBody ActivateModerator moderator) {
@@ -133,6 +135,31 @@ public class ModeratorRestController {
     @DeleteMapping(value = "kitchenware/{id}")
     public void removeKitchenware(@PathVariable(name = "id") long id) {
         kitchenwareService.removeKitchenware(id);
+    }
+
+    @PostMapping(value = "recipe")
+    public void addRecipe(@RequestParam String name) {
+        recipeService.addRecipe(name);
+    }
+
+    @PostMapping(value = "recipe/{id}/ingredients")
+    public void addIngredientToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.addIngredientToRecipe(id, name);
+    }
+
+    @PostMapping(value = "recipe/{id}/kitchenware")
+    public void addKitchenwareToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.addKitchenwareToRecipe(id, name);
+    }
+
+    @DeleteMapping(value = "recipe/{id}/ingredients")
+    public void removeIngredientFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.removeIngredientFromRecipe(id, name);
+    }
+
+    @DeleteMapping(value = "recipe/{id}/kitchenware")
+    public void removeKitchenwareFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.removeKitchenwareFromRecipe(id, name);
     }
 
 }
