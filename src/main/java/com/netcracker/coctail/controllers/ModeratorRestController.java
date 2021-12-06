@@ -1,11 +1,14 @@
 package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.ModeratorDao;
+
 import com.netcracker.coctail.model.ActivateModerator;
 import com.netcracker.coctail.model.CreateIngredient;
-import com.netcracker.coctail.model.CreateKitchenware;
 import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.model.Kitchenware;
+import com.netcracker.coctail.model.CreateKitchenware;
+import com.netcracker.coctail.model.Recipe;
+import com.netcracker.coctail.model.CreateRecipe;
 import com.netcracker.coctail.service.IngredientService;
 import com.netcracker.coctail.service.KitchenwareService;
 import com.netcracker.coctail.service.RecipeService;
@@ -128,7 +131,7 @@ public class ModeratorRestController {
     }
 
     @PutMapping(value = "kitchenware")
-    void editKitchenware(@RequestBody Kitchenware kitchenware) {
+    public void editKitchenware(@RequestBody Kitchenware kitchenware) {
         kitchenwareService.editKitchenware(kitchenware);
     }
 
@@ -138,8 +141,8 @@ public class ModeratorRestController {
     }
 
     @PostMapping(value = "recipe")
-    public void addRecipe(@RequestParam String name) {
-        recipeService.addRecipe(name);
+    public void addRecipe(@RequestBody CreateRecipe recipe) {
+        recipeService.addRecipe(recipe);
     }
 
     @PostMapping(value = "recipe/{id}/ingredients")
@@ -160,6 +163,16 @@ public class ModeratorRestController {
     @DeleteMapping(value = "recipe/{id}/kitchenware")
     public void removeKitchenwareFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
         recipeService.removeKitchenwareFromRecipe(id, name);
+    }
+
+    @PutMapping(value = "recipe")
+    public void editRecipe(@RequestBody Recipe recipe) {
+        recipeService.editRecipe(recipe);
+    }
+
+    @DeleteMapping(value = "recipe/{id}")
+    public void removeRecipe(@PathVariable(name = "id") int id) {
+        recipeService.removeRecipe(id);
     }
 
 }

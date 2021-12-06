@@ -5,10 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Recipe {
-    private final Integer id;
+public class CreateRecipe {
     private final String name;
-    private final Integer rating;
     private final boolean alcohol;
     private final boolean sugarless;
     private final boolean isActive;
