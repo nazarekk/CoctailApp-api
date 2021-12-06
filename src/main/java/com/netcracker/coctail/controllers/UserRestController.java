@@ -1,4 +1,5 @@
 package com.netcracker.coctail.controllers;
+
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.exceptions.DuplicatePasswordException;
@@ -95,11 +96,11 @@ public class UserRestController {
   @PostMapping("add/{friendid}")
   public ResponseEntity addFriend(
       @PathVariable(name = "friendid") long friendid,
-      HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+      @RequestHeader("Authorization") String token) {
+    String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
     Boolean ret = friendlistService.addFriend(ownerEmail, friendid);
     return ret == Boolean.TRUE
-        ? new ResponseEntity(ret,HttpStatus.OK) :
+        ? new ResponseEntity(ret, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
@@ -121,7 +122,7 @@ public class UserRestController {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     Boolean ret = friendlistService.acceptFriendRequest(ownerEmail, friendid);
     return ret == Boolean.TRUE
-        ? new ResponseEntity(ret,HttpStatus.OK) :
+        ? new ResponseEntity(ret, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
@@ -132,18 +133,18 @@ public class UserRestController {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     Boolean ret = friendlistService.declineFriendRequest(ownerEmail, friendid);
     return ret == Boolean.TRUE
-        ? new ResponseEntity(ret,HttpStatus.OK) :
+        ? new ResponseEntity(ret, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @PatchMapping("subscribe/{friendid}")
   public ResponseEntity subcribeTo(
       @PathVariable(name = "friendid") long friendid,
-      HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+      @RequestHeader("Authorization") String token) {
+    String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
     Boolean ret = friendlistService.subscribeToFriend(ownerEmail, friendid);
     return ret == Boolean.TRUE
-        ? new ResponseEntity(ret,HttpStatus.OK) :
+        ? new ResponseEntity(ret, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 

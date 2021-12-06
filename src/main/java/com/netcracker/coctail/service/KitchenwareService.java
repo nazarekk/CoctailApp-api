@@ -10,7 +10,7 @@ public interface KitchenwareService {
 
     List<Kitchenware> getKitchenwareByName(String name);
 
-    List<Kitchenware> getKitchenwareFiltered(String type, String category);
+    List<Kitchenware> getKitchenwareFiltered(String type, String category, String active);
 
     Boolean addKitchenware(CreateKitchenware kitchenware);
 

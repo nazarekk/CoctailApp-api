@@ -19,5 +19,5 @@ public interface KitchenwareDao {
 
     void removeKitchenware(Kitchenware kitchenware);
 
-    List<Kitchenware> findAllKitchenwareFiltered(String type, String category);
+    List<Kitchenware> findAllKitchenwareFiltered(String type, String category, String active);
 }

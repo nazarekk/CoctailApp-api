@@ -10,7 +10,7 @@ public interface IngredientService {
 
     List<Ingredient> getIngredientByName(String name);
 
-    List<Ingredient> getIngredientFiltered(String type, String category);
+    List<Ingredient> getIngredientFiltered(String type, String category, String active);
 
     Boolean addIngredient(CreateIngredient ingredient);
 

@@ -19,5 +19,5 @@ public interface IngredientDao {
 
     void removeIngredient(Ingredient ingredient);
 
-    List<Ingredient> findAllIngredientFiltered(String type, String category);
+    List<Ingredient> findAllIngredientFiltered(String type, String category, String active);
 }

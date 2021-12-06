@@ -42,8 +42,10 @@ public class ModeratorRestController {
 
   @GetMapping("ingredients/filter")
   public ResponseEntity<List<Ingredient>> getIngredientsFiltered(
-      @RequestParam String type, @RequestParam String category) {
-    List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category);
+      @RequestParam String type,
+      @RequestParam String category,
+      @RequestParam String active) {
+    List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category, active);
     if (ingredients.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -81,7 +83,7 @@ public class ModeratorRestController {
     Boolean ret = ingredientService.editIngredient(ingredient);
     return ret == Boolean.TRUE
         ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        new ResponseEntity(HttpStatus.NOT_MODIFIED);
   }
 
   @DeleteMapping(value = "ingredients/{id}")
@@ -102,8 +104,10 @@ public class ModeratorRestController {
 
   @GetMapping("kitchenware/filter")
   public ResponseEntity<List<Kitchenware>> getKitchenwareFiltered(
-      @RequestParam String type, @RequestParam String category) {
-    List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareFiltered(type, category);
+      @RequestParam String type,
+      @RequestParam String category,
+      @RequestParam String active) {
+    List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareFiltered(type, category, active);
     if (kitchenware.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
