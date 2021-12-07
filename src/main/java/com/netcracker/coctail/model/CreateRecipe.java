@@ -7,7 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class CreateRecipe {
     private final String name;
-    private final boolean alcohol;
+    private Alcohol alcohol;
     private final boolean sugarless;
     private final boolean isActive;
+    private final String image;
+    private final String recipe;
 }

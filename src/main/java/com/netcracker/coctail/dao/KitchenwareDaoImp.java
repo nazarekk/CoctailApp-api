@@ -36,24 +36,26 @@ public class KitchenwareDaoImp implements KitchenwareDao {
   @Value("${removeKitchenware}")
   private String removeKitchenware;
 
-  private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-  RowMapper<Kitchenware> rowMapper = (rs, rownum) ->
-      new Kitchenware(rs.getLong("id"),
-          rs.getString("kitchenwarename"),
-          rs.getString("type"),
-          rs.getString("category"),
-          rs.getBoolean("isActive"));
+    RowMapper<Kitchenware> rowMapper = (rs, rownum) ->
+            new Kitchenware(rs.getLong("id"),
+                    rs.getString("kitchenwarename"),
+                    rs.getString("type"),
+                    rs.getString("category"),
+                    rs.getBoolean("isActive"),
+                    rs.getString("image"));
 
-  @Override
-  public void create(CreateKitchenware kitchenware) {
-    SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("kitchenwarename", kitchenware.getName())
-        .addValue("type", kitchenware.getType())
-        .addValue("category", kitchenware.getCategory())
-        .addValue("isActive", kitchenware.isActive());
-    jdbcTemplate.update(createKitchenware, param);
-  }
+    @Override
+    public void create(CreateKitchenware kitchenware) {
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("kitchenwarename", kitchenware.getName())
+                .addValue("type", kitchenware.getType())
+                .addValue("category", kitchenware.getCategory())
+                .addValue("isActive", kitchenware.isActive())
+                .addValue("image", kitchenware.getImage());
+        jdbcTemplate.update(createKitchenware, param);
+    }
 
   @Override
   public List<Kitchenware> findAllKitchenwareByName(String name) {
@@ -80,16 +82,17 @@ public class KitchenwareDaoImp implements KitchenwareDao {
     return jdbcTemplate.query(String.format(findKitchenwareById, id), rowMapper);
   }
 
-  @Override
-  public void editKitchenware(Kitchenware kitchenware) {
-    SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("id", kitchenware.getId())
-        .addValue("kitchenwarename", kitchenware.getName())
-        .addValue("type", kitchenware.getType())
-        .addValue("category", kitchenware.getCategory())
-        .addValue("isActive", kitchenware.isActive());
-    jdbcTemplate.update(editKitchenware, param);
-  }
+    @Override
+    public void editKitchenware(Kitchenware kitchenware) {
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("id", kitchenware.getId())
+                .addValue("kitchenwarename", kitchenware.getName())
+                .addValue("type", kitchenware.getType())
+                .addValue("category", kitchenware.getCategory())
+                .addValue("isActive", kitchenware.isActive())
+                .addValue("image", kitchenware.getImage());
+        jdbcTemplate.update(editKitchenware, param);
+    }
 
   @Override
   public void removeKitchenware(Kitchenware kitchenware) {

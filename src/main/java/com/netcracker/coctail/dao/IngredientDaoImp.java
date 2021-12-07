@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@Slf4j
 @PropertySource("classpath:SQLscripts.properties")
 public class IngredientDaoImp implements IngredientDao {
 
@@ -38,24 +37,26 @@ public class IngredientDaoImp implements IngredientDao {
   @Value("${removeIngredient}")
   private String removeIngredient;
 
-  private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-  RowMapper<Ingredient> rowMapper = (rs, rownum) ->
-      new Ingredient(rs.getLong("id"),
-          rs.getString("ingredientsname"),
-          rs.getString("type"),
-          rs.getString("category"),
-          rs.getBoolean("isActive"));
+    RowMapper<Ingredient> rowMapper = (rs, rownum) ->
+            new Ingredient(rs.getLong("id"),
+                    rs.getString("ingredientsname"),
+                    rs.getString("type"),
+                    rs.getString("category"),
+                    rs.getBoolean("isActive"),
+                    rs.getString("image"));
 
-  @Override
-  public void create(CreateIngredient ingredient) {
-    SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("ingredientsname", ingredient.getName())
-        .addValue("type", ingredient.getType())
-        .addValue("category", ingredient.getCategory())
-        .addValue("isActive", ingredient.isActive());
-    jdbcTemplate.update(createIngredient, param);
-  }
+    @Override
+    public void create(CreateIngredient ingredient) {
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("ingredientsname", ingredient.getName())
+                .addValue("type", ingredient.getType())
+                .addValue("category", ingredient.getCategory())
+                .addValue("isActive", ingredient.isActive())
+                .addValue("image", ingredient.getImage());
+        jdbcTemplate.update(createIngredient, param);
+    }
 
   @Override
   public List<Ingredient> findAllIngredientByName(String name) {
@@ -83,16 +84,17 @@ public class IngredientDaoImp implements IngredientDao {
     return jdbcTemplate.query(String.format(findIngredientById, id), rowMapper);
   }
 
-  @Override
-  public void editIngredient(Ingredient ingredient) {
-    SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("id", ingredient.getId())
-        .addValue("ingredientsname", ingredient.getName())
-        .addValue("type", ingredient.getType())
-        .addValue("category", ingredient.getCategory())
-        .addValue("isActive", ingredient.isActive());
-    jdbcTemplate.update(editIngredient, param);
-  }
+    @Override
+    public void editIngredient(Ingredient ingredient) {
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("id", ingredient.getId())
+                .addValue("ingredientsname", ingredient.getName())
+                .addValue("type", ingredient.getType())
+                .addValue("category", ingredient.getCategory())
+                .addValue("isActive", ingredient.isActive())
+                .addValue("image", ingredient.getImage());
+        jdbcTemplate.update(editIngredient, param);
+    }
 
   @Override
   public void removeIngredient(Ingredient ingredient) {
