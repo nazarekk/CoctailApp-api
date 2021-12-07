@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     private static final String AUTHENTICAL_ENDPOINT = "/api/auth/login";
     private static final String USER_ENDPOINT = "/api/users/**";
     private static final String REG_ENDPOINT = "/api/users";
+    private static final String ALL_ENDPOINT = "/**";
     //private static final String front_link = "${front_link}";
 
     @Autowired
@@ -51,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
+                .antMatchers(ALL_ENDPOINT).permitAll()
                 .antMatchers(REG_ENDPOINT).permitAll()
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")

@@ -6,8 +6,12 @@ import com.netcracker.coctail.model.CreateIngredient;
 import com.netcracker.coctail.model.CreateKitchenware;
 import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.model.Kitchenware;
+import com.netcracker.coctail.model.CreateKitchenware;
+import com.netcracker.coctail.model.Recipe;
+import com.netcracker.coctail.model.CreateRecipe;
 import com.netcracker.coctail.service.IngredientService;
 import com.netcracker.coctail.service.KitchenwareService;
+import com.netcracker.coctail.service.RecipeService;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +25,10 @@ import java.util.List;
 @Data
 public class ModeratorRestController {
 
-  private final ModeratorDao createModeratorDao;
-  private final IngredientService ingredientService;
-  private final KitchenwareService kitchenwareService;
+    private final ModeratorDao createModeratorDao;
+    private final IngredientService ingredientService;
+    private final KitchenwareService kitchenwareService;
+    private final RecipeService recipeService;
 
   @PostMapping("activation")
   public String activateModerator(@RequestBody ActivateModerator moderator) {
@@ -154,5 +159,40 @@ public class ModeratorRestController {
         ? new ResponseEntity(kitchenwareService.removeKitchenware(id), HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
+
+    @PostMapping(value = "recipe")
+    public void addRecipe(@RequestBody CreateRecipe recipe) {
+        recipeService.addRecipe(recipe);
+    }
+
+    @PostMapping(value = "recipe/{id}/ingredients")
+    public void addIngredientToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.addIngredientToRecipe(id, name);
+    }
+
+    @PostMapping(value = "recipe/{id}/kitchenware")
+    public void addKitchenwareToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.addKitchenwareToRecipe(id, name);
+    }
+
+    @DeleteMapping(value = "recipe/{id}/ingredients")
+    public void removeIngredientFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.removeIngredientFromRecipe(id, name);
+    }
+
+    @DeleteMapping(value = "recipe/{id}/kitchenware")
+    public void removeKitchenwareFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        recipeService.removeKitchenwareFromRecipe(id, name);
+    }
+
+    @PutMapping(value = "recipe")
+    public void editRecipe(@RequestBody Recipe recipe) {
+        recipeService.editRecipe(recipe);
+    }
+
+    @DeleteMapping(value = "recipe/{id}")
+    public void removeRecipe(@PathVariable(name = "id") int id) {
+        recipeService.removeRecipe(id);
+    }
 
 }

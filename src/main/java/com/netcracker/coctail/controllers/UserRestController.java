@@ -1,15 +1,12 @@
 package com.netcracker.coctail.controllers;
-
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.exceptions.DuplicatePasswordException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
-import com.netcracker.coctail.model.FriendUser;
-import com.netcracker.coctail.model.User;
-import com.netcracker.coctail.model.UserInfo;
-import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.*;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
+import com.netcracker.coctail.service.RecipeService;
 import com.netcracker.coctail.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,25 +28,28 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 @Data
 public class UserRestController {
-  private UserService userService;
-  private JwtTokenProvider jwtTokenProvider;
-  private UserDao userDao;
-  private FriendlistService friendlistService;
-  private PasswordEncoder passwordEncoder;
+    private UserService userService;
+    private JwtTokenProvider jwtTokenProvider;
+    private UserDao userDao;
+    private FriendlistService friendlistService;
+    private PasswordEncoder passwordEncoder;
+    private RecipeService recipeService;
 
-  @Autowired
-  @Lazy
-  public UserRestController(UserService userService,
-                            JwtTokenProvider jwtTokenProvider,
-                            UserDao userDao,
-                            FriendlistService friendlistService,
-                            PasswordEncoder passwordEncoder) {
-    this.userService = userService;
-    this.jwtTokenProvider = jwtTokenProvider;
-    this.userDao = userDao;
-    this.friendlistService = friendlistService;
-    this.passwordEncoder = passwordEncoder;
-  }
+    @Autowired
+    @Lazy
+    public UserRestController(UserService userService,
+                              JwtTokenProvider jwtTokenProvider,
+                              UserDao userDao,
+                              FriendlistService friendlistService,
+                              PasswordEncoder passwordEncoder,
+                              RecipeService recipeService) {
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userDao = userDao;
+        this.friendlistService = friendlistService;
+        this.passwordEncoder = passwordEncoder;
+        this.recipeService = recipeService;
+    }
 
   @GetMapping(value = "{id}")
   public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
@@ -158,4 +158,37 @@ public class UserRestController {
         ? new ResponseEntity(ret, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
+    @GetMapping("recipe/{id}")
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable(name = "id") int id) {
+        Recipe result = recipeService.getRecipeById(id);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("recipe/list")
+    public ResponseEntity<List<DishRecipe>> recipesList() {
+        List<DishRecipe> recipes = recipeService.getRecipesByName("");
+        if (recipes.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "recipe/favourites/{id}")
+    public void addToFavourites(@PathVariable(name = "id") int id, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        recipeService.addToFavourites(ownerEmail, id);
+    }
+
+    @PatchMapping("recipe/{id}")
+    public void likeRecipe(
+            @PathVariable(name = "id") int id,
+            @RequestParam boolean like,
+            HttpServletRequest request) {
+            String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+            recipeService.likeRecipe(ownerEmail, id, like);
+    }
+
 }
