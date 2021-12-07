@@ -6,22 +6,22 @@ CREATE TABLE ROLE (
 INSERT INTO
     ROLE (ID, ROLENAME)
 VALUES
-    (1, 'Unconfirmed');
+    (1, 'ROLE_UNCONFIRMED');
 
 INSERT INTO
     ROLE (ID, ROLENAME)
 VALUES
-    (2, 'Confirmed');
+    (2, 'ROLE_CONFIRMED');
 	
 INSERT INTO
     ROLE (ID, ROLENAME)
 VALUES
-    (3, 'Admin');
+    (3, 'ROLE_ADMIN');
 	
 INSERT INTO
     ROLE (ID, ROLENAME)
 VALUES
-    (4, 'Moderator');
+    (4, 'ROLE_MODERATOR');
 
 CREATE TABLE USERS (
     USERID SERIAL PRIMARY KEY,
@@ -47,13 +47,20 @@ CREATE TABLE FRIENDLIST (
     STATUSID BIGINT REFERENCES FRIENDSSTATUS(ID)
 );
 
-CREATE TABLE INGREDIENTS (
-    ID SERIAL PRIMARY KEY,
-    INGREDIENTSNAME  TEXT,
-    TYPE TEXT,
-    CATEGORY TEXT,
-    ISACTIVE BOOLEAN
+create table ingredients
+(
+    id              serial
+        constraint ingredients_pkey
+            primary key,
+    ingredientsname text,
+    type            text,
+    category        text,
+    isactive        boolean,
+    image           text default 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fthenounproject.com%2Fterm%2Fundefined-document%2F1738131%2F&psig=AOvVaw2-u4NSaidUOEi1uE2xxZw1&ust=1638920164444000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCNiozcWr0PQCFQAAAAAdAAAAABAD'::text
 );
+
+alter table ingredients
+    owner to postgres;
 
 CREATE TABLE USERTOSTOCK (
     ID SERIAL PRIMARY KEY,
@@ -62,23 +69,59 @@ CREATE TABLE USERTOSTOCK (
     QUANTITY BIGINT
 );
 
-CREATE TABLE RECIPES (
-    ID SERIAL PRIMARY KEY,
-    RECIPE TEXT,
-    RATING BIGINT
+create table recipes
+(
+    id        serial
+        constraint recipes_pkey
+            primary key,
+    name      text,
+    rating    bigint,
+    sugarless boolean,
+    isactive  boolean,
+    image     text default 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fthenounproject.com%2Fterm%2Fundefined-document%2F1738131%2F&psig=AOvVaw2-u4NSaidUOEi1uE2xxZw1&ust=1638920164444000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCNiozcWr0PQCFQAAAAAdAAAAABAD'::text,
+    recipe    text,
+    alcohol   text
 );
 
-CREATE TABLE RECIPESTOINGR (
-    ID SERIAL PRIMARY KEY,
-    RECIPEID BIGINT REFERENCES RECIPES(ID) ON DELETE CASCADE,
-    INGREDIENTID BIGINT REFERENCES INGREDIENTS(ID) ON DELETE CASCADE
+alter table recipes
+    owner to postgres;
+
+create table recipestoingr
+(
+    id           serial
+        constraint recipestoingr_pkey
+            primary key,
+    recipeid     bigint
+        constraint recipestoingr_recipeid_fkey
+            references recipes
+            on delete cascade,
+    ingredientid bigint
+        constraint recipestoingr_ingredientid_fkey
+            references ingredients
+            on delete cascade
 );
 
-CREATE TABLE USERTORECIPES (
-    ID SERIAL PRIMARY KEY,
-    USERID BIGINT REFERENCES USERS(USERID) ON DELETE CASCADE,
-    RECIPEID BIGINT REFERENCES RECIPES(ID) ON DELETE CASCADE
+alter table recipestoingr
+    owner to postgres;
+
+create table usertorecipes
+(
+    id       serial
+        constraint usertorecipes_pkey
+            primary key,
+    userid   bigint
+        constraint usertorecipes_userid_fkey
+            references users
+            on delete cascade,
+    recipeid bigint
+        constraint usertorecipes_recipeid_fkey
+            references recipes
+            on delete cascade,
+    liked    boolean
 );
+
+alter table usertorecipes
+    owner to postgres;
 
 CREATE TABLE EVENTS (
     ID SERIAL PRIMARY KEY,
@@ -99,16 +142,35 @@ CREATE TABLE EVENTSTOUSERS (
     USERID BIGINT REFERENCES USERS(USERID)
 );
 
-CREATE TABLE KITCHENWARE (
-    ID SERIAL PRIMARY KEY,
-    KITCHENWARENAME TEXT,
-    TYPE TEXT,
-    CATEGORY TEXT,
-    ISACTIVE BOOLEAN
+create table kitchenware
+(
+    id              serial
+        constraint kitchenware_pkey
+            primary key,
+    kitchenwarename text,
+    type            text,
+    category        text,
+    isactive        boolean,
+    image           text default 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fthenounproject.com%2Fterm%2Fundefined-document%2F1738131%2F&psig=AOvVaw2-u4NSaidUOEi1uE2xxZw1&ust=1638920164444000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCNiozcWr0PQCFQAAAAAdAAAAABAD'::text
 );
 
-CREATE TABLE KITCHENWARETORECIPES (
-    ID SERIAL PRIMARY KEY,
-    KITCHENWAREID BIGINT REFERENCES KITCHENWARE(ID) ON DELETE CASCADE,
-    RECIPEID BIGINT REFERENCES RECIPES(ID) ON DELETE CASCADE
+alter table kitchenware
+    owner to postgres;
+
+create table kitchenwaretorecipes
+(
+    id            serial
+        constraint kitchenwaretorecipes_pkey
+            primary key,
+    kitchenwareid bigint
+        constraint kitchenwaretorecipes_kitchenwareid_fkey
+            references kitchenware
+            on delete cascade,
+    recipeid      bigint
+        constraint kitchenwaretorecipes_recipeid_fkey
+            references recipes
+            on delete cascade
 );
+
+alter table kitchenwaretorecipes
+    owner to postgres;
