@@ -44,12 +44,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Role> getRolesByEmail(String email) {
-        List<Role> name = roleDao.findRoleNameByEmail(email);
-        return name;
-    }
-
-    @Override
     public String getRolenameByEmail(String email) {
         Role result = roleDao.findRoleNameByEmail(email).get(0);
         log.info("IN getRolenameByEmail - role: {} found by email: {}", result.getRolename(), email);

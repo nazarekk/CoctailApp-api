@@ -1,5 +1,6 @@
 package com.netcracker.coctail.config;
 
+import com.netcracker.coctail.security.jwt.JwtAuthenticationEntryPoint;
 import com.netcracker.coctail.security.jwt.JwtConfigurer;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import java.util.Arrays;
@@ -37,6 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -58,8 +62,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
                 .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
                 .anyRequest().authenticated()
+                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
+
     }
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
