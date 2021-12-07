@@ -1,6 +1,7 @@
 package com.netcracker.coctail.service;
 
 import com.netcracker.coctail.model.CreateRecipe;
+import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.model.Recipe;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface RecipeService {
 
     void removeKitchenwareFromRecipe(int id, String name);
 
-    List<Recipe> getRecipesByName(String name);
+    List<DishRecipe> getRecipesByName(String name);
 
     Recipe getRecipeById(int id);
 
@@ -27,8 +28,6 @@ public interface RecipeService {
 
     void addToFavourites(String ownerEmail, int recipeId);
 
-    void likeRecipe(String ownerEmail, int recipeId);
-
-    void withdrawLike(String ownerEmail, int recipeId);
+    void likeRecipe(String ownerEmail, int recipeId, boolean liked);
 
 }

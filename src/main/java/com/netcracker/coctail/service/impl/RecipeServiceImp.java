@@ -5,16 +5,13 @@ import com.netcracker.coctail.dao.IngredientDao;
 import com.netcracker.coctail.dao.KitchenwareDao;
 import com.netcracker.coctail.dao.RecipeDao;
 import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
-import com.netcracker.coctail.model.CreateRecipe;
-import com.netcracker.coctail.model.Ingredient;
-import com.netcracker.coctail.model.Kitchenware;
-import com.netcracker.coctail.model.Recipe;
+import com.netcracker.coctail.model.*;
 import com.netcracker.coctail.service.RecipeService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -27,8 +24,21 @@ public class RecipeServiceImp implements RecipeService {
     private final FriendlistDao friendlistDao;
 
     @Override
-    public List<Recipe> getRecipesByName(String name) {
-        List<Recipe> result = recipeDao.findAllRecipesByName(name);
+    public List<DishRecipe> getRecipesByName(String name) {
+        List<Recipe> recipes = recipeDao.findAllRecipesByName(name);
+        List<DishRecipe> result = new ArrayList<>();
+        for (Recipe recipe : recipes){
+            int recipeId = recipe.getId();
+            result.add(new DishRecipe(
+                    recipe.getId(),
+                    recipe.getName(),
+                    recipe.getRating(),
+                    recipe.isAlcohol(),
+                    recipe.isSugarless(),
+                    recipeDao.containsIngredients(recipeId),
+                    recipeDao.containsKitchenware(recipeId)
+            ));
+        }
         return result;
     }
 
@@ -76,24 +86,23 @@ public class RecipeServiceImp implements RecipeService {
     }
 
     @Override
-    public void likeRecipe(String ownerEmail, int recipeId) {
+    public void likeRecipe(String ownerEmail, int recipeId, boolean like) {
         long ownerId = friendlistDao.getOwnerId(ownerEmail);
-        if (!recipeDao.checkLike(ownerId, recipeId)) {
-            recipeDao.likeRecipe(recipeId);
-        } else {
-            log.info("You already liked this recipe");
+        if(recipeDao.checkLike(ownerId, recipeId).isEmpty()){
+            log.info("To like the dish, you must first add it to your favourites");
             throw new InvalidEmailOrPasswordException();
         }
-    }
-
-    @Override
-    public void withdrawLike(String ownerEmail, int recipeId) {
-        long ownerId = friendlistDao.getOwnerId(ownerEmail);
-        if (recipeDao.checkLike(ownerId, recipeId)) {
-            recipeDao.withdrawLike(recipeId);
-        } else {
-            log.info("You didn't like this recipe");
+        if (like && recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
+            log.info("You already liked this recipe");
             throw new InvalidEmailOrPasswordException();
+        } else if(like){
+            recipeDao.likeRecipe(recipeId);
+            recipeDao.likedLock(ownerId, recipeId, like);
+        } else if (!like && !recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()){
+            log.info("You didn't like this recipe");
+        } else {
+            recipeDao.withdrawLike(recipeId);
+            recipeDao.likedLock(ownerId, recipeId, like);
         }
     }
 

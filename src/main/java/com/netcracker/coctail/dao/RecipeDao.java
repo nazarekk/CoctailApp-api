@@ -1,7 +1,6 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.CreateRecipe;
-import com.netcracker.coctail.model.Recipe;
+import com.netcracker.coctail.model.*;
 
 import java.util.List;
 
@@ -31,7 +30,13 @@ public interface RecipeDao {
 
     void likeRecipe(int recipeId);
 
-    boolean checkLike(long userId, int recipeId);
+    public void likedLock(long userId, int recipeId, boolean liked);
+
+    List<UserToRecipe> checkLike(long userId, int recipeId);
 
     void withdrawLike(int recipeId);
+
+    List<Ingredient> containsIngredients(int recipeId);
+
+    List<Kitchenware> containsKitchenware(int recipeId);
 }

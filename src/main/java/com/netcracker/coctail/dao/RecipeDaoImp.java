@@ -1,8 +1,6 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.CreateRecipe;
-import com.netcracker.coctail.model.Recipe;
-import com.netcracker.coctail.model.UserToRecipe;
+import com.netcracker.coctail.model.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -47,6 +45,12 @@ public class RecipeDaoImp implements RecipeDao {
     private String checkLike;
     @Value("${withdrawLike}")
     private String withdrawLike;
+    @Value("${likedLock}")
+    private String likedLock;
+    @Value("${containsKitchenware}")
+    private String containsKitchenware;
+    @Value("${containsIngredients}")
+    private String containsIngredients;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -101,15 +105,23 @@ public class RecipeDaoImp implements RecipeDao {
         jdbcTemplate.update(likeRecipe, param);
     }
 
+    public void likedLock(long userId, int recipeId, boolean liked){
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("recipeid", recipeId)
+                .addValue("userid", userId)
+                .addValue("liked", liked);
+        jdbcTemplate.update(likedLock, param);
+    }
+
     @Override
-    public boolean checkLike(long userId, int recipeId) {
+    public List<UserToRecipe> checkLike(long userId, int recipeId) {
         RowMapper<UserToRecipe> rowMapper = (rs, rownum) ->
                 new UserToRecipe(
                         rs.getInt("id"),
                         rs.getInt("userid"),
                         rs.getInt("recipeid"),
                         rs.getBoolean("liked"));
-        return jdbcTemplate.query(String.format(checkLike, userId, recipeId), rowMapper).get(0).isLiked();
+        return jdbcTemplate.query(String.format(checkLike, userId, recipeId), rowMapper);
     }
 
     @Override
@@ -117,6 +129,28 @@ public class RecipeDaoImp implements RecipeDao {
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("id", recipeId);
         jdbcTemplate.update(withdrawLike, param);
+    }
+
+    @Override
+    public List<Ingredient> containsIngredients(int recipeId) {
+        RowMapper<Ingredient> rowMapper = (rs, rownum) ->
+                new Ingredient(rs.getLong("id"),
+                        rs.getString("ingredientsname"),
+                        rs.getString("type"),
+                        rs.getString("category"),
+                        rs.getBoolean("isActive"));
+        return jdbcTemplate.query(String.format(containsIngredients, recipeId), rowMapper);
+    }
+
+    @Override
+    public List<Kitchenware> containsKitchenware(int recipeId) {
+        RowMapper<Kitchenware> rowMapper = (rs, rownum) ->
+                new Kitchenware(rs.getLong("id"),
+                        rs.getString("kitchenwarename"),
+                        rs.getString("type"),
+                        rs.getString("category"),
+                        rs.getBoolean("isActive"));
+        return jdbcTemplate.query(String.format(containsKitchenware, recipeId), rowMapper);
     }
 
     @Override

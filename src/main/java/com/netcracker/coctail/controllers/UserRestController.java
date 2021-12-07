@@ -158,8 +158,8 @@ public class UserRestController {
     }
 
     @GetMapping("recipe/list")
-    public ResponseEntity<List<Recipe>> recipeList() {
-        List<Recipe> recipes = recipeService.getRecipesByName("");
+    public ResponseEntity<List<DishRecipe>> recipesList() {
+        List<DishRecipe> recipes = recipeService.getRecipesByName("");
         if (recipes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -177,12 +177,8 @@ public class UserRestController {
             @PathVariable(name = "id") int id,
             @RequestParam boolean like,
             HttpServletRequest request) {
-        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        if (like) {
-            recipeService.likeRecipe(ownerEmail, id);
-        } else {
-            recipeService.withdrawLike(ownerEmail, id);
-        }
+            String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+            recipeService.likeRecipe(ownerEmail, id, like);
     }
 
 }
