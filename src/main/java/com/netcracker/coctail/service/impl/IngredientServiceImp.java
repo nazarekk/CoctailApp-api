@@ -57,14 +57,20 @@ public class IngredientServiceImp implements IngredientService {
   @Override
   public Boolean editIngredient(Ingredient ingredient) {
     log.info("Ingredient isActive = " + ingredient.isActive());
+    String name = ingredient.getName();
     long id = ingredient.getId();
     Ingredient result = ingredientDao.findIngredientById(id).get(0);
     if (result == null) {
       log.info("Ingredient with id " + id + " doesn't exists");
       throw new InvalidEmailOrPasswordException();
     }
-    ingredientDao.editIngredient(ingredient);
-    return Boolean.TRUE;
+    if (ingredientDao.findIngredientByName(name).isEmpty()) {
+      ingredientDao.editIngredient(ingredient);
+      return Boolean.TRUE;
+    } else {
+      log.info("Ingredient with name " + name + " already exists");
+      throw new InvalidEmailOrPasswordException();
+    }
   }
 
   @Override
