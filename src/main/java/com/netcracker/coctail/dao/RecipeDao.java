@@ -1,6 +1,11 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.*;
+
+import com.netcracker.coctail.model.CreateRecipe;
+import com.netcracker.coctail.model.Ingredient;
+import com.netcracker.coctail.model.Kitchenware;
+import com.netcracker.coctail.model.Recipe;
+import com.netcracker.coctail.model.UserToRecipe;
 
 import java.util.List;
 
