@@ -141,38 +141,67 @@ public class ModeratorRestController {
     }
 
     @PostMapping(value = "recipe")
-    public void addRecipe(@RequestBody CreateRecipe recipe) {
-        recipeService.addRecipe(recipe);
+    public ResponseEntity<Integer> addRecipe(@RequestBody CreateRecipe recipe) {
+        int id = recipeService.addRecipe(recipe);
+        if (id > 0) {
+            return new ResponseEntity<>(id, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @PostMapping(value = "recipe/{id}/ingredients")
-    public void addIngredientToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
-        recipeService.addIngredientToRecipe(id, name);
+    public ResponseEntity addIngredientToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        if (recipeService.addIngredientToRecipe(id, name)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @PostMapping(value = "recipe/{id}/kitchenware")
-    public void addKitchenwareToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
-        recipeService.addKitchenwareToRecipe(id, name);
+    public ResponseEntity addKitchenwareToRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        if (recipeService.addKitchenwareToRecipe(id, name)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @DeleteMapping(value = "recipe/{id}/ingredients")
-    public void removeIngredientFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
-        recipeService.removeIngredientFromRecipe(id, name);
+    public ResponseEntity removeIngredientFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        if (recipeService.removeIngredientFromRecipe(id, name)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @DeleteMapping(value = "recipe/{id}/kitchenware")
-    public void removeKitchenwareFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
-        recipeService.removeKitchenwareFromRecipe(id, name);
+    public ResponseEntity removeKitchenwareFromRecipe(@PathVariable(name = "id") int id, @RequestParam String name) {
+        if (recipeService.removeKitchenwareFromRecipe(id, name)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @PutMapping(value = "recipe")
-    public void editRecipe(@RequestBody Recipe recipe) {
-        recipeService.editRecipe(recipe);
+    public ResponseEntity editRecipe(@RequestBody Recipe recipe) {
+        if (recipeService.editRecipe(recipe)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @DeleteMapping(value = "recipe/{id}")
-    public void removeRecipe(@PathVariable(name = "id") int id) {
-        recipeService.removeRecipe(id);
+    public ResponseEntity removeRecipe(@PathVariable(name = "id") int id) {
+        if (recipeService.removeRecipe(id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
 }

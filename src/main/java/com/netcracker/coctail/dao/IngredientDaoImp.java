@@ -41,7 +41,8 @@ public class IngredientDaoImp implements IngredientDao {
                     rs.getString("ingredientsname"),
                     rs.getString("type"),
                     rs.getString("category"),
-                    rs.getBoolean("isActive"));
+                    rs.getBoolean("isActive"),
+                    rs.getString("image"));
 
     @Override
     public void create(CreateIngredient ingredient) {
@@ -49,7 +50,8 @@ public class IngredientDaoImp implements IngredientDao {
                 .addValue("ingredientsname", ingredient.getName())
                 .addValue("type", ingredient.getType())
                 .addValue("category", ingredient.getCategory())
-                .addValue("isActive", ingredient.isActive());
+                .addValue("isActive", ingredient.isActive())
+                .addValue("image", ingredient.getImage());
         jdbcTemplate.update(createIngredient, param);
     }
 
@@ -80,7 +82,8 @@ public class IngredientDaoImp implements IngredientDao {
                 .addValue("ingredientsname", ingredient.getName())
                 .addValue("type", ingredient.getType())
                 .addValue("category", ingredient.getCategory())
-                .addValue("isActive", ingredient.isActive());
+                .addValue("isActive", ingredient.isActive())
+                .addValue("image", ingredient.getImage());
         jdbcTemplate.update(editIngredient, param);
     }
 

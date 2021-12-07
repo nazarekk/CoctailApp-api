@@ -41,7 +41,8 @@ public class KitchenwareDaoImp implements KitchenwareDao {
                     rs.getString("kitchenwarename"),
                     rs.getString("type"),
                     rs.getString("category"),
-                    rs.getBoolean("isActive"));
+                    rs.getBoolean("isActive"),
+                    rs.getString("image"));
 
     @Override
     public void create(CreateKitchenware kitchenware) {
@@ -49,7 +50,8 @@ public class KitchenwareDaoImp implements KitchenwareDao {
                 .addValue("kitchenwarename", kitchenware.getName())
                 .addValue("type", kitchenware.getType())
                 .addValue("category", kitchenware.getCategory())
-                .addValue("isActive", kitchenware.isActive());
+                .addValue("isActive", kitchenware.isActive())
+                .addValue("image", kitchenware.getImage());
         jdbcTemplate.update(createKitchenware, param);
     }
 
@@ -80,7 +82,8 @@ public class KitchenwareDaoImp implements KitchenwareDao {
                 .addValue("kitchenwarename", kitchenware.getName())
                 .addValue("type", kitchenware.getType())
                 .addValue("category", kitchenware.getCategory())
-                .addValue("isActive", kitchenware.isActive());
+                .addValue("isActive", kitchenware.isActive())
+                .addValue("image", kitchenware.getImage());
         jdbcTemplate.update(editKitchenware, param);
     }
 

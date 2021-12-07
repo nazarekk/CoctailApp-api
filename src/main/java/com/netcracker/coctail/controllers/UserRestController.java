@@ -4,7 +4,12 @@ import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.exceptions.DuplicatePasswordException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
-import com.netcracker.coctail.model.*;
+
+import com.netcracker.coctail.model.FriendUser;
+import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.model.UserInfo;
+import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
 import com.netcracker.coctail.service.RecipeService;
@@ -21,7 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * REST controller user connected requests.
@@ -148,13 +153,23 @@ public class UserRestController {
         friendlistService.removeFriend(ownerEmail, friendid);
     }
 
-    @GetMapping("recipe/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable(name = "id") int id) {
-        Recipe result = recipeService.getRecipeById(id);
-        if (result == null) {
+    @GetMapping("recipe")
+    public ResponseEntity<List<DishRecipe>> getRecipeByName(@RequestParam String name) {
+        List<DishRecipe> recipes = recipeService.getRecipesByName(name);
+        if (recipes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
+    }
+
+    @GetMapping("recipe/filter")
+    public ResponseEntity<List<DishRecipe>> getRecipesFiltered(
+            @RequestParam boolean sugarless, @RequestParam String alcohol) {
+        List<DishRecipe> recipes = recipeService.getRecipesFiltered(sugarless, alcohol);
+        if (recipes.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
     @GetMapping("recipe/list")
@@ -166,19 +181,36 @@ public class UserRestController {
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
+    @GetMapping(value = "recipe/{id}")
+    public ResponseEntity<DishRecipe> getRecipeById(@PathVariable(name = "id") int id) {
+        DishRecipe result = recipeService.getRecipeById(id);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping(value = "recipe/favourites/{id}")
-    public void addToFavourites(@PathVariable(name = "id") int id, HttpServletRequest request) {
+    public ResponseEntity addToFavourites(@PathVariable(name = "id") int id, HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        recipeService.addToFavourites(ownerEmail, id);
+        if (recipeService.addToFavourites(ownerEmail, id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
     }
 
     @PatchMapping("recipe/{id}")
-    public void likeRecipe(
+    public ResponseEntity likeRecipe(
             @PathVariable(name = "id") int id,
             @RequestParam boolean like,
             HttpServletRequest request) {
-            String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-            recipeService.likeRecipe(ownerEmail, id, like);
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (recipeService.likeRecipe(ownerEmail, id, like)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
     }
 
 }

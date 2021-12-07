@@ -8,26 +8,28 @@ import java.util.List;
 
 public interface RecipeService {
 
-    void addRecipe(CreateRecipe recipe);
+    Integer addRecipe(CreateRecipe recipe);
 
-    void addIngredientToRecipe(int id, String name);
+    boolean addIngredientToRecipe(int id, String name);
 
-    void addKitchenwareToRecipe(int id, String name);
+    boolean addKitchenwareToRecipe(int id, String name);
 
-    void removeIngredientFromRecipe(int id, String name);
+    boolean removeIngredientFromRecipe(int id, String name);
 
-    void removeKitchenwareFromRecipe(int id, String name);
+    boolean removeKitchenwareFromRecipe(int id, String name);
 
     List<DishRecipe> getRecipesByName(String name);
 
-    Recipe getRecipeById(int id);
+    List<DishRecipe> getRecipesFiltered(boolean sugarless, String alcohol);
 
-    void editRecipe(Recipe recipe);
+    DishRecipe getRecipeById(int id);
 
-    void removeRecipe(int id);
+    boolean editRecipe(Recipe recipe);
 
-    void addToFavourites(String ownerEmail, int recipeId);
+    boolean removeRecipe(int id);
 
-    void likeRecipe(String ownerEmail, int recipeId, boolean liked);
+    boolean addToFavourites(String ownerEmail, int recipeId);
+
+    boolean likeRecipe(String ownerEmail, int recipeId, boolean liked);
 
 }

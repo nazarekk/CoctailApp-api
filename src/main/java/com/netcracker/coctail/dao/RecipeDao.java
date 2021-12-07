@@ -22,6 +22,12 @@ public interface RecipeDao {
 
     List<Recipe> findAllRecipesByName(String name);
 
+    List<Recipe> findAllRecipesFiltered(boolean sugarless, String alcohol);
+
+    boolean ingredientInRecipe(Integer recipeId, Long ingredientId);
+
+    boolean kitchenwareInRecipe(Integer recipeId, Long kitchenwareId);
+
     void editRecipe(Recipe recipe);
 
     void removeRecipe(int id);
@@ -30,7 +36,7 @@ public interface RecipeDao {
 
     void likeRecipe(int recipeId);
 
-    public void likedLock(long userId, int recipeId, boolean liked);
+    void likedLock(long userId, int recipeId, boolean liked);
 
     List<UserToRecipe> checkLike(long userId, int recipeId);
 
@@ -39,4 +45,5 @@ public interface RecipeDao {
     List<Ingredient> containsIngredients(int recipeId);
 
     List<Kitchenware> containsKitchenware(int recipeId);
+
 }
