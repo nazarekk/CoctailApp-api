@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:SQLscripts.properties")
 public class IngredientDaoImp implements IngredientDao {
 
-
     @Value("${findIngredientByName}")
     private String findIngredientByName;
     @Value("${findIngredientById}")
