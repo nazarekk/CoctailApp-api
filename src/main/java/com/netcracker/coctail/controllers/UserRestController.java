@@ -1,23 +1,16 @@
 package com.netcracker.coctail.controllers;
-
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.exceptions.DuplicatePasswordException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
 
-import com.netcracker.coctail.model.FriendUser;
-import com.netcracker.coctail.model.User;
-import com.netcracker.coctail.model.UserInfo;
-import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.*;
 import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
-import com.netcracker.coctail.service.RecipeService;
 import com.netcracker.coctail.service.UserService;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -25,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -102,14 +96,11 @@ public class UserRestController {
   }
 
   @PostMapping("add/{friendid}")
-  public ResponseEntity addFriend(
+  public void addFriend(
       @PathVariable(name = "friendid") long friendid,
-      @RequestHeader("Authorization") String token) {
-    String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
-    Boolean ret = friendlistService.addFriend(ownerEmail, friendid);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+      HttpServletRequest request) {
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    friendlistService.addFriend(ownerEmail, friendid);
   }
 
   @GetMapping("find")
@@ -145,8 +136,8 @@ public class UserRestController {
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
-  @PatchMapping("subscribe/{friendid}")
-  public ResponseEntity subcribeTo(
+    @PatchMapping("subscribe/{friendid}")
+    public ResponseEntity subcribeTo(
       @PathVariable(name = "friendid") long friendid,
       @RequestHeader("Authorization") String token) {
     String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
@@ -158,10 +149,10 @@ public class UserRestController {
 
   @DeleteMapping("remove/{friendid}")
   public ResponseEntity removeFromFriends(
-      @PathVariable(name = "friendid") long friendid,
-      HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    Boolean ret = friendlistService.removeFriend(ownerEmail, friendid);
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        Boolean ret = friendlistService.removeFriend(ownerEmail, friendid);
     return ret == Boolean.TRUE
         ? new ResponseEntity(ret, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -186,6 +177,68 @@ public class UserRestController {
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
+    @DeleteMapping("remove/{friendid}")
+    public void removeFromFriends(
+            @PathVariable(name = "friendid") long friendid,
+            HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        friendlistService.removeFriend(ownerEmail, friendid);
+    }
+
+    @PostMapping(value = "stock/ingredients")
+    public void addIngredient(@RequestHeader("Authorization") String token, @RequestBody StockIngredientOperations stockIngredientOperations) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        personalStockService.addIngredientToStock(userId, stockIngredientOperations);
+    }
+
+    @DeleteMapping("stock/remove/{ingredientid}")
+    public void removeStockIngredient(
+            @RequestHeader("Authorization") String token,
+            @PathVariable(name = "ingredientid") long ingredientId) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        personalStockService.removeIngredientFromStock(userId, ingredientId);
+    }
+
+    @PatchMapping(value = "stock/edit")
+    public void editStockIngredient(
+            @RequestHeader("Authorization") String token,
+            @RequestBody StockIngredientOperations stockIngredientOperations) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        personalStockService.editIngredient(userId, stockIngredientOperations);
+    }
+
+    @GetMapping(value = "stock/my")
+    public ResponseEntity<List<StockIngredientInfo>> getAllUserIngredients(@RequestHeader("Authorization") String token) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        List<StockIngredientInfo> stockIngredients = personalStockService.getStockIngredientsByName(userId, "");
+        if (stockIngredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(stockIngredients, HttpStatus.OK);
+    }
+
+    @GetMapping("stock/search")
+    public ResponseEntity<List<StockIngredientInfo>> getStockIngredientsByName(@RequestHeader("Authorization") String token,
+                                                                               @RequestParam String name) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        List<StockIngredientInfo> stockIngredients = personalStockService.getStockIngredientsByName(userId, name);
+        if (stockIngredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(stockIngredients, HttpStatus.OK);
+    }
+
+    @GetMapping("stock/filter")
+    public ResponseEntity<List<StockIngredientInfo>> getStockIngredientsFiltered(
+            @RequestHeader("Authorization") String token, @RequestParam String type,
+            @RequestParam String category) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        List<StockIngredientInfo> stockIngredients = personalStockService.getStockIngredientsFiltered(userId, type, category);
+        if (stockIngredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(stockIngredients, HttpStatus.OK);
+    }
   @GetMapping("recipe/list")
   public ResponseEntity<List<DishRecipe>> recipesList() {
     List<DishRecipe> recipes = recipeService.getRecipesByName("");
