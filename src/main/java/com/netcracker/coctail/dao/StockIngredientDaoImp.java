@@ -21,8 +21,6 @@ public class StockIngredientDaoImp implements StockIngredientDao {
 
     @Value("${addStockIngredient}")
     private String addStockIngredient;
-    @Value("{getUserIdByEmail}")
-    private String getUserIdByEmail;
     @Value("${findExistingStockIngredientById}")
     private String findExistingStockIngredientById;
     @Value("${removeStockIngredient}")
