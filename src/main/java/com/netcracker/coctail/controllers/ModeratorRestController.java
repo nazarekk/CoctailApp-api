@@ -6,7 +6,6 @@ import com.netcracker.coctail.model.CreateIngredient;
 import com.netcracker.coctail.model.CreateKitchenware;
 import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.model.Kitchenware;
-import com.netcracker.coctail.model.CreateKitchenware;
 import com.netcracker.coctail.model.Recipe;
 import com.netcracker.coctail.model.CreateRecipe;
 import com.netcracker.coctail.service.IngredientService;
