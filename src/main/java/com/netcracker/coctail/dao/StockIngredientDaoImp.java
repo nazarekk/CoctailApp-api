@@ -19,85 +19,90 @@ import java.util.List;
 @PropertySource("classpath:SQLscripts.properties")
 public class StockIngredientDaoImp implements StockIngredientDao {
 
-    @Value("${addStockIngredient}")
-    private String addStockIngredient;
-    @Value("{getUserIdByEmail}")
-    private String getUserIdByEmail;
-    @Value("${findExistingStockIngredientById}")
-    private String findExistingStockIngredientById;
-    @Value("${removeStockIngredient}")
-    private String removeStockIngredient;
-    @Value("${editStockIngredient}")
-    private String editStockIngredient;
-    @Value("${findStockIngredientsByName}")
-    private String findStockIngredientsByName;
-    @Value("${findStockIngredientsFiltered}")
-    private String findStockIngredientsFiltered;
+  @Value("${addStockIngredient}")
+  private String addStockIngredient;
+  @Value("{getUserIdByEmail}")
+  private String getUserIdByEmail;
+  @Value("${findExistingStockIngredientById}")
+  private String findExistingStockIngredientById;
+  @Value("${removeStockIngredient}")
+  private String removeStockIngredient;
+  @Value("${editStockIngredient}")
+  private String editStockIngredient;
+  @Value("${findStockIngredientsByName}")
+  private String findStockIngredientsByName;
+  @Value("${findStockIngredientsFiltered}")
+  private String findStockIngredientsFiltered;
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+  private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    @Override
-    public void addIngredientToStock(long ownerId, StockIngredientOperations stockIngredientOperations) {
-        SqlParameterSource param = new MapSqlParameterSource()
-                .addValue("userid", ownerId)
-                .addValue("ingredientid", stockIngredientOperations.getIngredientId())
-                .addValue("quantity", stockIngredientOperations.getQuantity());
-        jdbcTemplate.update(addStockIngredient, param);
-    }
+  @Override
+  public void addIngredientToStock(long ownerId,
+                                   StockIngredientOperations stockIngredientOperations) {
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("userid", ownerId)
+        .addValue("ingredientid", stockIngredientOperations.getIngredientId())
+        .addValue("quantity", stockIngredientOperations.getQuantity());
+    jdbcTemplate.update(addStockIngredient, param);
+  }
 
-    @Override
-    public void editStockIngredient(long id, long quantity) {
-        SqlParameterSource param = new MapSqlParameterSource().
-                addValue("id", id).
-                addValue("quantity", quantity);
-        jdbcTemplate.update(editStockIngredient, param);
-    }
+  @Override
+  public void editStockIngredient(long id, long quantity) {
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("id", id)
+        .addValue("quantity", quantity);
+    jdbcTemplate.update(editStockIngredient, param);
+  }
 
-    @Override
-    public void removeIngredientFromStock(long id) {
-        SqlParameterSource param = new MapSqlParameterSource().
-                addValue("id", id);
-        jdbcTemplate.update(removeStockIngredient, param);
-    }
+  @Override
+  public void removeIngredientFromStock(long id) {
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("id", id);
+    jdbcTemplate.update(removeStockIngredient, param);
+  }
 
-    @Override
-    public List<StockIngredientInfo> findStockIngredientsByName(long userId, String name) {
-        RowMapper<StockIngredientInfo> rowMapper = (rs, rownum) ->
-                new StockIngredientInfo(rs.getLong("id"),
-                        rs.getString("ingredientsname"),
-                        rs.getString("type"),
-                        rs.getString("category"),
-                        rs.getBoolean("isactive"),
-                        rs.getLong("quantity"),
-                        rs.getString("image"));
+  @Override
+  public List<StockIngredientInfo> findStockIngredientsByName(long userId, String name) {
+    RowMapper<StockIngredientInfo> rowMapper = (rs, rownum) ->
+        new StockIngredientInfo(rs.getLong("id"),
+            rs.getString("ingredientsname"),
+            rs.getString("type"),
+            rs.getString("category"),
+            rs.getBoolean("isactive"),
+            rs.getLong("quantity"),
+            rs.getString("image"));
 
-        return jdbcTemplate.query(String.format(findStockIngredientsByName, userId, name + "%"), rowMapper);
-    }
+    return jdbcTemplate.query(String.format(findStockIngredientsByName, userId, name + "%"),
+        rowMapper);
+  }
 
-    @Override
-    public List<StockIngredient> findExistingStockIngredientById(long userId, long ingredientId) {
-        RowMapper<StockIngredient> rowMapper = (rs, rownum) ->
-                new StockIngredient(rs.getLong("id"),
-                        rs.getLong("userid"),
-                        rs.getLong("ingredientid"),
-                        rs.getLong("quantity"));
+  @Override
+  public List<StockIngredient> findExistingStockIngredientById(long userId, long ingredientId) {
+    RowMapper<StockIngredient> rowMapper = (rs, rownum) ->
+        new StockIngredient(rs.getLong("id"),
+            rs.getLong("userid"),
+            rs.getLong("ingredientid"),
+            rs.getLong("quantity"));
 
-        return jdbcTemplate.query(String.format(findExistingStockIngredientById, userId, ingredientId), rowMapper);
-    }
+    return jdbcTemplate.query(String.format(findExistingStockIngredientById, userId, ingredientId),
+        rowMapper);
+  }
 
-    @Override
-    public List<StockIngredientInfo> findStockIngredientsFiltered(long userId, String type, String category) {
-        RowMapper<StockIngredientInfo> rowMapper = (rs, rownum) ->
-                new StockIngredientInfo(rs.getLong("id"),
-                        rs.getString("ingredientsname"),
-                        rs.getString("type"),
-                        rs.getString("category"),
-                        rs.getBoolean("isactive"),
-                        rs.getLong("quantity"),
-                        rs.getString("image"));
+  @Override
+  public List<StockIngredientInfo> findStockIngredientsFiltered(long userId, String type,
+                                                                String category) {
+    RowMapper<StockIngredientInfo> rowMapper = (rs, rownum) ->
+        new StockIngredientInfo(rs.getLong("id"),
+            rs.getString("ingredientsname"),
+            rs.getString("type"),
+            rs.getString("category"),
+            rs.getBoolean("isactive"),
+            rs.getLong("quantity"),
+            rs.getString("image"));
 
-        return jdbcTemplate.query(String.format(findStockIngredientsFiltered, userId, type, category), rowMapper);
-    }
+    return jdbcTemplate.query(String.format(findStockIngredientsFiltered, userId, type, category),
+        rowMapper);
+  }
 
 
 }

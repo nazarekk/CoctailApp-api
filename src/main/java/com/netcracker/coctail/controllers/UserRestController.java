@@ -4,10 +4,17 @@ import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.exceptions.DuplicatePasswordException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
 
-import com.netcracker.coctail.model.*;
 import com.netcracker.coctail.model.DishRecipe;
+import com.netcracker.coctail.model.FriendUser;
+import com.netcracker.coctail.model.StockIngredientInfo;
+import com.netcracker.coctail.model.StockIngredientOperations;
+import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.model.UserInfo;
+import com.netcracker.coctail.model.UserPasswords;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
+import com.netcracker.coctail.service.PersonalStockService;
+import com.netcracker.coctail.service.RecipeService;
 import com.netcracker.coctail.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -36,6 +43,7 @@ public class UserRestController {
   private FriendlistService friendlistService;
   private PasswordEncoder passwordEncoder;
   private RecipeService recipeService;
+  private PersonalStockService personalStockService;
 
   @Autowired
   @Lazy
@@ -44,13 +52,15 @@ public class UserRestController {
                             UserDao userDao,
                             FriendlistService friendlistService,
                             PasswordEncoder passwordEncoder,
-                            RecipeService recipeService) {
+                            RecipeService recipeService,
+                            PersonalStockService personalStockService) {
     this.userService = userService;
     this.jwtTokenProvider = jwtTokenProvider;
     this.userDao = userDao;
     this.friendlistService = friendlistService;
     this.passwordEncoder = passwordEncoder;
     this.recipeService = recipeService;
+    this.personalStockService = personalStockService;
   }
 
   @GetMapping(value = "{id}")
@@ -177,16 +187,9 @@ public class UserRestController {
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
-    @DeleteMapping("remove/{friendid}")
-    public void removeFromFriends(
-            @PathVariable(name = "friendid") long friendid,
-            HttpServletRequest request) {
-        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        friendlistService.removeFriend(ownerEmail, friendid);
-    }
-
     @PostMapping(value = "stock/ingredients")
-    public void addIngredient(@RequestHeader("Authorization") String token, @RequestBody StockIngredientOperations stockIngredientOperations) {
+    public void addIngredient(@RequestHeader("Authorization") String token, @RequestBody
+        StockIngredientOperations stockIngredientOperations) {
         long userId = personalStockService.getOwnerIdByToken(token);
         personalStockService.addIngredientToStock(userId, stockIngredientOperations);
     }
