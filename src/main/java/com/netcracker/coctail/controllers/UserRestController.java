@@ -131,25 +131,34 @@ public class UserRestController {
     }
 
     @PostMapping(value = "stock/ingredients")
-    public void addIngredient(@RequestHeader("Authorization") String token, @RequestBody StockIngredientOperations stockIngredientOperations) {
+    public ResponseEntity addIngredient(@RequestHeader("Authorization") String token, @RequestBody StockIngredientOperations stockIngredientOperations) {
         long userId = personalStockService.getOwnerIdByToken(token);
-        personalStockService.addIngredientToStock(userId, stockIngredientOperations);
+        boolean result = personalStockService.addIngredientToStock(userId, stockIngredientOperations);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @DeleteMapping("stock/remove/{ingredientid}")
-    public void removeStockIngredient(
+    public ResponseEntity removeStockIngredient(
             @RequestHeader("Authorization") String token,
             @PathVariable(name = "ingredientid") long ingredientId) {
         long userId = personalStockService.getOwnerIdByToken(token);
-        personalStockService.removeIngredientFromStock(userId, ingredientId);
+        boolean result = personalStockService.removeIngredientFromStock(userId, ingredientId);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PatchMapping(value = "stock/edit")
-    public void editStockIngredient(
+    public ResponseEntity editStockIngredient(
             @RequestHeader("Authorization") String token,
             @RequestBody StockIngredientOperations stockIngredientOperations) {
         long userId = personalStockService.getOwnerIdByToken(token);
-        personalStockService.editIngredient(userId, stockIngredientOperations);
+        boolean result = personalStockService.editIngredient(userId, stockIngredientOperations);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "stock/my")

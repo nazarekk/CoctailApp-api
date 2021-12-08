@@ -25,36 +25,41 @@ public class PersonalStockServiceImp implements PersonalStockService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public void addIngredientToStock(long userId, StockIngredientOperations stockIngredientOperations) {
+    public boolean addIngredientToStock(long userId, StockIngredientOperations stockIngredientOperations) {
         long ingredientId = stockIngredientOperations.getIngredientId();
 
         if (stockIngredientDao.findExistingStockIngredientById(userId, ingredientId).isEmpty()) {
             stockIngredientDao.addIngredientToStock(userId, stockIngredientOperations);
+            return true;
         } else {
-            log.info("The user with id " + userId + " has already ingredient with id " + ingredientId + " in stock");
-            throw new UserAlreadyHasStockIngredient();
+            log.info("User with id " + userId + " has already ingredient with id " + ingredientId + " in stock");
+            return false;
         }
     }
 
     @Override
-    public void editIngredient(long userId, StockIngredientOperations stockIngredientOperations) {
+    public boolean editIngredient(long userId, StockIngredientOperations stockIngredientOperations) {
         long ingredientId = stockIngredientOperations.getIngredientId();
         List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
         if (stockIngredients.isEmpty()) {
-            throw new UserDoesNotHaveSuchIngredient();
+            log.info("User with id " + userId + " doesn't have ingredient with id " + ingredientId);
+            return false;
         } else {
             stockIngredientDao.editStockIngredient(stockIngredients.get(0).getId(),
                     stockIngredientOperations.getQuantity());
+            return true;
         }
     }
 
     @Override
-    public void removeIngredientFromStock(long userId, long ingredientId) {
+    public boolean removeIngredientFromStock(long userId, long ingredientId) {
         List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
         if (stockIngredients.isEmpty()) {
-            throw new UserDoesNotHaveSuchIngredient();
+            log.info("User with id " + userId + " doesn't have ingredient with id " + ingredientId);
+            return false;
         } else {
             stockIngredientDao.removeIngredientFromStock(stockIngredients.get(0).getId());
+            return true;
         }
     }
 
@@ -76,8 +81,7 @@ public class PersonalStockServiceImp implements PersonalStockService {
 
     @Override
     public List<StockIngredientInfo> getStockIngredientsFiltered(long userId, String type, String category) {
-
-        return null;
+        return stockIngredientDao.findStockIngredientsFiltered(userId, type, category);
     }
 
 }

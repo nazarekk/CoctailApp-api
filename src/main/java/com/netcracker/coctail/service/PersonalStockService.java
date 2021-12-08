@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface PersonalStockService {
 
-    void addIngredientToStock(long userId, StockIngredientOperations stockIngredientOperations);
-    void editIngredient(long userId, StockIngredientOperations stockIngredientOperations);
-    void removeIngredientFromStock(long userId, long ingredientId);
+    boolean addIngredientToStock(long userId, StockIngredientOperations stockIngredientOperations);
+    boolean editIngredient(long userId, StockIngredientOperations stockIngredientOperations);
+    boolean removeIngredientFromStock(long userId, long ingredientId);
     long getOwnerIdByToken(String token);
     List<StockIngredientInfo> getStockIngredientsByName(long userId, String name);
     List<StockIngredient> getExistingStockIngredientById(long userId, long ingredientId);
