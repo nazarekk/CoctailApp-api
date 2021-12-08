@@ -189,12 +189,19 @@ public class RecipeDaoImp implements RecipeDao {
 
     @Override
     public void createRecipe(CreateRecipe recipe) {
+        String link;
+        if (recipe.getImage() == null) {
+            link =
+                "https://static.thenounproject.com/png/1738131-200.png";
+        } else {
+            link = recipe.getImage();
+        }
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("name", recipe.getName())
                 .addValue("alcohol", recipe.getAlcohol().name())
                 .addValue("sugarless", recipe.isSugarless())
                 .addValue("isActive", recipe.isActive())
-                .addValue("image", recipe.getImage())
+                .addValue("image", link)
                 .addValue("recipe", recipe.getRecipe())
                 .addValue("rating", 0);
         jdbcTemplate.update(createRecipe, param);

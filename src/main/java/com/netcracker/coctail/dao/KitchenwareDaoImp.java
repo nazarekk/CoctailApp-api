@@ -48,12 +48,19 @@ public class KitchenwareDaoImp implements KitchenwareDao {
 
     @Override
     public void create(CreateKitchenware kitchenware) {
+      String link;
+      if (kitchenware.getImage() == null) {
+        link =
+            "https://static.thenounproject.com/png/1738131-200.png";
+      } else {
+        link = kitchenware.getImage();
+      }
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("kitchenwarename", kitchenware.getName())
                 .addValue("type", kitchenware.getType())
                 .addValue("category", kitchenware.getCategory())
                 .addValue("isActive", kitchenware.isActive())
-                .addValue("image", kitchenware.getImage());
+                .addValue("image", link);
         jdbcTemplate.update(createKitchenware, param);
     }
 
