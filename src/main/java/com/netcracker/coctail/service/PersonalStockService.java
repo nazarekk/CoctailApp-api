@@ -1,6 +1,5 @@
 package com.netcracker.coctail.service;
 
-import com.netcracker.coctail.model.Kitchenware;
 import com.netcracker.coctail.model.StockIngredientInfo;
 import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.StockIngredient;
@@ -14,6 +13,6 @@ public interface PersonalStockService {
     void removeIngredientFromStock(long userId, long ingredientId);
     long getOwnerIdByToken(String token);
     List<StockIngredientInfo> getStockIngredientsByName(long userId, String name);
-    List<StockIngredient> findExistingStockIngredientById(long userId, long ingredientId);
-
+    List<StockIngredient> getExistingStockIngredientById(long userId, long ingredientId);
+    List<StockIngredientInfo> getStockIngredientsFiltered(long userId, String type, String category);
 }

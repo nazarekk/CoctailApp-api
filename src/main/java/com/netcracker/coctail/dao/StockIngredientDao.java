@@ -11,6 +11,7 @@ public interface StockIngredientDao {
     void addIngredientToStock(long id, StockIngredientOperations stockIngredientOperations);
     void editStockIngredient(long id, long quantity);
     void removeIngredientFromStock(long id);
-    List<StockIngredientInfo> findStockIngredientsByName(long ownerId, String name);
-    List<StockIngredient> findExistingStockIngredientById(long ownerId, long ingredientId);
+    List<StockIngredientInfo> findStockIngredientsByName(long userId, String name);
+    List<StockIngredient> findExistingStockIngredientById(long userId, long ingredientId);
+    List<StockIngredientInfo> findStockIngredientsFiltered(long userId, String type, String category);
 }

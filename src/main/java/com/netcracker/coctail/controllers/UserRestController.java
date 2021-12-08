@@ -163,10 +163,22 @@ public class UserRestController {
     }
 
     @GetMapping("stock/search")
-    public ResponseEntity<List<StockIngredientInfo>> findStockIngredientsByName(@RequestHeader("Authorization") String token,
-                                                                                @RequestParam String name) {
+    public ResponseEntity<List<StockIngredientInfo>> getStockIngredientsByName(@RequestHeader("Authorization") String token,
+                                                                               @RequestParam String name) {
         long userId = personalStockService.getOwnerIdByToken(token);
         List<StockIngredientInfo> stockIngredients = personalStockService.getStockIngredientsByName(userId, name);
+        if (stockIngredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(stockIngredients, HttpStatus.OK);
+    }
+
+    @GetMapping("stock/filter")
+    public ResponseEntity<List<StockIngredientInfo>> getStockIngredientsFiltered(
+            @RequestHeader("Authorization") String token, @RequestParam String type,
+            @RequestParam String category) {
+        long userId = personalStockService.getOwnerIdByToken(token);
+        List<StockIngredientInfo> stockIngredients = personalStockService.getStockIngredientsFiltered(userId, type, category);
         if (stockIngredients.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

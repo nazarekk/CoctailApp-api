@@ -39,7 +39,7 @@ public class PersonalStockServiceImp implements PersonalStockService {
     @Override
     public void editIngredient(long userId, StockIngredientOperations stockIngredientOperations) {
         long ingredientId = stockIngredientOperations.getIngredientId();
-        List<StockIngredient> stockIngredients = findExistingStockIngredientById(userId, ingredientId);
+        List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
         if (stockIngredients.isEmpty()) {
             throw new UserDoesNotHaveSuchIngredient();
         } else {
@@ -50,7 +50,7 @@ public class PersonalStockServiceImp implements PersonalStockService {
 
     @Override
     public void removeIngredientFromStock(long userId, long ingredientId) {
-        List<StockIngredient> stockIngredients = findExistingStockIngredientById(userId, ingredientId);
+        List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
         if (stockIngredients.isEmpty()) {
             throw new UserDoesNotHaveSuchIngredient();
         } else {
@@ -70,8 +70,14 @@ public class PersonalStockServiceImp implements PersonalStockService {
     }
 
     @Override
-    public List<StockIngredient> findExistingStockIngredientById(long userId, long ingredientId) {
+    public List<StockIngredient> getExistingStockIngredientById(long userId, long ingredientId) {
         return stockIngredientDao.findExistingStockIngredientById(userId, ingredientId);
+    }
+
+    @Override
+    public List<StockIngredientInfo> getStockIngredientsFiltered(long userId, String type, String category) {
+
+        return null;
     }
 
 }
