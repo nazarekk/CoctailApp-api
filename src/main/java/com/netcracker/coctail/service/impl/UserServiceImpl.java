@@ -13,6 +13,8 @@ import com.netcracker.coctail.model.UserPersonalInfo;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,11 +30,24 @@ import java.util.List;
 @Data
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
-    private final RoleDao roleDao;
-    private final JdbcTemplate jdbcTemplate;
-    private final ForgotPasswordDao forgotPasswordDao;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private UserDao userDao;
+    private RoleDao roleDao;
+    private JdbcTemplate jdbcTemplate;
+    private ForgotPasswordDao forgotPasswordDao;
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    @Lazy
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao,
+                           JdbcTemplate jdbcTemplate,
+                           ForgotPasswordDao forgotPasswordDao,
+                           BCryptPasswordEncoder passwordEncoder) {
+        this.userDao = userDao;
+        this.roleDao = roleDao;
+        this.jdbcTemplate = jdbcTemplate;
+        this.forgotPasswordDao = forgotPasswordDao;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public User getUserByEmail(String email) {
         List<User> result = userDao.findUserByEmail(email);
@@ -41,6 +56,12 @@ public class UserServiceImpl implements UserService {
         }
         log.info("IN getUserByEmail - user: {} found by email: {}", result.get(0).getNickname(), result.get(0).getEmail());
         return result.get(0);
+    }
+
+    @Override
+    public List<Role> getRolesByEmail(String email) {
+        List<Role> name = roleDao.findRoleNameByEmail(email);
+        return name;
     }
 
     @Override
@@ -68,8 +89,8 @@ public class UserServiceImpl implements UserService {
             log.warn("Change user password by email: {}, not succsessful", user.getEmail());
             return null;
         } else {
-            log.warn("Change user password by email: {}, succsessfuly", user.getEmail());
-            return "Password changed succsessfuly";
+            log.warn("Change user password by email: {}, successfuly", user.getEmail());
+            return "Password changed successfuly";
         }
     }
 

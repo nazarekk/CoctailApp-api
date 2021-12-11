@@ -7,8 +7,10 @@ import com.netcracker.coctail.services.MailSender;
 import java.util.Collection;
 import java.util.UUID;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,16 +19,25 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Data
 @Component
+@Slf4j
+@Lazy
 @PropertySource("classpath:SQLscripts.properties")
 public class ModeratorDaoImp implements ModeratorDao {
 
-  private final NamedParameterJdbcTemplate jdbcTemplate;
-  private final BCryptPasswordEncoder passwordEncoder;
+  private NamedParameterJdbcTemplate jdbcTemplate;
+  private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  ModeratorDaoImp(PasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
+    this.jdbcTemplate = jdbcTemplate;
+    this.passwordEncoder = passwordEncoder;
+  }
+
   @Value("${moderatorCreation}")
   private String moderatorCreation;
   @Value("${ActivateModerator}")
@@ -41,6 +52,8 @@ public class ModeratorDaoImp implements ModeratorDao {
   private String SearchModerator;
   @Value("${FilterModerator}")
   private String FilterModerator;
+  @Value("${front_link}")
+  private String front_link;
 
   @Autowired
   private MailSender mailSender;
@@ -48,8 +61,9 @@ public class ModeratorDaoImp implements ModeratorDao {
   @Async
   public void send(String email, String code) {
     String message =
-        "Hello! To finish registration visit http://localhost:8080/api/moderators/activation/'%s'";
-    mailSender.send(email, "verification", String.format(message, code));
+        "Hello! To finish registration visit " + front_link
+            + "/moderator/verification?verificationCode=" + code;
+    mailSender.send(email, "verification", message);
   }
 
   @Override
@@ -70,9 +84,10 @@ public class ModeratorDaoImp implements ModeratorDao {
   @Override
   public void activateModerator(ActivateModerator moderator) {
     KeyHolder holder = new GeneratedKeyHolder();
+    log.info("Moderator " + moderator.getNickname() + " activated");
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("roleid", 4)
-        .addValue("activation", moderator.getCode())
+        .addValue("activation", moderator.getVerificationCode())
         .addValue("nickname", moderator.getNickname())
         .addValue("password", passwordEncoder.encode(moderator.getPassword()));
     jdbcTemplate.update(moderatorActivation, param, holder);

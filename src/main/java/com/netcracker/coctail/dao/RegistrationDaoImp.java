@@ -1,11 +1,13 @@
 package com.netcracker.coctail.dao;
 
 
+import com.netcracker.coctail.model.ActivateUser;
 import com.netcracker.coctail.model.CreateUser;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import com.netcracker.coctail.services.MailSender;
@@ -24,11 +26,18 @@ import java.util.UUID;
 @Data
 @Slf4j
 @Component
+@Lazy
 @PropertySource("classpath:SQLscripts.properties")
 public class RegistrationDaoImp implements RegistrationDao {
 
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private PasswordEncoder passwordEncoder;
+    private NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Autowired
+    RegistrationDaoImp(PasswordEncoder passwordEncoder, NamedParameterJdbcTemplate jdbcTemplate) {
+        this.passwordEncoder = passwordEncoder;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Autowired
     private MailSender mailSender;
@@ -44,8 +53,7 @@ public class RegistrationDaoImp implements RegistrationDao {
     public void send(String email, String code) {
         String message = "Hello! To finish registration visit "
             + front_link + "/registration/verification?code=" + code;
-        mailSender.send(email, "verification", String.format(message, code));
-
+        mailSender.send(email, "verification", message);
     }
 
     @Override
@@ -62,10 +70,11 @@ public class RegistrationDaoImp implements RegistrationDao {
     }
 
     @Override
-    public int activateUser(String code) {
+    public int activateUser(ActivateUser activateUser) {
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("roleid", 2)
-                .addValue("activation", code);
+                .addValue("activation", activateUser.getVerificationCode())
+                .addValue("nickname", activateUser.getNickname());
         return jdbcTemplate.update(userActivation, param);
     }
 }

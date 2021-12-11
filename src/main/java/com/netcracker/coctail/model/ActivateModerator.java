@@ -6,5 +6,5 @@ import lombok.Data;
 public class ActivateModerator {
   private final String password;
   private final String nickname;
-  private final String code;
+  private final String verificationCode;
 }

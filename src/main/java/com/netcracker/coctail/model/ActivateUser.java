@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ActivateUser {
-    private final String email;
-    private int roleId;
+    private final String nickname;
+    private final String verificationCode;
 }
