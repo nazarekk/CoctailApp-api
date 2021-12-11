@@ -3,7 +3,11 @@ package com.netcracker.coctail.service.impl;
 import com.netcracker.coctail.dao.EventDao;
 import com.netcracker.coctail.dao.FriendlistDao;
 import com.netcracker.coctail.dao.RecipeDao;
-import com.netcracker.coctail.model.*;
+
+import com.netcracker.coctail.model.CreateEvent;
+import com.netcracker.coctail.model.Event;
+import com.netcracker.coctail.model.EventInfo;
+import com.netcracker.coctail.model.Recipe;
 import com.netcracker.coctail.service.EventService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

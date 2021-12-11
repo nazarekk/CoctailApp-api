@@ -1,6 +1,10 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.*;
+import com.netcracker.coctail.model.Event;
+import com.netcracker.coctail.model.Recipe;
+import com.netcracker.coctail.model.CreateEvent;
+import com.netcracker.coctail.model.EventUser;
+import com.netcracker.coctail.model.Alcohol;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
