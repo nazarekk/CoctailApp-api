@@ -99,26 +99,26 @@ public class UserRestController {
     }
 
     @PutMapping(value = "settings/edit")
-    public ResponseEntity editMyPersonalData(HttpServletRequest request,
-                                             @RequestBody @Valid UserPersonalInfo user) {
+    public ResponseEntity<?> editMyPersonalData(HttpServletRequest request,
+                                                @RequestBody @Valid UserPersonalInfo user) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         userService.changeInfo(email, user);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(value = "settings")
-    public ResponseEntity changePassword(HttpServletRequest request,
-                                         @RequestBody @Valid UserPasswords userPasswords) {
+    public ResponseEntity<?> changePassword(HttpServletRequest request,
+                                            @RequestBody @Valid UserPasswords userPasswords) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         User user = userService.getUserByEmail(email);
         userService.checkPassword(user, userPasswords);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "settings/edit")
+    @GetMapping("settings/edit")
     public ResponseEntity<UserPersonalInfo> getInformationInSettings(HttpServletRequest request) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        return new ResponseEntity(userDao.getInfo(email), HttpStatus.OK);
+        return new ResponseEntity<>(userDao.getInfo(email), HttpStatus.OK);
     }
 
 }

@@ -3,13 +3,16 @@ package com.netcracker.coctail.config;
 import com.netcracker.coctail.security.jwt.JwtAuthenticationEntryPoint;
 import com.netcracker.coctail.security.jwt.JwtConfigurer;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
+
 import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -29,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     private static final String MODERACTIVATION_ENDPOINT = "/api/moderators/activation**";
     private static final String USERACTIVATION_ENDPOINT = "/api/users/activation**";
     private static final String AUTHENTICAL_ENDPOINT = "/api/auth/**";
+    private static final String REFRESH_ENDPOINT = "/api/auth/refresh-token";
     private static final String USER_ENDPOINT = "/api/users/**";
     private static final String REG_ENDPOINT = "/api/users";
     //private static final String front_link = "${front_link}";
@@ -50,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-            .cors().configurationSource(corsConfigurationSource())
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
@@ -60,13 +64,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
                 .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
                 .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
+                .antMatchers(REFRESH_ENDPOINT).permitAll()
                 .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
                 .anyRequest().authenticated()
-                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).
+                and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
+                and().apply(new JwtConfigurer(jwtTokenProvider));
 
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

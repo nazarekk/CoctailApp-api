@@ -54,6 +54,7 @@ public class JwtTokenProvider {
 
         return doGenerateToken(claims, email);
     }
+
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -67,17 +68,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
-        Date validity = new Date(System.currentTimeMillis() + refreshExpirationDateInMs);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
-    }
 
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getEmail(token));
@@ -85,14 +75,14 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+            return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(7);
         }
         return null;
     }
@@ -111,4 +101,4 @@ public class JwtTokenProvider {
             throw ex;
         }
     }
-    }
+}
