@@ -281,6 +281,33 @@ public class UserRestController {
         }
     }
 
+    @GetMapping(value = "events/{id}")
+    public ResponseEntity<EventInfo> eventInfo(@PathVariable(name = "id") int id) {
+        EventInfo result = eventService.eventInfo(id);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "events/list")
+    public ResponseEntity<List<Event>> eventsList() {
+        List<Event> events = eventService.getEventsByName("");
+        if (events.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("events/filter")
+    public ResponseEntity<List<Event>> getRecipesFiltered(HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        List<Event> events = eventService.getEventsFiltered(ownerEmail);
+        if (events.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
 
     @PostMapping(value = "events")
     public ResponseEntity<Integer> createEvent(@RequestBody CreateEvent event, HttpServletRequest request) {
@@ -292,5 +319,67 @@ public class UserRestController {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
+
+    @PostMapping(value = "join/{id}")
+    public ResponseEntity joinEvent(@PathVariable(name = "id") int id, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (eventService.joinEvent(ownerEmail, id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @PostMapping(value = "events/{id}/recipe")
+    public ResponseEntity addRecipeToEvent(@PathVariable(name = "id") int id, @RequestParam String name, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (eventService.addRecipeToEvent(id, name, ownerEmail)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @DeleteMapping(value = "leave/{id}")
+    public ResponseEntity leaveEvent(@PathVariable(name = "id") int id, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (eventService.leaveEvent(ownerEmail, id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @DeleteMapping(value = "events/{id}/recipe")
+    public ResponseEntity removeRecipeFromEvent(@PathVariable(name = "id") int id, @RequestParam String name, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (eventService.removeRecipeFromEvent(id, name, ownerEmail)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @PatchMapping(value = "events/{id}")
+    public ResponseEntity editEvent(@RequestBody CreateEvent event, @PathVariable(name = "id") int id, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (eventService.editEvent(ownerEmail, event, id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @DeleteMapping(value = "events/{id}")
+    public ResponseEntity declineEvent(@PathVariable(name = "id") int id, HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        if (eventService.declineEvent(ownerEmail, id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+
 
 }

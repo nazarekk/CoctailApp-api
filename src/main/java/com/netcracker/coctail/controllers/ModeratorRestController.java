@@ -138,17 +138,17 @@ public class ModeratorRestController {
 
   @PostMapping(value = "kitchenware")
   public ResponseEntity addKitchenware(@RequestBody CreateKitchenware kitchenware) {
-    Boolean ret = kitchenwareService.addKitchenware(kitchenware);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
+    Boolean result = kitchenwareService.addKitchenware(kitchenware);
+    return result == Boolean.TRUE
+        ? new ResponseEntity(result, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
   @PutMapping(value = "kitchenware")
   public ResponseEntity editKitchenware(@RequestBody Kitchenware kitchenware) {
-    Boolean ret = kitchenwareService.editKitchenware(kitchenware);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
+    Boolean result = kitchenwareService.editKitchenware(kitchenware);
+    return result == Boolean.TRUE
+        ? new ResponseEntity(result, HttpStatus.OK) :
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
