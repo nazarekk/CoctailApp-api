@@ -10,6 +10,7 @@ import com.netcracker.coctail.model.Kitchenware;
 import com.netcracker.coctail.model.Recipe;
 import com.netcracker.coctail.service.IngredientService;
 import com.netcracker.coctail.service.KitchenwareService;
+import com.netcracker.coctail.service.PersonalStockService;
 import com.netcracker.coctail.service.RecipeService;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -28,136 +29,137 @@ public class ModeratorRestController {
     private final IngredientService ingredientService;
     private final KitchenwareService kitchenwareService;
     private final RecipeService recipeService;
+    private final PersonalStockService personalStockService;
 
-  @PostMapping("activation")
-  public String activateModerator(@RequestBody ActivateModerator moderator) {
-    createModeratorDao.activateModerator(moderator);
-    return "Account is activated!";
-  }
-
-  @GetMapping("ingredients")
-  public ResponseEntity<List<Ingredient>> getIngredientsByName(@RequestParam String name) {
-    List<Ingredient> ingredients = ingredientService.getIngredientByName(name);
-    if (ingredients.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping("activation")
+    public String activateModerator(@RequestBody ActivateModerator moderator) {
+        createModeratorDao.activateModerator(moderator);
+        return "Account is activated!";
     }
-    return new ResponseEntity<>(ingredients, HttpStatus.OK);
-  }
 
-  @GetMapping("ingredients/filter")
-  public ResponseEntity<List<Ingredient>> getIngredientsFiltered(
-      @RequestParam String type,
-      @RequestParam String category,
-      @RequestParam String active) {
-    List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category, active);
-    if (ingredients.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("ingredients")
+    public ResponseEntity<List<Ingredient>> getIngredientsByName(@RequestParam String name) {
+        List<Ingredient> ingredients = ingredientService.getIngredientByName(name);
+        if (ingredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(ingredients, HttpStatus.OK);
     }
-    return new ResponseEntity<>(ingredients, HttpStatus.OK);
-  }
 
-  @GetMapping("ingredients/list")
-  public ResponseEntity<List<Ingredient>> ingredientsList() {
-    List<Ingredient> ingredients = ingredientService.getIngredientByName("");
-    if (ingredients.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("ingredients/filter")
+    public ResponseEntity<List<Ingredient>> getIngredientsFiltered(
+            @RequestParam String type,
+            @RequestParam String category,
+            @RequestParam String active) {
+        List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category, active);
+        if (ingredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(ingredients, HttpStatus.OK);
     }
-    return new ResponseEntity<>(ingredients, HttpStatus.OK);
-  }
 
-  @GetMapping(value = "ingredients/{id}")
-  public ResponseEntity<Ingredient> getIngredientById(@PathVariable(name = "id") long id) {
-    Ingredient result = ingredientService.getIngredientById(id);
-    if (result == null) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("ingredients/list")
+    public ResponseEntity<List<Ingredient>> ingredientsList() {
+        List<Ingredient> ingredients = ingredientService.getIngredientByName("");
+        if (ingredients.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(ingredients, HttpStatus.OK);
     }
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
 
-  @PostMapping(value = "ingredients")
-  public ResponseEntity addIngredient(@RequestBody CreateIngredient ingredient) {
-    Boolean ret = ingredientService.addIngredient(ingredient);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-  }
-
-  @PutMapping(value = "ingredients")
-  public ResponseEntity editIngredient(@RequestBody Ingredient ingredient) {
-    Boolean ret = ingredientService.editIngredient(ingredient);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity(HttpStatus.NOT_MODIFIED);
-  }
-
-  @DeleteMapping(value = "ingredients/{id}")
-  public ResponseEntity removeIngredient(@PathVariable(name = "id") long id) {
-    return ingredientService.removeIngredient(id) == Boolean.TRUE
-        ? new ResponseEntity(ingredientService.removeIngredient(id), HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-  }
-
-  @GetMapping("kitchenware")
-  public ResponseEntity<List<Kitchenware>> getKitchenwareByName(@RequestParam String name) {
-    List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareByName(name);
-    if (kitchenware.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping(value = "ingredients/{id}")
+    public ResponseEntity<Ingredient> getIngredientById(@PathVariable(name = "id") long id) {
+        Ingredient result = ingredientService.getIngredientById(id);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    return new ResponseEntity<>(kitchenware, HttpStatus.OK);
-  }
 
-  @GetMapping("kitchenware/filter")
-  public ResponseEntity<List<Kitchenware>> getKitchenwareFiltered(
-      @RequestParam String type,
-      @RequestParam String category,
-      @RequestParam String active) {
-    List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareFiltered(type, category, active);
-    if (kitchenware.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping(value = "ingredients")
+    public ResponseEntity addIngredient(@RequestBody CreateIngredient ingredient) {
+        Boolean ret = ingredientService.addIngredient(ingredient);
+        return ret == Boolean.TRUE
+                ? new ResponseEntity(ret, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
-    return new ResponseEntity<>(kitchenware, HttpStatus.OK);
-  }
 
-  @GetMapping("kitchenware/list")
-  public ResponseEntity<List<Kitchenware>> kitchenwareList() {
-    List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareByName("");
-    if (kitchenware.isEmpty()) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PutMapping(value = "ingredients")
+    public ResponseEntity editIngredient(@RequestBody Ingredient ingredient) {
+        Boolean ret = ingredientService.editIngredient(ingredient);
+        return ret == Boolean.TRUE
+                ? new ResponseEntity(ret, HttpStatus.OK) :
+                new ResponseEntity(HttpStatus.NOT_MODIFIED);
     }
-    return new ResponseEntity<>(kitchenware, HttpStatus.OK);
-  }
 
-  @GetMapping(value = "kitchenware/{id}")
-  public ResponseEntity<Kitchenware> getKitchenwareById(@PathVariable(name = "id") long id) {
-    Kitchenware result = kitchenwareService.getKitchenwareById(id);
-    if (result == null) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping(value = "ingredients/{id}")
+    public ResponseEntity removeIngredient(@PathVariable(name = "id") long id) {
+        return ingredientService.removeIngredient(id) == Boolean.TRUE
+                ? new ResponseEntity(ingredientService.removeIngredient(id), HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
-    return new ResponseEntity<>(result, HttpStatus.OK);
-  }
 
-  @PostMapping(value = "kitchenware")
-  public ResponseEntity addKitchenware(@RequestBody CreateKitchenware kitchenware) {
-    Boolean ret = kitchenwareService.addKitchenware(kitchenware);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-  }
+    @GetMapping("kitchenware")
+    public ResponseEntity<List<Kitchenware>> getKitchenwareByName(@RequestParam String name) {
+        List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareByName(name);
+        if (kitchenware.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(kitchenware, HttpStatus.OK);
+    }
 
-  @PutMapping(value = "kitchenware")
-  public ResponseEntity editKitchenware(@RequestBody Kitchenware kitchenware) {
-    Boolean ret = kitchenwareService.editKitchenware(kitchenware);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-  }
+    @GetMapping("kitchenware/filter")
+    public ResponseEntity<List<Kitchenware>> getKitchenwareFiltered(
+            @RequestParam String type,
+            @RequestParam String category,
+            @RequestParam String active) {
+        List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareFiltered(type, category, active);
+        if (kitchenware.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(kitchenware, HttpStatus.OK);
+    }
 
-  @DeleteMapping(value = "kitchenware/{id}")
-  public ResponseEntity removeKitchenware(@PathVariable(name = "id") long id) {
-    return kitchenwareService.removeKitchenware(id) == Boolean.TRUE
-        ? new ResponseEntity(kitchenwareService.removeKitchenware(id), HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
-  }
+    @GetMapping("kitchenware/list")
+    public ResponseEntity<List<Kitchenware>> kitchenwareList() {
+        List<Kitchenware> kitchenware = kitchenwareService.getKitchenwareByName("");
+        if (kitchenware.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(kitchenware, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "kitchenware/{id}")
+    public ResponseEntity<Kitchenware> getKitchenwareById(@PathVariable(name = "id") long id) {
+        Kitchenware result = kitchenwareService.getKitchenwareById(id);
+        if (result == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "kitchenware")
+    public ResponseEntity addKitchenware(@RequestBody CreateKitchenware kitchenware) {
+        Boolean ret = kitchenwareService.addKitchenware(kitchenware);
+        return ret == Boolean.TRUE
+                ? new ResponseEntity(ret, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @PutMapping(value = "kitchenware")
+    public ResponseEntity editKitchenware(@RequestBody Kitchenware kitchenware) {
+        Boolean ret = kitchenwareService.editKitchenware(kitchenware);
+        return ret == Boolean.TRUE
+                ? new ResponseEntity(ret, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @DeleteMapping(value = "kitchenware/{id}")
+    public ResponseEntity removeKitchenware(@PathVariable(name = "id") long id) {
+        return kitchenwareService.removeKitchenware(id) == Boolean.TRUE
+                ? new ResponseEntity(kitchenwareService.removeKitchenware(id), HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
 
     @PostMapping(value = "recipe")
     public ResponseEntity<Integer> addRecipe(@RequestBody CreateRecipe recipe) {
@@ -221,6 +223,25 @@ public class ModeratorRestController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+    }
+
+    @DeleteMapping("stock/remove/{userid}/{ingredientid}")
+    public ResponseEntity removeStockIngredient(
+            @PathVariable(name = "userid") int userId, @PathVariable(name = "ingredientid") long ingredientId) {
+        boolean result = personalStockService.removeIngredientFromStock(userId, ingredientId);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping(value = "stock/edit/{userid}")
+    public ResponseEntity editStockIngredient(
+            @PathVariable(name = "userid") int userId, @RequestParam long ingredientId,
+            @RequestParam long quantity) {
+        boolean result = personalStockService.editIngredient(userId, ingredientId, quantity);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
