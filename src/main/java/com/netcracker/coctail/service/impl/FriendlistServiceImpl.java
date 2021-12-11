@@ -61,7 +61,7 @@ public class FriendlistServiceImpl implements FriendlistService {
   }
 
   @Override
-  public void addFriend(String ownerEmail, long friendId) {
+  public Boolean addFriend(String ownerEmail, long friendId) {
 
     long notFriends = status(Id.NONE.getStatus());
     long confirm = status(Id.CONFIRM.getStatus());
@@ -74,6 +74,7 @@ public class FriendlistServiceImpl implements FriendlistService {
     } else if (check(ownerId, friendId, notFriends)) {
       friendlistDao.editFriendlist(ownerId, friendId, waiting);
       friendlistDao.editFriendlist(friendId, ownerId, confirm);
+      return Boolean.TRUE;
     } else if (check(ownerId, friendId, confirm)) {
       throw new UserAlreadyAwaitsYourResponseException();
     } else if (check(ownerId, friendId, waiting)) {
@@ -81,11 +82,11 @@ public class FriendlistServiceImpl implements FriendlistService {
     } else {
       throw new AlreadyFriendsException();
     }
-
+    return Boolean.FALSE;
   }
 
   @Override
-  public void acceptFriendRequest(String ownerEmail, long friendId) {
+  public Boolean acceptFriendRequest(String ownerEmail, long friendId) {
 
     long confirm = status(Id.CONFIRM.getStatus());
     long friends = status(Id.FRIENDS.getStatus());
@@ -97,11 +98,12 @@ public class FriendlistServiceImpl implements FriendlistService {
     } else {
       friendlistDao.editFriendlist(ownerId, friendId, friends);
       friendlistDao.editFriendlist(friendId, ownerId, friends);
+      return Boolean.TRUE;
     }
   }
 
   @Override
-  public void declineFriendRequest(String ownerEmail, long friendId) {
+  public Boolean declineFriendRequest(String ownerEmail, long friendId) {
 
     long confirm = status(Id.CONFIRM.getStatus());
     long notFriends = status(Id.NONE.getStatus());
@@ -113,11 +115,12 @@ public class FriendlistServiceImpl implements FriendlistService {
     } else {
       friendlistDao.editFriendlist(ownerId, friendId, notFriends);
       friendlistDao.editFriendlist(friendId, ownerId, notFriends);
+      return Boolean.TRUE;
     }
   }
 
   @Override
-  public void subscribeToFriend(String ownerEmail, long friendId) {
+  public Boolean subscribeToFriend(String ownerEmail, long friendId) {
 
     long friends = status(Id.FRIENDS.getStatus());
     long subscribed = status(Id.SUBSCRIBED.getStatus());
@@ -128,16 +131,18 @@ public class FriendlistServiceImpl implements FriendlistService {
       throw new NotInFriendlistException();
     } else {
       friendlistDao.editFriendlist(ownerId, friendId, subscribed);
+      return Boolean.TRUE;
     }
   }
 
   @Override
-  public void removeFriend(String ownerEmail, long friendId) {
+  public Boolean removeFriend(String ownerEmail, long friendId) {
 
     long notFriends = status(Id.NONE.getStatus());
     long friends = status(Id.FRIENDS.getStatus());
-    long subscribed = status(Id.SUBSCRIBED.name());
+    long subscribed = status(Id.SUBSCRIBED.getStatus());
     long ownerId = friendlistDao.getOwnerId(ownerEmail);
+    log.info("trying to remove friendid " + friendId + "from ownerId " + ownerId);
 
     if (friendlistDao.findFriendlist(ownerId, friendId).isEmpty()
         || (!check(ownerId, friendId, friends) && !check(ownerId, friendId, subscribed))) {
@@ -145,6 +150,7 @@ public class FriendlistServiceImpl implements FriendlistService {
     } else {
       friendlistDao.editFriendlist(ownerId, friendId, notFriends);
       friendlistDao.editFriendlist(friendId, ownerId, notFriends);
+      return Boolean.TRUE;
     }
   }
 
@@ -171,7 +177,7 @@ public class FriendlistServiceImpl implements FriendlistService {
                 friendlistDao.findFriendlist(
                     ownerId, friendId).get(0).getStatusid()));
       }
-      log.info("added friend wth frienId " + friendId);
+      log.info("added friend wth friendId " + friendId);
     }
     return friends;
   }

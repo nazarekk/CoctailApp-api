@@ -21,58 +21,60 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
-    private final JwtTokenProvider jwtTokenProvider;
+  private final JwtTokenProvider jwtTokenProvider;
 
-    private static final String ADMIN_ENDPOINT = "/api/admin/**";
-    private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
-    private static final String MODERACTIVATION_ENDPOINT = "/api/moderators/activation**";
-    private static final String USERACTIVATION_ENDPOINT = "/api/users/activation**";
-    private static final String AUTHENTICAL_ENDPOINT = "/api/auth/login";
-    private static final String USER_ENDPOINT = "/api/users/**";
-    private static final String REG_ENDPOINT = "/api/users";
-    private static final String ALL_ENDPOINT = "/**";
-    //private static final String front_link = "${front_link}";
+  private static final String ADMIN_ENDPOINT = "/api/admin/**";
+  private static final String MODERATOR_ENDPOINT = "/api/moderators/**";
+  private static final String MODERACTIVATION_ENDPOINT = "/api/moderators/activation**";
+  private static final String USERACTIVATION_ENDPOINT = "/api/users/activation**";
+  private static final String AUTHENTICAL_ENDPOINT = "/api/auth/login";
+  private static final String USER_ENDPOINT = "/api/users/**";
+  private static final String REG_ENDPOINT = "/api/users";
+  private static final String ALL_ENDPOINT = "/**";
+  //private static final String front_link = "${front_link}";
 
-    @Autowired
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+  @Autowired
+  public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    this.jwtTokenProvider = jwtTokenProvider;
+  }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+  @Bean
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
-                .antMatchers(REG_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
-                .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
-                .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
-                .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
-                .antMatchers(ALL_ENDPOINT).permitAll()
-                .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED") // Баг: админ и модератор не имеют доступа
-                .anyRequest().authenticated()
-                .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
-    }
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable()
+        .cors().configurationSource(corsConfigurationSource())
+        .and()
+        .csrf().disable()
+        .authorizeRequests()
+        .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
+        .antMatchers(ALL_ENDPOINT).permitAll()
+        .antMatchers(REG_ENDPOINT).permitAll()
+        .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+        .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
+        .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
+        .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
+        .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
+        .antMatchers(USER_ENDPOINT).hasRole("MODERATOR")
+        .anyRequest().authenticated()
+        .and()
+        .apply(new JwtConfigurer(jwtTokenProvider));
+  }
+
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("*"));
+    configuration.addAllowedOrigin("*");
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
 }
