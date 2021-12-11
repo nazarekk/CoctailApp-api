@@ -1,11 +1,6 @@
 package com.netcracker.coctail.security.jwt;
 
-import com.netcracker.coctail.model.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Util class that provides methods for generation, validation, etc. of JWT token.
@@ -59,16 +52,12 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
 
-        return doGenerateToken(claims, email);
-    }
-
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject)
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -96,10 +85,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String authToken) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
-            if (claims.getBody().getExpiration().before(new Date(System.currentTimeMillis()))) {
-                return false;
-            }
-            return true;
+            return !claims.getBody().getExpiration().before(new Date(System.currentTimeMillis()));
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
             throw new BadCredentialsException("INVALID_CREDENTIALS", ex);
         } catch (ExpiredJwtException ex) {

@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,14 +34,14 @@ public class UserServiceImpl implements UserService {
     private RoleDao roleDao;
     private JdbcTemplate jdbcTemplate;
     private ForgotPasswordDao forgotPasswordDao;
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     @Lazy
     public UserServiceImpl(UserDao userDao, RoleDao roleDao,
                            JdbcTemplate jdbcTemplate,
                            ForgotPasswordDao forgotPasswordDao,
-                           BCryptPasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.jdbcTemplate = jdbcTemplate;
@@ -56,12 +56,6 @@ public class UserServiceImpl implements UserService {
         }
         log.info("IN getUserByEmail - user: {} found by email: {}", result.get(0).getNickname(), result.get(0).getEmail());
         return result.get(0);
-    }
-
-    @Override
-    public List<Role> getRolesByEmail(String email) {
-        List<Role> name = roleDao.findRoleNameByEmail(email);
-        return name;
     }
 
     @Override

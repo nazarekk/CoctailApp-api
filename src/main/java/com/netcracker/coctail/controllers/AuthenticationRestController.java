@@ -6,13 +6,11 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
 import com.netcracker.coctail.services.AuthService;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,14 +24,12 @@ import java.util.Map;
 @RequestMapping(value = "/api/auth/")
 @CrossOrigin(origins = "*")
 @Data
-@AllArgsConstructor
 public class AuthenticationRestController {
 
     private AuthenticationManager authenticationManager;
     private JwtTokenProvider jwtTokenProvider;
     private UserService userService;
     private ForgotPasswordDao forgotPasswordDao;
-    private BCryptPasswordEncoder passwordEncoder;
     private AuthService authService;
 
     @Autowired
@@ -41,11 +37,9 @@ public class AuthenticationRestController {
                                  JwtTokenProvider jwtTokenProvider,
                                  UserService userService,
                                  ForgotPasswordDao forgotPasswordDao,
-                                 BCryptPasswordEncoder passwordEncoder,
                                  AuthService authService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.forgotPasswordDao = forgotPasswordDao;
         this.authService = authService;

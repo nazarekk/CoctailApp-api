@@ -3,7 +3,9 @@ package com.netcracker.coctail.config;
 import com.netcracker.coctail.security.jwt.JwtAuthenticationEntryPoint;
 import com.netcracker.coctail.security.jwt.JwtConfigurer;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
+
 import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,10 +38,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     private static final String ALL_ENDPOINT = "/**";
     //private static final String front_link = "${front_link}";
 
-  @Autowired
-  public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
-    this.jwtTokenProvider = jwtTokenProvider;
-  }
+    @Autowired
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -68,9 +70,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
                 .antMatchers(USER_ENDPOINT).hasRole("MODERATOR")
                 .anyRequest().authenticated()
-                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).
-                and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-                and().apply(new JwtConfigurer(jwtTokenProvider));
+                .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().apply(new JwtConfigurer(jwtTokenProvider));
 
     }
 
