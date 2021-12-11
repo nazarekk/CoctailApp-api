@@ -2,7 +2,6 @@ package com.netcracker.coctail.service;
 
 import com.netcracker.coctail.model.CreateRecipe;
 import com.netcracker.coctail.model.DishRecipe;
-import com.netcracker.coctail.model.Event;
 import com.netcracker.coctail.model.Recipe;
 
 import java.util.List;

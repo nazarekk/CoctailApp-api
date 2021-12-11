@@ -5,13 +5,28 @@ import com.netcracker.coctail.dto.UserDto;
 import com.netcracker.coctail.exceptions.DuplicatePasswordException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
 
-import com.netcracker.coctail.model.*;
+
+import com.netcracker.coctail.model.DishRecipe;
+import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.model.UserInfo;
+import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.StockIngredientInfo;
+import com.netcracker.coctail.model.EventInfo;
+import com.netcracker.coctail.model.Event;
+import com.netcracker.coctail.model.StockIngredientOperations;
+import com.netcracker.coctail.model.FriendUser;
+import com.netcracker.coctail.model.CreateEvent;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
-import com.netcracker.coctail.service.*;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.netcracker.coctail.service.FriendlistService;
+import com.netcracker.coctail.service.PersonalStockService;
+import com.netcracker.coctail.service.RecipeService;
+import com.netcracker.coctail.service.UserService;
+import com.netcracker.coctail.service.EventService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -299,8 +314,8 @@ public class UserRestController {
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
-    @GetMapping("events/filter")
-    public ResponseEntity<List<Event>> getRecipesFiltered(HttpServletRequest request) {
+    @GetMapping(value = "events/filter")
+    public ResponseEntity<List<Event>> getEventsFiltered(HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
         List<Event> events = eventService.getEventsFiltered(ownerEmail);
         if (events.isEmpty()) {
