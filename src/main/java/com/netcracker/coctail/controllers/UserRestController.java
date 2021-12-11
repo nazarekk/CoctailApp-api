@@ -7,7 +7,6 @@ import com.netcracker.coctail.exceptions.InvalidPasswordException;
 import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.StockIngredientInfo;
-import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPasswords;
@@ -188,9 +187,9 @@ public class UserRestController {
     }
 
     @PostMapping(value = "stock/ingredients")
-    public ResponseEntity addIngredient(@RequestHeader("Authorization") String token, @RequestBody StockIngredientOperations stockIngredientOperations) {
+    public ResponseEntity addIngredient(@RequestHeader("Authorization") String token, @RequestParam long ingredientId, @RequestParam long quantity) {
         long userId = personalStockService.getOwnerIdByToken(token);
-        boolean result = personalStockService.addIngredientToStock(userId, stockIngredientOperations);
+        boolean result = personalStockService.addIngredientToStock(userId, ingredientId, quantity);
         return result == Boolean.TRUE
                 ? new ResponseEntity(HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -209,10 +208,9 @@ public class UserRestController {
 
     @PatchMapping(value = "stock/edit")
     public ResponseEntity editStockIngredient(
-            @RequestHeader("Authorization") String token,
-            @RequestBody StockIngredientOperations stockIngredientOperations) {
+            @RequestHeader("Authorization") String token, @RequestParam long ingredientId, @RequestParam long quantity) {
         long userId = personalStockService.getOwnerIdByToken(token);
-        boolean result = personalStockService.editIngredient(userId, stockIngredientOperations);
+        boolean result = personalStockService.editIngredient(userId, ingredientId, quantity);
         return result == Boolean.TRUE
                 ? new ResponseEntity(HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);

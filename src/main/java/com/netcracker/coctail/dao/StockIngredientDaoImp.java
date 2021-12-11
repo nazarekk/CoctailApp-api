@@ -1,7 +1,6 @@
 package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.StockIngredientInfo;
-import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.StockIngredient;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,12 +36,11 @@ public class StockIngredientDaoImp implements StockIngredientDao {
   private final NamedParameterJdbcTemplate jdbcTemplate;
 
   @Override
-  public void addIngredientToStock(long ownerId,
-                                   StockIngredientOperations stockIngredientOperations) {
+  public void addIngredientToStock(long ownerId, long ingredientId, long quantity) {
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("userid", ownerId)
-        .addValue("ingredientid", stockIngredientOperations.getIngredientId())
-        .addValue("quantity", stockIngredientOperations.getQuantity());
+        .addValue("ingredientid", ingredientId)
+        .addValue("quantity", quantity);
     jdbcTemplate.update(addStockIngredient, param);
   }
 
