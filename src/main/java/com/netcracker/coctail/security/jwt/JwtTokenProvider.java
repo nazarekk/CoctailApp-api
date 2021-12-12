@@ -1,15 +1,11 @@
 package com.netcracker.coctail.security.jwt;
 
-import com.netcracker.coctail.model.Role;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Util class that provides methods for generation, validation, etc. of JWT token.
@@ -53,16 +47,17 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(String email, List<Role> roles) {
+    public String createToken(String email, String role) {
 
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles", getRoleNames(roles));
+        claims.put("role", role);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .setClaims(claims)
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -81,31 +76,20 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-            return bearerToken.substring(7, bearerToken.length());
+            return bearerToken.substring(7);
         }
         return null;
     }
 
-    public boolean validateToken(String token) {
+
+    public boolean validateToken(String authToken) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-
-            if (claims.getBody().getExpiration().before(new Date())) {
-                return false;
-            }
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
+            return !claims.getBody().getExpiration().before(new Date(System.currentTimeMillis()));
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+            throw new BadCredentialsException("INVALID_CREDENTIALS", ex);
+        } catch (ExpiredJwtException ex) {
+            throw ex;
         }
-    }
-
-    private List<String> getRoleNames(List<Role> userRoles) {
-        List<String> result = new ArrayList<>();
-
-        userRoles.forEach(role -> {
-            result.add(role.getRolename());
-        });
-
-        return result;
     }
 }

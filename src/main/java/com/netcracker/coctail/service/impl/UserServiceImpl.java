@@ -2,16 +2,21 @@ package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.ForgotPasswordDao;
 import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
+import com.netcracker.coctail.exceptions.InvalidNicknameException;
+import com.netcracker.coctail.exceptions.InvalidPasswordException;
 import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.dao.RoleDao;
 import com.netcracker.coctail.dao.UserDao;
+import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.UserPersonalInfo;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,16 +34,19 @@ public class UserServiceImpl implements UserService {
     private RoleDao roleDao;
     private JdbcTemplate jdbcTemplate;
     private ForgotPasswordDao forgotPasswordDao;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     @Lazy
     public UserServiceImpl(UserDao userDao, RoleDao roleDao,
                            JdbcTemplate jdbcTemplate,
-                           ForgotPasswordDao forgotPasswordDao) {
+                           ForgotPasswordDao forgotPasswordDao,
+                           PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.jdbcTemplate = jdbcTemplate;
         this.forgotPasswordDao = forgotPasswordDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getUserByEmail(String email) {
@@ -48,12 +56,6 @@ public class UserServiceImpl implements UserService {
         }
         log.info("IN getUserByEmail - user: {} found by email: {}", result.get(0).getNickname(), result.get(0).getEmail());
         return result.get(0);
-    }
-
-    @Override
-    public List<Role> getRolesByEmail(String email) {
-        List<Role> name = roleDao.findRoleNameByEmail(email);
-        return name;
     }
 
     @Override
@@ -83,6 +85,24 @@ public class UserServiceImpl implements UserService {
         } else {
             log.warn("Change user password by email: {}, successfuly", user.getEmail());
             return "Password changed successfuly";
+        }
+    }
+
+    public void checkPassword(User user, UserPasswords userPasswords) {
+        if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
+            log.warn("CheckPassword: user by email: {}, not succsessful", user.getEmail());
+            throw new InvalidPasswordException();
+        } else {
+            changeUserPassword(user, userPasswords.getNewPassword());
+        }
+    }
+
+    public void changeInfo(String email, UserPersonalInfo user) {
+        if (!userDao.findUsersByNickname(email, user).isEmpty()) {
+            throw new InvalidNicknameException();
+        } else {
+            userDao.editInfo(email, user);
+            log.warn("EditInfo: user by email: {}, change personal info succsessful", email);
         }
     }
 }

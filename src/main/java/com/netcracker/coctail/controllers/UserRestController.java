@@ -106,14 +106,11 @@ public class UserRestController {
   }
 
   @PostMapping("add/{friendid}")
-  public ResponseEntity addFriend(
+  public void addFriend(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-    Boolean ret = friendlistService.addFriend(ownerEmail, friendid);
-    return ret == Boolean.TRUE
-        ? new ResponseEntity(ret, HttpStatus.OK) :
-        new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    friendlistService.addFriend(ownerEmail, friendid);
   }
 
   @GetMapping("find")
@@ -180,6 +177,20 @@ public class UserRestController {
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
+    @GetMapping(value = "info")
+    public ResponseEntity<UserInfo> seeMyPersonalData(HttpServletRequest request) {
+        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        return new ResponseEntity<>(userDao.myInfo(email), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "settings/edit")
+    public ResponseEntity<?> editMyPersonalData(HttpServletRequest request,
+                                                @RequestBody @Valid UserPersonalInfo user) {
+        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        userService.changeInfo(email, user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("recipe/filter")
     public ResponseEntity<List<DishRecipe>> getRecipesFiltered(
             @RequestParam boolean sugarless, @RequestParam String alcohol) {
@@ -195,6 +206,21 @@ public class UserRestController {
         StockIngredientOperations stockIngredientOperations) {
         long userId = personalStockService.getOwnerIdByToken(token);
         personalStockService.addIngredientToStock(userId, stockIngredientOperations);
+    }
+
+    @PutMapping(value = "settings")
+    public ResponseEntity<?> changePassword(HttpServletRequest request,
+                                            @RequestBody @Valid UserPasswords userPasswords) {
+        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        User user = userService.getUserByEmail(email);
+        userService.checkPassword(user, userPasswords);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("settings/edit")
+    public ResponseEntity<UserPersonalInfo> getInformationInSettings(HttpServletRequest request) {
+        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        return new ResponseEntity<>(userDao.getInfo(email), HttpStatus.OK);
     }
 
     @DeleteMapping("stock/remove/{ingredientid}")

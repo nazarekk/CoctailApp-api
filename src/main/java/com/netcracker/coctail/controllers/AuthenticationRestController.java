@@ -7,12 +7,14 @@ import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
+import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,6 +36,7 @@ public class AuthenticationRestController {
   private UserService userService;
   private ForgotPasswordDao forgotPasswordDao;
   private PasswordEncoder passwordEncoder;
+  private AuthService authService;
 
   @Autowired
   AuthenticationRestController(AuthenticationManager authenticationManager,
@@ -49,23 +52,21 @@ public class AuthenticationRestController {
   }
 
 
-  @PostMapping("login")
-  public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
-    String email = requestDto.getEmail();
-    User user = userService.getUserByEmail(email);
-    if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-      throw new InvalidEmailOrPasswordException();
+    @PostMapping("login")
+    public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
+        return ResponseEntity.ok(authService.loginAuthorization(requestDto));
     }
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
-    List<Role> roles = userService.getRolesByEmail(email);
-    String token = jwtTokenProvider.createToken(email, roles);
 
     Map<Object, Object> response = new HashMap<>();
     response.put("role", userService.getRolenameByEmail(email));
     response.put("token", token);
 
     return ResponseEntity.ok(response);
+  }
+
+  @PostMapping("refresh-token")
+  public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+    return new ResponseEntity<>(authService.refreshTokenAuth(request), HttpStatus.OK);
   }
 
 
