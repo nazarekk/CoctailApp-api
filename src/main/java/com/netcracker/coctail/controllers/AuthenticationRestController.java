@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -33,14 +33,14 @@ public class AuthenticationRestController {
   private JwtTokenProvider jwtTokenProvider;
   private UserService userService;
   private ForgotPasswordDao forgotPasswordDao;
-  private BCryptPasswordEncoder passwordEncoder;
+  private PasswordEncoder passwordEncoder;
 
   @Autowired
   AuthenticationRestController(AuthenticationManager authenticationManager,
                                JwtTokenProvider jwtTokenProvider,
                                UserService userService,
                                ForgotPasswordDao forgotPasswordDao,
-                               BCryptPasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder) {
     this.authenticationManager = authenticationManager;
     this.jwtTokenProvider = jwtTokenProvider;
     this.passwordEncoder = passwordEncoder;
