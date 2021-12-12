@@ -6,13 +6,15 @@ import com.netcracker.coctail.exceptions.InvalidPasswordException;
 
 import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.model.FriendUser;
+import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.model.StockIngredientInfo;
-import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPasswords;
+import com.netcracker.coctail.model.UserPersonalInfo;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.FriendlistService;
+import com.netcracker.coctail.service.IngredientService;
 import com.netcracker.coctail.service.PersonalStockService;
 import com.netcracker.coctail.service.RecipeService;
 import com.netcracker.coctail.service.UserService;
@@ -44,6 +46,7 @@ public class UserRestController {
   private PasswordEncoder passwordEncoder;
   private RecipeService recipeService;
   private PersonalStockService personalStockService;
+  private IngredientService ingredientService;
 
   @Autowired
   @Lazy
@@ -144,6 +147,15 @@ public class UserRestController {
         new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
   }
 
+  @GetMapping("ingredients/list")
+  public ResponseEntity<List<Ingredient>> ingredientsList() {
+    List<Ingredient> ingredients = ingredientService.getIngredientByName("");
+    if (ingredients.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(ingredients, HttpStatus.OK);
+  }
+
   @GetMapping("recipe")
   public ResponseEntity<List<DishRecipe>> getRecipeByName(@RequestParam String name) {
     List<DishRecipe> recipes = recipeService.getRecipesByName(name);
@@ -165,6 +177,12 @@ public class UserRestController {
     String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     userService.changeInfo(email, user);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @GetMapping("settings/edit")
+  public ResponseEntity<UserPersonalInfo> getInformationInSettings(HttpServletRequest request) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    return new ResponseEntity<>(userDao.getInfo(email), HttpStatus.OK);
   }
 
   @GetMapping("recipe/filter")
