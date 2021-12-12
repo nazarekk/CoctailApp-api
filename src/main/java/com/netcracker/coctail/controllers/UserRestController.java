@@ -121,6 +121,16 @@ public class UserRestController {
     return new ResponseEntity<>(users, HttpStatus.OK);
   }
 
+    @GetMapping("friendlist")
+    public ResponseEntity<List<FriendUser>> getFriendList(HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        List<FriendUser> users = friendlistService.friendList(ownerEmail);
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
   @PatchMapping("accept/{friendid}")
   public ResponseEntity acceptFriend(
       @PathVariable(name = "friendid") long friendid,
