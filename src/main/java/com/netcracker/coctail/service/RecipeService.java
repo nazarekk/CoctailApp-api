@@ -28,7 +28,7 @@ public interface RecipeService {
 
     boolean removeRecipe(int id);
 
-    boolean addToFavourites(String ownerEmail, int recipeId);
+    boolean addToFavourites(String ownerEmail, int recipeId, boolean favourite);
 
     boolean likeRecipe(String ownerEmail, int recipeId, boolean liked);
 

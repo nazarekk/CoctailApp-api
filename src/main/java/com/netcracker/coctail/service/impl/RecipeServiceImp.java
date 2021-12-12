@@ -124,18 +124,23 @@ public class RecipeServiceImp implements RecipeService {
     }
 
     @Override
-    public boolean addToFavourites(String ownerEmail, int recipeId) {
+    public boolean addToFavourites(String ownerEmail, int recipeId, boolean favourite) {
         long ownerId = friendlistDao.getOwnerId(ownerEmail);
-        if (recipeDao.findRecipeById(recipeId).get(0) == null) {
-            log.info("Recipe with id " + recipeId + " doesn't exist");
-            return false;
-        }
         if (recipeDao.checkLike(ownerId, recipeId).isEmpty()) {
             recipeDao.addToFavourites(ownerId, recipeId);
+        }
+        if (favourite && !recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
+            recipeDao.favouriteLock(ownerId, recipeId, favourite);
             return true;
-        } else {
-            log.info("You already added dish to favourites");
+        } else if (favourite) {
+            log.info("You already added this recipe to favourites");
             return false;
+        } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
+            log.info("You didn't add this recipe to favourites");
+            return false;
+        } else {
+            recipeDao.favouriteLock(ownerId, recipeId, favourite);
+            return true;
         }
 
     }
@@ -144,16 +149,16 @@ public class RecipeServiceImp implements RecipeService {
     public boolean likeRecipe(String ownerEmail, int recipeId, boolean like) {
         long ownerId = friendlistDao.getOwnerId(ownerEmail);
         if (recipeDao.checkLike(ownerId, recipeId).isEmpty()) {
-            log.info("To like the dish, you must first add it to your favourites");
-            return false;
+            recipeDao.addToFavourites(ownerId, recipeId);
         }
-        if (like && recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
-            log.info("You already liked this recipe");
-            return false;
-        } else if (like) {
+        if (like && !recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
             recipeDao.likeRecipe(recipeId);
             recipeDao.likedLock(ownerId, recipeId, like);
             return true;
+        }
+        else if (like) {
+            log.info("You already liked this recipe");
+            return false;
         } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
             log.info("You didn't like this recipe");
             return false;

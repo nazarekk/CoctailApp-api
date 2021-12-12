@@ -1,9 +1,6 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.Friendlist;
-import com.netcracker.coctail.model.FriendsStatus;
-import com.netcracker.coctail.model.ReadUser;
-import com.netcracker.coctail.model.User;
+import com.netcracker.coctail.model.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -25,6 +22,8 @@ public class FriendlistDaoImpl implements FriendlistDao {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     @Value("${friendlistCreation}")
     private String friendlistCreation;
+    @Value("${friendlist}")
+    private String friendlist;
     @Value("${EditFriendlist}")
     private String EditFriendlist;
     @Value("${RemoveFriendlist}")
@@ -38,14 +37,25 @@ public class FriendlistDaoImpl implements FriendlistDao {
     @Value("${FindIdsByNickname}")
     private String FindIdsByNickname;
 
+
     @Override
-    public List<Friendlist> findFriendlist(long ownerid, long friendid) {
+    public List<Friendlist> findFriendlist(long ownerId, long friendId) {
         RowMapper<Friendlist> rowMapper = (rs, rownum) ->
                 new Friendlist(rs.getLong("id"),
                         rs.getLong("ownerid"),
                         rs.getLong("friendid"),
                         rs.getLong("statusid"));
-        return jdbcTemplate.query(String.format(FindFriendlist, ownerid, friendid), rowMapper);
+        return jdbcTemplate.query(String.format(FindFriendlist, ownerId, friendId), rowMapper);
+    }
+
+    @Override
+    public List<FriendUser> friendList(long ownerId) {
+        RowMapper<FriendUser> rowMapper = (rs, rownum) ->
+                new FriendUser(rs.getLong("userid"),
+                        rs.getString("nickname"),
+                        rs.getString("email"),
+                        rs.getLong("statusid"));
+        return jdbcTemplate.query(String.format(friendlist, ownerId), rowMapper);
     }
 
     @Override

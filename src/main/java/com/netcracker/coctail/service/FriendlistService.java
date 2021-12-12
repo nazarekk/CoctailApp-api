@@ -12,5 +12,7 @@ public interface FriendlistService {
     Boolean declineFriendRequest(String ownerEmail, long friendid);
     Boolean removeFriend(String ownerEmail, long friendid);
     Boolean subscribeToFriend(String ownerEmail, long friendid);
+    Boolean unsubcribeFromFriend(String ownerEmail, long friendid);
     List<FriendUser> getUserByNickname(String ownerEmail, String nickname);
+    List<FriendUser> friendList(String ownerEmail);
 }

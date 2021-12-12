@@ -136,6 +136,16 @@ public class UserRestController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping("friendlist")
+    public ResponseEntity<List<FriendUser>> getFriendList(HttpServletRequest request) {
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        List<FriendUser> users = friendlistService.friendList(ownerEmail);
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
     @PatchMapping("accept/{friendid}")
     public ResponseEntity acceptFriend(
             @PathVariable(name = "friendid") long friendid,
@@ -164,6 +174,17 @@ public class UserRestController {
             @RequestHeader("Authorization") String token) {
         String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
         Boolean ret = friendlistService.subscribeToFriend(ownerEmail, friendid);
+        return ret == Boolean.TRUE
+                ? new ResponseEntity(ret, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+    }
+
+    @PatchMapping("unsubscribe/{friendid}")
+    public ResponseEntity unsubcribeFrom(
+            @PathVariable(name = "friendid") long friendid,
+            @RequestHeader("Authorization") String token) {
+        String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
+        Boolean ret = friendlistService.unsubcribeFromFriend(ownerEmail, friendid);
         return ret == Boolean.TRUE
                 ? new ResponseEntity(ret, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -273,10 +294,10 @@ public class UserRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping(value = "recipe/favourites/{id}")
-    public ResponseEntity addToFavourites(@PathVariable(name = "id") int id, HttpServletRequest request) {
+    @PatchMapping(value = "recipe/favourites/{id}")
+    public ResponseEntity addToFavourites(@PathVariable(name = "id") int id, @RequestParam boolean favourite, HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        if (recipeService.addToFavourites(ownerEmail, id)) {
+        if (recipeService.addToFavourites(ownerEmail, id, favourite)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
@@ -394,7 +415,6 @@ public class UserRestController {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
-
 
 
 }
