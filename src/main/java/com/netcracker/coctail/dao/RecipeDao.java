@@ -43,6 +43,8 @@ public interface RecipeDao {
 
     void likedLock(long userId, int recipeId, boolean liked);
 
+    void favouriteLock(long userId, int recipeId, boolean liked);
+
     List<UserToRecipe> checkLike(long userId, int recipeId);
 
     void withdrawLike(int recipeId);
@@ -50,5 +52,6 @@ public interface RecipeDao {
     List<Ingredient> containsIngredients(int recipeId);
 
     List<Kitchenware> containsKitchenware(int recipeId);
+
 
 }

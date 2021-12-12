@@ -30,15 +30,13 @@ public class KitchenwareServiceImp implements KitchenwareService {
 
   @Override
   public List<Kitchenware> getKitchenwareByName(String name) {
-    List<Kitchenware> result = kitchenwareDao.findAllKitchenwareByName(name);
-    return result;
+    return kitchenwareDao.findAllKitchenwareByName(name);
   }
 
   @Override
   public List<Kitchenware> getKitchenwareFiltered(String type, String category, String active) {
     log.info("Filtering");
-    List<Kitchenware> result = kitchenwareDao.findAllKitchenwareFiltered(type, category, active);
-    return result;
+    return kitchenwareDao.findAllKitchenwareFiltered(type, category, active);
   }
 
   @Override
