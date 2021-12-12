@@ -7,14 +7,14 @@ import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
+import com.netcracker.coctail.services.AuthService;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -43,25 +43,20 @@ public class AuthenticationRestController {
                                JwtTokenProvider jwtTokenProvider,
                                UserService userService,
                                ForgotPasswordDao forgotPasswordDao,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               AuthService authService) {
     this.authenticationManager = authenticationManager;
     this.jwtTokenProvider = jwtTokenProvider;
     this.passwordEncoder = passwordEncoder;
     this.userService = userService;
     this.forgotPasswordDao = forgotPasswordDao;
+    this.authService = authService;
   }
 
 
-    @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
-        return ResponseEntity.ok(authService.loginAuthorization(requestDto));
-    }
-
-    Map<Object, Object> response = new HashMap<>();
-    response.put("role", userService.getRolenameByEmail(email));
-    response.put("token", token);
-
-    return ResponseEntity.ok(response);
+  @PostMapping("login")
+  public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
+    return ResponseEntity.ok(authService.loginAuthorization(requestDto));
   }
 
   @PostMapping("refresh-token")
