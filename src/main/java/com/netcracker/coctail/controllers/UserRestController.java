@@ -2,23 +2,14 @@ package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
-import com.netcracker.coctail.exceptions.DuplicatePasswordException;
-import com.netcracker.coctail.exceptions.InvalidPasswordException;
-
 
 import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.model.FriendUser;
-import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.model.StockIngredientInfo;
 import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.User;
-import com.netcracker.coctail.model.UserInfo;
-import com.netcracker.coctail.model.UserPasswords;
-import com.netcracker.coctail.model.StockIngredientInfo;
 import com.netcracker.coctail.model.EventInfo;
 import com.netcracker.coctail.model.Event;
-import com.netcracker.coctail.model.StockIngredientOperations;
-import com.netcracker.coctail.model.FriendUser;
 import com.netcracker.coctail.model.CreateEvent;
 import com.netcracker.coctail.model.UserPersonalInfo;
 
@@ -99,33 +90,13 @@ public class UserRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping(value = "settings")
-    public ResponseEntity changePassword(HttpServletRequest request,
-                                         @RequestBody @Valid UserPasswords userPasswords) {
-        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        System.out.println(userPasswords);
-        User user = userService.getUserByEmail(email);
-        if (!passwordEncoder.matches(userPasswords.getOldPassword(), user.getPassword())) {
-            throw new InvalidPasswordException();
-        } else if (!userPasswords.getPassword().equals(userPasswords.getDoubleCheckPass())) {
-            throw new DuplicatePasswordException();
-        } else {
-            userService.changeUserPassword(user, userPasswords.getPassword());
-            return new ResponseEntity(HttpStatus.OK);
-        }
-    }
 
-    @GetMapping(value = "info")
-    public ResponseEntity<UserInfo> seeMyPersonalData(HttpServletRequest request) {
+    @PutMapping(value = "settings/edit")
+    public ResponseEntity<?> editMyPersonalData(HttpServletRequest request,
+                                                @RequestBody @Valid UserPersonalInfo user) {
         String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        return new ResponseEntity<>(userDao.myInfo(email), HttpStatus.OK);
-    }
-
-    @PatchMapping(value = "edit")
-    public ResponseEntity editMyPersonalData(HttpServletRequest request,
-                                             @RequestBody UserInfo user) {
-        String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        return new ResponseEntity(userDao.editInfo(email, user), HttpStatus.OK);
+        userService.changeInfo(email, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
   @PostMapping("add/{friendid}")
