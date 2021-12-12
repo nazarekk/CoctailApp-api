@@ -52,6 +52,8 @@ public class RecipeDaoImp implements RecipeDao {
     private String withdrawLike;
     @Value("${likedLock}")
     private String likedLock;
+    @Value("${favouriteLock}")
+    private String favouriteLock;
     @Value("${containsKitchenware}")
     private String containsKitchenware;
     @Value("${containsIngredients}")
@@ -145,6 +147,14 @@ public class RecipeDaoImp implements RecipeDao {
         jdbcTemplate.update(likedLock, param);
     }
 
+    public void favouriteLock(long userId, int recipeId, boolean favourite) {
+        SqlParameterSource param = new MapSqlParameterSource()
+                .addValue("recipeid", recipeId)
+                .addValue("userid", userId)
+                .addValue("favourite", favourite);
+        jdbcTemplate.update(favouriteLock, param);
+    }
+
     @Override
     public List<UserToRecipe> checkLike(long userId, int recipeId) {
         RowMapper<UserToRecipe> rowMapper = (rs, rownum) ->
@@ -152,7 +162,8 @@ public class RecipeDaoImp implements RecipeDao {
                         rs.getInt("id"),
                         rs.getInt("userid"),
                         rs.getInt("recipeid"),
-                        rs.getBoolean("liked"));
+                        rs.getBoolean("liked"),
+                        rs.getBoolean("favourite"));
         return jdbcTemplate.query(String.format(checkLike, userId, recipeId), rowMapper);
     }
 

@@ -10,4 +10,5 @@ public class UserToRecipe {
     private Integer userId;
     private Integer recipeId;
     private boolean liked;
+    private boolean favourite;
 }
