@@ -1,6 +1,11 @@
 package com.netcracker.coctail.dao;
 
-import com.netcracker.coctail.model.*;
+
+import com.netcracker.coctail.model.FriendUser;
+import com.netcracker.coctail.model.Friendlist;
+import com.netcracker.coctail.model.FriendsStatus;
+import com.netcracker.coctail.model.ReadUser;
+import com.netcracker.coctail.model.User;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
