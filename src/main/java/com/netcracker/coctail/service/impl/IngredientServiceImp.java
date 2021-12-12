@@ -64,10 +64,7 @@ public class IngredientServiceImp implements IngredientService {
       log.info("Ingredient with id " + id + " doesn't exists");
       throw new InvalidEmailOrPasswordException();
     }
-    if (ingredientDao.findIngredientByName(name).isEmpty()) {
-      ingredientDao.editIngredient(ingredient);
-      return Boolean.TRUE;
-    } else if (result.getName().equals(name)) {
+    if (ingredientDao.findIngredientByName(name).isEmpty() | result.getName().equals(name)) {
       ingredientDao.editIngredient(ingredient);
       return Boolean.TRUE;
     } else {
