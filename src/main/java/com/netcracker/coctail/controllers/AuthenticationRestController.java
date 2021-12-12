@@ -2,21 +2,18 @@ package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.ForgotPasswordDao;
 import com.netcracker.coctail.dto.AuthenticationRequestDto;
-import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
-import com.netcracker.coctail.model.Role;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
+import com.netcracker.coctail.services.AuthService;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -29,44 +26,35 @@ import java.util.Map;
 @Data
 public class AuthenticationRestController {
 
-  private AuthenticationManager authenticationManager;
-  private JwtTokenProvider jwtTokenProvider;
-  private UserService userService;
-  private ForgotPasswordDao forgotPasswordDao;
-  private BCryptPasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
+    private JwtTokenProvider jwtTokenProvider;
+    private UserService userService;
+    private ForgotPasswordDao forgotPasswordDao;
+    private AuthService authService;
 
-  @Autowired
-  AuthenticationRestController(AuthenticationManager authenticationManager,
-                               JwtTokenProvider jwtTokenProvider,
-                               UserService userService,
-                               ForgotPasswordDao forgotPasswordDao,
-                               BCryptPasswordEncoder passwordEncoder) {
-    this.authenticationManager = authenticationManager;
-    this.jwtTokenProvider = jwtTokenProvider;
-    this.passwordEncoder = passwordEncoder;
-    this.userService = userService;
-    this.forgotPasswordDao = forgotPasswordDao;
-  }
-
-
-  @PostMapping("login")
-  public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
-    String email = requestDto.getEmail();
-    User user = userService.getUserByEmail(email);
-    if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-      throw new InvalidEmailOrPasswordException();
+    @Autowired
+    AuthenticationRestController(AuthenticationManager authenticationManager,
+                                 JwtTokenProvider jwtTokenProvider,
+                                 UserService userService,
+                                 ForgotPasswordDao forgotPasswordDao,
+                                 AuthService authService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userService = userService;
+        this.forgotPasswordDao = forgotPasswordDao;
+        this.authService = authService;
     }
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
-    List<Role> roles = userService.getRolesByEmail(email);
-    String token = jwtTokenProvider.createToken(email, roles);
 
-    Map<Object, Object> response = new HashMap<>();
-    response.put("role", userService.getRolenameByEmail(email));
-    response.put("token", token);
 
-    return ResponseEntity.ok(response);
-  }
+    @PostMapping("login")
+    public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
+        return ResponseEntity.ok(authService.loginAuthorization(requestDto));
+    }
+
+    @PostMapping("refresh-token")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        return new ResponseEntity<>(authService.refreshTokenAuth(request), HttpStatus.OK);
+    }
 
 
   @PostMapping("restore-password")
