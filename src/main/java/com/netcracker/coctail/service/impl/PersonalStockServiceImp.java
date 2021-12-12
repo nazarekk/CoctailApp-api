@@ -1,11 +1,9 @@
 package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.FriendlistDao;
+import com.netcracker.coctail.dao.IngredientDao;
 import com.netcracker.coctail.dao.StockIngredientDao;
-import com.netcracker.coctail.exceptions.UserAlreadyHasStockIngredient;
-import com.netcracker.coctail.exceptions.UserDoesNotHaveSuchIngredient;
 import com.netcracker.coctail.model.StockIngredientInfo;
-import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.StockIngredient;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.PersonalStockService;
@@ -20,64 +18,77 @@ import java.util.List;
 @Data
 public class PersonalStockServiceImp implements PersonalStockService {
 
-    private final StockIngredientDao stockIngredientDao;
-    private final FriendlistDao friendlistDao;
-    private final JwtTokenProvider jwtTokenProvider;
+  private final StockIngredientDao stockIngredientDao;
+  private final FriendlistDao friendlistDao;
+  private final IngredientDao ingredientDao;
+  private final JwtTokenProvider jwtTokenProvider;
 
-    @Override
-    public void addIngredientToStock(long userId, StockIngredientOperations stockIngredientOperations) {
-        long ingredientId = stockIngredientOperations.getIngredientId();
-
-        if (stockIngredientDao.findExistingStockIngredientById(userId, ingredientId).isEmpty()) {
-            stockIngredientDao.addIngredientToStock(userId, stockIngredientOperations);
-        } else {
-            log.info("The user with id " + userId + " has already ingredient with id " + ingredientId + " in stock");
-            throw new UserAlreadyHasStockIngredient();
-        }
+  @Override
+  public boolean addIngredientToStock(long userId, long ingredientId, long quantity) {
+    if (ingredientDao.findIngredientById(ingredientId).get(0) == null) {
+      log.warn("IN getIngredientById - no ingredient found by id: {}", ingredientId);
+      return false;
+    } else if (!stockIngredientDao.findExistingStockIngredientById(userId, ingredientId)
+        .isEmpty()) {
+      log.info("User with id " + userId + " has already ingredient with id " + ingredientId
+          + " in stock");
+      return false;
+    } else {
+      stockIngredientDao.addIngredientToStock(userId, ingredientId, quantity);
+      return true;
     }
+  }
 
-    @Override
-    public void editIngredient(long userId, StockIngredientOperations stockIngredientOperations) {
-        long ingredientId = stockIngredientOperations.getIngredientId();
-        List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
-        if (stockIngredients.isEmpty()) {
-            throw new UserDoesNotHaveSuchIngredient();
-        } else {
-            stockIngredientDao.editStockIngredient(stockIngredients.get(0).getId(),
-                    stockIngredientOperations.getQuantity());
-        }
+  @Override
+  public boolean editIngredient(long userId, long ingredientId, long quantity) {
+    List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
+    if (ingredientDao.findIngredientById(ingredientId).get(0) == null) {
+      log.warn("IN getIngredientById - no ingredient found by id: {}", ingredientId);
+      return false;
+    } else if (stockIngredients.isEmpty()) {
+      log.info("User with id " + userId + " doesn't have ingredient with id " + ingredientId);
+      return false;
+    } else {
+      stockIngredientDao.editStockIngredient(stockIngredients.get(0).getId(), quantity);
+      return true;
     }
+  }
 
-    @Override
-    public void removeIngredientFromStock(long userId, long ingredientId) {
-        List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
-        if (stockIngredients.isEmpty()) {
-            throw new UserDoesNotHaveSuchIngredient();
-        } else {
-            stockIngredientDao.removeIngredientFromStock(stockIngredients.get(0).getId());
-        }
+  @Override
+  public boolean removeIngredientFromStock(long userId, long ingredientId) {
+    List<StockIngredient> stockIngredients = getExistingStockIngredientById(userId, ingredientId);
+    if (ingredientDao.findIngredientById(ingredientId).get(0) == null) {
+      log.warn("IN getIngredientById - no ingredient found by id: {}", ingredientId);
+      return false;
+    } else if (stockIngredients.isEmpty()) {
+      log.info("User with id " + userId + " doesn't have ingredient with id " + ingredientId);
+      return false;
+    } else {
+      stockIngredientDao.removeIngredientFromStock(stockIngredients.get(0).getId());
+      return true;
     }
+  }
 
-    @Override
-    public long getOwnerIdByToken(String token) {
-        String email = jwtTokenProvider.getEmail(token.substring(7));
-        return friendlistDao.getOwnerId(email);
-    }
+  @Override
+  public long getOwnerIdByToken(String token) {
+    String email = jwtTokenProvider.getEmail(token.substring(7));
+    return friendlistDao.getOwnerId(email);
+  }
 
-    @Override
-    public List<StockIngredientInfo> getStockIngredientsByName(long userId, String name) {
-        return stockIngredientDao.findStockIngredientsByName(userId, name);
-    }
+  @Override
+  public List<StockIngredientInfo> getStockIngredientsByName(long userId, String name) {
+    return stockIngredientDao.findStockIngredientsByName(userId, name);
+  }
 
-    @Override
-    public List<StockIngredient> getExistingStockIngredientById(long userId, long ingredientId) {
-        return stockIngredientDao.findExistingStockIngredientById(userId, ingredientId);
-    }
+  @Override
+  public List<StockIngredient> getExistingStockIngredientById(long userId, long ingredientId) {
+    return stockIngredientDao.findExistingStockIngredientById(userId, ingredientId);
+  }
 
-    @Override
-    public List<StockIngredientInfo> getStockIngredientsFiltered(long userId, String type, String category) {
-
-        return null;
-    }
+  @Override
+  public List<StockIngredientInfo> getStockIngredientsFiltered(long userId, String type,
+                                                               String category) {
+    return stockIngredientDao.findStockIngredientsFiltered(userId, type, category);
+  }
 
 }
