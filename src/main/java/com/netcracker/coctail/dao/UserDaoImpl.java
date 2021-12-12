@@ -1,6 +1,7 @@
 package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.UserInfo;
+import com.netcracker.coctail.model.UserPersonalInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,6 +23,10 @@ public class UserDaoImpl implements UserDao {
   private String userInfo;
   @Value("${EditUser}")
   private String EditUser;
+  @Value("${personalInfo}")
+  private String personalInfo;
+  @Value("${FindInfoByNickname}")
+  private String findInfoByNickname;
 
   private final JdbcTemplate jdbcTemplate;
 
@@ -56,7 +61,23 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public int editInfo(String email, UserInfo user) {
-    return jdbcTemplate.update(EditUser, user.getEmail(), user.getNickname(), email);
+  public UserPersonalInfo getInfo(String email) {
+    RowMapper<UserPersonalInfo> rowMapper = (rs, rownum) ->
+            new UserPersonalInfo(rs.getString("nickname"),
+                    rs.getString("information"));
+    return jdbcTemplate.query(String.format(personalInfo, email), rowMapper).get(0);
   }
+
+  @Override
+  public int editInfo(String email, UserPersonalInfo user) {
+    return jdbcTemplate.update(EditUser, user.getNickname(), user.getInformation(), email);
+  }
+  @Override
+  public List<UserPersonalInfo> findUsersByNickname(String email, UserPersonalInfo user) {
+    RowMapper<UserPersonalInfo> rowMapper = (rs, rownum) ->
+            new UserPersonalInfo(rs.getString("nickname"),
+                    rs.getString("information"));
+    return jdbcTemplate.query(String.format(findInfoByNickname, user.getNickname(), email), rowMapper);
+  }
+
 }

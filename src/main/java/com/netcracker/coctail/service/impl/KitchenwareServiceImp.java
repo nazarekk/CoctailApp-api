@@ -61,7 +61,7 @@ public class KitchenwareServiceImp implements KitchenwareService {
       log.info("Kitchenware with id " + id + " doesn't exists");
       throw new InvalidEmailOrPasswordException();
     }
-    if (kitchenwareDao.findKitchenwareByName(name).isEmpty()) {
+    if (kitchenwareDao.findKitchenwareByName(name).isEmpty() | name.equals(result.getName())) {
       kitchenwareDao.editKitchenware(kitchenware);
       return Boolean.TRUE;
     } else {
