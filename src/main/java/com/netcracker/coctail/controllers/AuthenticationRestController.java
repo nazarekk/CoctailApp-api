@@ -6,14 +6,15 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
 import com.netcracker.coctail.services.AuthService;
+import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -26,35 +27,38 @@ import java.util.Map;
 @Data
 public class AuthenticationRestController {
 
-    private AuthenticationManager authenticationManager;
-    private JwtTokenProvider jwtTokenProvider;
-    private UserService userService;
-    private ForgotPasswordDao forgotPasswordDao;
-    private AuthService authService;
+  private AuthenticationManager authenticationManager;
+  private JwtTokenProvider jwtTokenProvider;
+  private UserService userService;
+  private ForgotPasswordDao forgotPasswordDao;
+  private PasswordEncoder passwordEncoder;
+  private AuthService authService;
 
-    @Autowired
-    AuthenticationRestController(AuthenticationManager authenticationManager,
-                                 JwtTokenProvider jwtTokenProvider,
-                                 UserService userService,
-                                 ForgotPasswordDao forgotPasswordDao,
-                                 AuthService authService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
-        this.forgotPasswordDao = forgotPasswordDao;
-        this.authService = authService;
-    }
+  @Autowired
+  AuthenticationRestController(AuthenticationManager authenticationManager,
+                               JwtTokenProvider jwtTokenProvider,
+                               UserService userService,
+                               ForgotPasswordDao forgotPasswordDao,
+                               PasswordEncoder passwordEncoder,
+                               AuthService authService) {
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenProvider = jwtTokenProvider;
+    this.passwordEncoder = passwordEncoder;
+    this.userService = userService;
+    this.forgotPasswordDao = forgotPasswordDao;
+    this.authService = authService;
+  }
 
 
-    @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
-        return ResponseEntity.ok(authService.loginAuthorization(requestDto));
-    }
+  @PostMapping("login")
+  public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto) {
+    return ResponseEntity.ok(authService.loginAuthorization(requestDto));
+  }
 
-    @PostMapping("refresh-token")
-    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
-        return new ResponseEntity<>(authService.refreshTokenAuth(request), HttpStatus.OK);
-    }
+  @PostMapping("refresh-token")
+  public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+    return new ResponseEntity<>(authService.refreshTokenAuth(request), HttpStatus.OK);
+  }
 
 
   @PostMapping("restore-password")

@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserPasswords {
-    private String oldPassword;
-    private String newPassword;
+    private final String oldPassword;
+    private final String newPassword;
 }
