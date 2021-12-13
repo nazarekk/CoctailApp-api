@@ -3,6 +3,7 @@ package com.netcracker.coctail.service.impl;
 import com.netcracker.coctail.dao.EventDao;
 import com.netcracker.coctail.dao.FriendlistDao;
 import com.netcracker.coctail.dao.RecipeDao;
+import com.netcracker.coctail.dao.UserDao;
 
 import com.netcracker.coctail.model.CreateEvent;
 import com.netcracker.coctail.model.Event;
@@ -24,6 +25,7 @@ public class EventServiceImp implements EventService {
     private final FriendlistDao friendlistDao;
     private final RecipeDao recipeDao;
     private final EventDao eventDao;
+    private final UserDao userDao;
 
     @Override
     public List<Event> getEventsByName(String name) {
@@ -93,6 +95,7 @@ public class EventServiceImp implements EventService {
     @Override
     public EventInfo eventInfo(int id) {
         Event event = eventDao.findEventById(id).get(0);
+        String nickname = userDao.findUserById(event.getCreatorId()).get(0).getNickname();
         if (event == null) {
             log.warn("IN findEventById - no events found by id: {}", id);
             return null;
@@ -102,6 +105,7 @@ public class EventServiceImp implements EventService {
                 event.getId(),
                 event.getName(),
                 event.getCreatorId(),
+                nickname,
                 event.getEventTime(),
                 eventDao.containsUsers(eventId),
                 eventDao.containsRecipes(eventId)
