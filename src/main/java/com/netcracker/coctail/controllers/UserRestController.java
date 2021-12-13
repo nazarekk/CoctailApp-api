@@ -1,16 +1,7 @@
 package com.netcracker.coctail.controllers;
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
-import com.netcracker.coctail.model.DishRecipe;
-import com.netcracker.coctail.model.FriendUser;
-import com.netcracker.coctail.model.Ingredient;
-import com.netcracker.coctail.model.StockIngredientInfo;
-import com.netcracker.coctail.model.User;
-import com.netcracker.coctail.model.EventInfo;
-import com.netcracker.coctail.model.Event;
-import com.netcracker.coctail.model.CreateEvent;
-import com.netcracker.coctail.model.UserInfo;
-import com.netcracker.coctail.model.UserPersonalInfo;
+import com.netcracker.coctail.model.*;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -182,12 +173,28 @@ public class UserRestController {
     return new ResponseEntity<>(userDao.myInfo(email), HttpStatus.OK);
   }
 
-  @PutMapping(value = "settings/edit")
+  @PutMapping(value = "settings")
+  public ResponseEntity<?> changePassword(HttpServletRequest request,
+                                          @RequestBody @Valid UserPasswords userPasswords) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    User user = userService.getUserByEmail(email);
+    userService.checkPassword(user, userPasswords);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PatchMapping(value = "settings/edit")
   public ResponseEntity<?> editMyPersonalData(HttpServletRequest request,
                                               @RequestBody @Valid UserPersonalInfo user) {
     String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     userService.changeInfo(email, user);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("settings/edit")
+  public ResponseEntity<?> editUserPhoto(HttpServletRequest request,
+                                         @RequestBody UserPhoto user) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    return new ResponseEntity<>(userService.changeUserPhoto(email, user), HttpStatus.OK);
   }
 
   @GetMapping("settings/edit")
@@ -424,6 +431,5 @@ public class UserRestController {
       return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
   }
-
 
 }

@@ -2,6 +2,7 @@ package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPersonalInfo;
+import com.netcracker.coctail.model.UserPhoto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,6 +28,11 @@ public class UserDaoImpl implements UserDao {
   private String personalInfo;
   @Value("${FindInfoByNickname}")
   private String findInfoByNickname;
+  @Value("${editUserPhoto}")
+  private String editUserPhoto;
+  @Value("${getUserPhoto}")
+  private String getUserPhoto;
+
 
   private final JdbcTemplate jdbcTemplate;
 
@@ -65,7 +71,8 @@ public class UserDaoImpl implements UserDao {
   public UserPersonalInfo getInfo(String email) {
     RowMapper<UserPersonalInfo> rowMapper = (rs, rownum) ->
             new UserPersonalInfo(rs.getString("nickname"),
-                    rs.getString("information"));
+                    rs.getString("information"),
+                    rs.getString("photo"));
     return jdbcTemplate.query(String.format(personalInfo, email), rowMapper).get(0);
   }
 
@@ -77,8 +84,21 @@ public class UserDaoImpl implements UserDao {
   public List<UserPersonalInfo> findUsersByNickname(String email, UserPersonalInfo user) {
     RowMapper<UserPersonalInfo> rowMapper = (rs, rownum) ->
             new UserPersonalInfo(rs.getString("nickname"),
-                    rs.getString("information"));
+                    rs.getString("information"),
+                    rs.getString("photo"));
     return jdbcTemplate.query(String.format(findInfoByNickname, user.getNickname(), email), rowMapper);
+  }
+
+  @Override
+  public int editPhoto(String email, UserPhoto user) {
+    return jdbcTemplate.update(editUserPhoto, user.getPhoto(), email);
+  }
+
+  @Override
+  public String getUserPhoto(String email) {
+    RowMapper<UserPhoto> rowMapper = (rs, rownum) ->
+            new UserPhoto(rs.getString("photo"));
+    return jdbcTemplate.query(String.format(getUserPhoto, email), rowMapper).get(0).getPhoto();
   }
 
 }

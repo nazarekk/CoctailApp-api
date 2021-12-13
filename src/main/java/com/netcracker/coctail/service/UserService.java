@@ -3,6 +3,7 @@ package com.netcracker.coctail.service;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserPasswords;
 import com.netcracker.coctail.model.UserPersonalInfo;
+import com.netcracker.coctail.model.UserPhoto;
 
 /**
  * Service interface for class {User}.
@@ -21,4 +22,6 @@ public interface UserService {
     void checkPassword(User user, UserPasswords userPasswords);
 
     void changeInfo(String email, UserPersonalInfo user);
+
+    boolean changeUserPhoto(String email, UserPhoto user);
 }
