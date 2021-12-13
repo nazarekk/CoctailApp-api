@@ -58,11 +58,12 @@ public class RecipeServiceImp implements RecipeService {
     Boolean liked = null;
     Boolean favourite = null;
     String token = httpServletRequest.getHeader("Authorization");
-    List<UserToRecipe> userToRecipes;
     List<DishRecipe> result = new ArrayList<>();
     long userid = 0;
-    if (token != null) {userid =
-        userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();}
+    if (token != null) {
+      userid =
+          userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();
+    }
     for (Recipe recipe : recipes) {
       if (token != null & !recipeDao.checkLike(userid, recipe.getId()).isEmpty()) {
         userToRecipe = recipeDao.checkLike(userid, recipe.getId()).get(0);

@@ -72,7 +72,7 @@ public class UserDaoImpl implements UserDao {
     RowMapper<UserPersonalInfo> rowMapper = (rs, rownum) ->
             new UserPersonalInfo(rs.getString("nickname"),
                     rs.getString("information"),
-                    rs.getString("photo"));
+                    rs.getString("image"));
     return jdbcTemplate.query(String.format(personalInfo, email), rowMapper).get(0);
   }
 
@@ -85,7 +85,7 @@ public class UserDaoImpl implements UserDao {
     RowMapper<UserPersonalInfo> rowMapper = (rs, rownum) ->
             new UserPersonalInfo(rs.getString("nickname"),
                     rs.getString("information"),
-                    rs.getString("photo"));
+                    rs.getString("image"));
     return jdbcTemplate.query(String.format(findInfoByNickname, user.getNickname(), email), rowMapper);
   }
 
@@ -97,7 +97,7 @@ public class UserDaoImpl implements UserDao {
   @Override
   public String getUserPhoto(String email) {
     RowMapper<UserPhoto> rowMapper = (rs, rownum) ->
-            new UserPhoto(rs.getString("photo"));
+            new UserPhoto(rs.getString("image"));
     return jdbcTemplate.query(String.format(getUserPhoto, email), rowMapper).get(0).getPhoto();
   }
 
