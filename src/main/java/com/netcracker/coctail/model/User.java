@@ -16,4 +16,5 @@ public class User {
     private String password;
     private Long roleid;
     private boolean isactive;
+    private String image;
 }

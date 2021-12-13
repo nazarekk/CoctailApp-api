@@ -10,4 +10,5 @@ public class FriendUser {
     private String nickname;
     private String email;
     private long statusId;
+    private String image;
 }

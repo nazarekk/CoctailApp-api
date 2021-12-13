@@ -40,7 +40,8 @@ public class UserDaoImpl implements UserDao {
           rs.getString("email"),
           rs.getString("password"),
           rs.getLong("roleid"),
-          rs.getBoolean("isactive"));
+          rs.getBoolean("isactive"),
+          rs.getString("image"));
 
   @Override
   public List<User> findUserByEmail(String email) {
