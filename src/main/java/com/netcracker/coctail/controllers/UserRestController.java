@@ -181,12 +181,19 @@ public class UserRestController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PutMapping(value = "settings/edit")
+  @PatchMapping(value = "settings/edit")
   public ResponseEntity<?> editMyPersonalData(HttpServletRequest request,
                                               @RequestBody @Valid UserPersonalInfo user) {
     String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     userService.changeInfo(email, user);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PutMapping("settings/edit")
+  public ResponseEntity<?> editUserPhoto(HttpServletRequest request,
+                                         @RequestBody UserPhoto user) {
+    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    return new ResponseEntity<>(userService.changeUserPhoto(email, user), HttpStatus.OK);
   }
 
   @GetMapping("settings/edit")
@@ -421,6 +428,5 @@ public class UserRestController {
       return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
   }
-
 
 }
