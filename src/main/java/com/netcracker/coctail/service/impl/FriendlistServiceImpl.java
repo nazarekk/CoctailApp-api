@@ -181,18 +181,21 @@ public class FriendlistServiceImpl implements FriendlistService {
     @Override
     public List<FriendUser> getUserByNickname(String ownerEmail, String nickname) {
         log.info("calling dao with input " + ownerEmail + " and " + nickname);
-        long notFriends = status(Id.NONE.getStatus());
         List<User> users = friendlistDao.getOwnerByNickname(nickname);
         List<FriendUser> friends = new ArrayList();
         long ownerId = friendlistDao.getOwnerId(ownerEmail);
-        long friendId;
+        List<User> noFriendlist = new ArrayList();
+        for (User user : users) {
+            long friendId = user.getId();
+            if (ownerId != friendId && friendlistDao.findFriendlist(ownerId, friendId).isEmpty()) {
+                    log.info("users with ids " + friendId + " and " + ownerId + " are not friends");
+                    noFriendlist.add(user);
+            }
+        }
+        friendlistDao.batchFriendlist(ownerId, noFriendlist);
         for (int i = 0; i < users.size(); i++) {
-            friendId = users.get(i).getId();
+            long friendId = users.get(i).getId();
             if (ownerId != friendId) {
-                if (friendlistDao.findFriendlist(ownerId, friendId).isEmpty()) {
-                    friendlistDao.createFriendlist(ownerId, friendId, notFriends);
-                    friendlistDao.createFriendlist(friendId, ownerId, notFriends);
-                }
                 friends.add(
                         new FriendUser(
                                 users.get(i).getId(),
@@ -200,8 +203,8 @@ public class FriendlistServiceImpl implements FriendlistService {
                                 users.get(i).getEmail(),
                                 friendlistDao.findFriendlist(
                                         ownerId, friendId).get(0).getStatusid()));
+                log.info("showing user with id " + friendId);
             }
-            log.info("added friend wth friendId " + friendId);
         }
         return friends;
     }
