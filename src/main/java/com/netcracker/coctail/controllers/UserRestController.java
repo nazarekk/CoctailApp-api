@@ -167,8 +167,9 @@ public class UserRestController {
   }
 
   @GetMapping("recipe")
-  public ResponseEntity<List<DishRecipe>> getRecipeByName(@RequestParam String name) {
-    List<DishRecipe> recipes = recipeService.getRecipesByName(name);
+  public ResponseEntity<List<DishRecipe>> getRecipeByName(@RequestParam String name,
+                                                          HttpServletRequest httpServletRequest) {
+    List<DishRecipe> recipes = recipeService.getRecipesByName(name, httpServletRequest);
     if (recipes.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -277,8 +278,8 @@ public class UserRestController {
   }
 
   @GetMapping("recipe/list")
-  public ResponseEntity<List<DishRecipe>> recipesList() {
-    List<DishRecipe> recipes = recipeService.getRecipesByName("");
+  public ResponseEntity<List<DishRecipe>> recipesList(HttpServletRequest request) {
+    List<DishRecipe> recipes = recipeService.getRecipesByName("", request);
     if (recipes.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -295,7 +296,9 @@ public class UserRestController {
   }
 
   @PatchMapping(value = "recipe/favourites/{id}")
-  public ResponseEntity addToFavourites(@PathVariable(name = "id") int id, @RequestParam boolean favourite, HttpServletRequest request) {
+  public ResponseEntity addToFavourites(@PathVariable(name = "id") int id,
+                                        @RequestParam boolean favourite,
+                                        HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     if (recipeService.addToFavourites(ownerEmail, id, favourite)) {
       return new ResponseEntity<>(HttpStatus.OK);

@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
   private static final String REFRESH_ENDPOINT = "/api/auth/refresh-token";
   private static final String USER_ENDPOINT = "/api/users**";
   private static final String REG_ENDPOINT = "/api/users";
+  private static final String DISHES_ENDPOINT = "/api/users/recipe/list";
   //private static final String front_link = "${front_link}";
 
   @Autowired
@@ -65,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
         .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
         .antMatchers(REFRESH_ENDPOINT).permitAll()
+        .antMatchers(DISHES_ENDPOINT).permitAll()
         .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
         .antMatchers(USER_ENDPOINT).hasRole("MODERATOR")
         .anyRequest().authenticated()
