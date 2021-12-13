@@ -13,6 +13,8 @@ public interface FriendlistDao {
 
     void createFriendlist(long ownerid, long friendid, long statusid);
 
+    void batchFriendlist(long ownerid, List<User> noFriendlist);
+
     void editFriendlist(long ownerid, long friendid, long statusid);
 
     void removeFriendlist(long ownerid, long friendid);

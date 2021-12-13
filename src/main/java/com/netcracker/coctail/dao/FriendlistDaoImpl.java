@@ -9,6 +9,8 @@ import com.netcracker.coctail.model.User;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,6 +19,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 @Data
@@ -25,6 +29,8 @@ import java.util.List;
 public class FriendlistDaoImpl implements FriendlistDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final JdbcTemplate batchJdbcTemplate;
+
     @Value("${friendlistCreation}")
     private String friendlistCreation;
     @Value("${friendlist}")
@@ -71,6 +77,40 @@ public class FriendlistDaoImpl implements FriendlistDao {
                 .addValue("friendid", friendid)
                 .addValue("statusid", statusid);
         jdbcTemplate.update(friendlistCreation, param, holder);
+    }
+
+    @Override
+    public void batchFriendlist(long ownerid, List<User> noFriendlist) {
+         batchJdbcTemplate.batchUpdate(
+                "INSERT INTO friendlist (ownerid, friendid, statusid) VALUES (?,?,?)",
+                new BatchPreparedStatementSetter() {
+
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, ownerid);
+                        ps.setLong(2, noFriendlist.get(i).getId());
+                        ps.setInt(3, 1);
+                    }
+
+                    public int getBatchSize() {
+                        return noFriendlist.size();
+                    }
+
+                });
+        batchJdbcTemplate.batchUpdate(
+                "INSERT INTO friendlist (friendid, ownerid, statusid) VALUES (?,?,?)",
+                new BatchPreparedStatementSetter() {
+
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, ownerid);
+                        ps.setLong(2, noFriendlist.get(i).getId());
+                        ps.setInt(3, 1);
+                    }
+
+                    public int getBatchSize() {
+                        return noFriendlist.size();
+                    }
+
+                });
     }
 
     @Override

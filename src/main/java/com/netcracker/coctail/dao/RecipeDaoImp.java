@@ -111,7 +111,7 @@ public class RecipeDaoImp implements RecipeDao {
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("id", recipe.getId())
                 .addValue("recipe", recipe.getName())
-                .addValue("alcohol", recipe.getAlcohol())
+                .addValue("alcohol", recipe.getAlcohol().name())
                 .addValue("sugarless", recipe.isSugarless())
                 .addValue("isActive", recipe.isActive());
         jdbcTemplate.update(editRecipe, param);
