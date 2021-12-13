@@ -103,7 +103,7 @@ public class RecipeServiceImp implements RecipeService {
             log.info("Recipe with id " + id + " doesn't exist");
             return false;
         }
-        if (recipeDao.findRecipeByName(name).isEmpty()) {
+        if (recipeDao.findRecipeByName(name).isEmpty() | recipe.getName().equals(result.getName())) {
             recipeDao.editRecipe(recipe);
             return true;
         } else {
