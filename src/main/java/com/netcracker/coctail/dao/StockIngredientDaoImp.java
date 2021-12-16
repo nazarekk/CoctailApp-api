@@ -97,7 +97,7 @@ public class StockIngredientDaoImp implements StockIngredientDao {
                         rs.getLong("quantity"),
                         rs.getString("image"));
 
-        return jdbcTemplate.query(String.format(findStockIngredientsFiltered, userId, type, category),
+        return jdbcTemplate.query(String.format(findStockIngredientsFiltered, userId, type + "%", category + "%"),
                 rowMapper);
     }
 

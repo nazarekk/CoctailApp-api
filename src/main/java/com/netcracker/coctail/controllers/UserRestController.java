@@ -1,6 +1,8 @@
 package com.netcracker.coctail.controllers;
+import com.netcracker.coctail.dao.RegistrationDao;
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
+import com.netcracker.coctail.model.ActivateUser;
 import com.netcracker.coctail.model.CreateEvent;
 import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.model.Event;
@@ -46,6 +48,7 @@ public class UserRestController {
   private PersonalStockService personalStockService;
   private IngredientService ingredientService;
   private EventService eventService;
+  private RegistrationDao registrationDao;
 
   @Autowired
   @Lazy
@@ -57,7 +60,8 @@ public class UserRestController {
                             RecipeService recipeService,
                             PersonalStockService personalStockService,
                             EventService eventService,
-                            IngredientService ingredientService) {
+                            IngredientService ingredientService,
+                            RegistrationDao registrationDao) {
     this.userService = userService;
     this.jwtTokenProvider = jwtTokenProvider;
     this.userDao = userDao;
@@ -67,6 +71,13 @@ public class UserRestController {
     this.personalStockService = personalStockService;
     this.eventService = eventService;
     this.ingredientService = ingredientService;
+    this.registrationDao = registrationDao;
+  }
+
+  @PatchMapping("/activation")
+  public ResponseEntity activateUser(@RequestBody ActivateUser user) {
+    return registrationDao.activateUser(user) == 1 ? new ResponseEntity(HttpStatus.OK) :
+        new ResponseEntity(HttpStatus.NOT_MODIFIED);
   }
 
   @GetMapping(value = "{id}")
@@ -98,6 +109,16 @@ public class UserRestController {
                                                             HttpServletRequest request) {
     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
     List<FriendUser> users = friendlistService.getUserByNickname(ownerEmail, nickname);
+    if (users.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(users, HttpStatus.OK);
+  }
+
+  @GetMapping("friendlist")
+  public ResponseEntity<List<FriendUser>> getFriendList(HttpServletRequest request) {
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    List<FriendUser> users = friendlistService.friendList(ownerEmail);
     if (users.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -216,8 +237,8 @@ public class UserRestController {
 
   @GetMapping("recipe/filter")
   public ResponseEntity<List<DishRecipe>> getRecipesFiltered(
-      @RequestParam boolean sugarless, @RequestParam String alcohol) {
-    List<DishRecipe> recipes = recipeService.getRecipesFiltered(sugarless, alcohol);
+      @RequestParam String sugarless, @RequestParam String alcohol, HttpServletRequest httpServletRequest) {
+    List<DishRecipe> recipes = recipeService.getRecipesFiltered(sugarless, alcohol, httpServletRequest);
     if (recipes.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -280,6 +301,27 @@ public class UserRestController {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     return new ResponseEntity<>(stockIngredients, HttpStatus.OK);
+  }
+
+  @GetMapping("ingredients/search")
+  public ResponseEntity<List<Ingredient>> getIngredientsByName(@RequestParam String name) {
+    List<Ingredient> ingredients = ingredientService.getIngredientByName(name);
+    if (ingredients.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(ingredients, HttpStatus.OK);
+  }
+
+  @GetMapping("ingredients/filter")
+  public ResponseEntity<List<Ingredient>> getIngredientsFiltered(
+      @RequestParam String type,
+      @RequestParam String category,
+      @RequestParam String active) {
+    List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category, active);
+    if (ingredients.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(ingredients, HttpStatus.OK);
   }
 
   @GetMapping("stock/filter")

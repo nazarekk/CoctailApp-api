@@ -25,8 +25,6 @@ public class IngredientDaoImp implements IngredientDao {
   private String findAllIngredientByName;
   @Value("${findAllIngredientFiltered}")
   private String findAllIngredientFiltered;
-  @Value("${findAllIngredientFilteredWithoutActive}")
-  private String findAllIngredientFilteredWithoutActive;
   @Value("${findIngredientByName}")
   private String findIngredientByName;
   @Value("${findIngredientById}")
@@ -73,13 +71,11 @@ public class IngredientDaoImp implements IngredientDao {
 
   @Override
   public List<Ingredient> findAllIngredientFiltered(String type, String category, String active) {
-    log.info(active);
     if (active.isEmpty()) {
-      return jdbcTemplate.query(String.format(findAllIngredientFilteredWithoutActive,
-          "%" + type + "%", "%" + category + "%"), rowMapper);
+      active = "true,false";
     }
     return jdbcTemplate.query(String.format(findAllIngredientFiltered,
-        "%" + type + "%", "%" + category + "%", Boolean.valueOf(active)), rowMapper);
+        "%" + type + "%", "%" + category + "%", active), rowMapper);
   }
 
   @Override

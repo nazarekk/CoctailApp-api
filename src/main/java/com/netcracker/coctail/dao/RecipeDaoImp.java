@@ -88,8 +88,12 @@ public class RecipeDaoImp implements RecipeDao {
   }
 
   @Override
-  public List<Recipe> findAllRecipesFiltered(boolean sugarless, String alcohol) {
-    return jdbcTemplate.query(String.format(findAllRecipesFiltered, sugarless, alcohol), rowMapper);
+  public List<Recipe> findAllRecipesFiltered(String sugarless, String alcohol) {
+    if (sugarless.isEmpty()) {
+      sugarless = "true,false";
+    }
+    return jdbcTemplate.query(String.format(findAllRecipesFiltered, sugarless, alcohol + "%"),
+        rowMapper);
   }
 
   @Override
