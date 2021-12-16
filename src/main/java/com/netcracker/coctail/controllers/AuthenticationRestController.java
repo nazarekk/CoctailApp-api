@@ -2,7 +2,6 @@ package com.netcracker.coctail.controllers;
 
 import com.netcracker.coctail.dao.ForgotPasswordDao;
 import com.netcracker.coctail.dto.AuthenticationRequestDto;
-import com.netcracker.coctail.dto.CaptchaResponseDto;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
@@ -12,16 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -57,12 +52,11 @@ public class AuthenticationRestController {
     }
 
 
-    @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationRequestDto requestDto,
-                                   HttpServletRequest request) {
-        String captchaResponse = request.getParameter("g-recaptcha-response");
-        System.out.println(captchaResponse);
-        return ResponseEntity.ok(authService.loginAuthorization(requestDto, captchaResponse));
+    @PostMapping(value = "login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> json) {
+        AuthenticationRequestDto requestDto = new AuthenticationRequestDto(json.get("email"), json.get("password"));
+        String captcha = json.get("captcha");
+        return ResponseEntity.ok(authService.loginAuthorization(requestDto, captcha));
     }
 
     @PostMapping("refresh-token")

@@ -8,7 +8,6 @@ import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.security.jwt.JwtTokenProvider;
 import com.netcracker.coctail.service.UserService;
 import io.jsonwebtoken.impl.DefaultClaims;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,13 +23,12 @@ import java.util.Map;
 @Service
 public class AuthService {
 
-    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
+    private static final String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
     @Value("${recaptcha.secret}")
     private String secret;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -38,21 +36,23 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
-                       UserService userService, PasswordEncoder passwordEncoder) {
+                       UserService userService, PasswordEncoder passwordEncoder, RestTemplate restTemplate) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.restTemplate = restTemplate;
     }
 
     public Map<Object, Object> loginAuthorization(AuthenticationRequestDto requestDto, String captchaResponse) {
-        String url = String.format(CAPTCHA_URL, secret, captchaResponse);
-        CaptchaResponseDto captchaResponseDto = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
-
-        if (captchaResponse == null || !captchaResponseDto.isSuccess()) {
-            throw new InvalidCaptchaException();
+        if (captchaResponse != null) {
+            String url = String.format(CAPTCHA_URL, secret, captchaResponse);
+            CaptchaResponseDto captchaResponseDto = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponseDto.class);
+            assert captchaResponseDto != null;
+            if (!captchaResponseDto.isSuccess()) {
+                throw new InvalidCaptchaException();
+            }
         }
-
         String email = requestDto.getEmail();
         User user = userService.getUserByEmail(email);
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
