@@ -14,7 +14,7 @@ public interface ModeratorDao {
 
   void editModerator(ModeratorInformation moderator);
 
-  void removeModerator(ModeratorInformation moderator);
+  Boolean removeModerator(ModeratorInformation moderator);
 
   ModeratorInformation searchModerator(String value);
 

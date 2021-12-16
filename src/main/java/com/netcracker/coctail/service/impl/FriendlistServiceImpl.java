@@ -64,6 +64,7 @@ public class FriendlistServiceImpl implements FriendlistService {
   @Override
   public List<FriendUser> friendList(String ownerEmail) {
     long ownerId = friendlistDao.getOwnerId(ownerEmail);
+    log.info("Looking for friends for {}", ownerId);
     return friendlistDao.friendList(ownerId);
   }
 

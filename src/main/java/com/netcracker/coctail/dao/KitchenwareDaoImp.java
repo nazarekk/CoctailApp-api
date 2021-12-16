@@ -23,8 +23,6 @@ public class KitchenwareDaoImp implements KitchenwareDao {
   private String findAllKitchenwareByName;
   @Value("${findAllKitchenwareFiltered}")
   private String findAllKitchenwareFiltered;
-  @Value("${findAllKitchenwareFilteredWithoutActive}")
-  private String findAllKitchenwareFilteredWithoutActive;
   @Value("${findKitchenwareByName}")
   private String findKitchenwareByName;
   @Value("${findKitchenwareById}")
@@ -36,33 +34,33 @@ public class KitchenwareDaoImp implements KitchenwareDao {
   @Value("${removeKitchenware}")
   private String removeKitchenware;
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
+  private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    RowMapper<Kitchenware> rowMapper = (rs, rownum) ->
-            new Kitchenware(rs.getLong("id"),
-                    rs.getString("kitchenwarename"),
-                    rs.getString("type"),
-                    rs.getString("category"),
-                    rs.getBoolean("isActive"),
-                    rs.getString("image"));
+  RowMapper<Kitchenware> rowMapper = (rs, rownum) ->
+      new Kitchenware(rs.getLong("id"),
+          rs.getString("kitchenwarename"),
+          rs.getString("type"),
+          rs.getString("category"),
+          rs.getBoolean("isActive"),
+          rs.getString("image"));
 
-    @Override
-    public void create(CreateKitchenware kitchenware) {
-      String link;
-      if (kitchenware.getImage() == null) {
-        link =
-            "https://static.thenounproject.com/png/1738131-200.png";
-      } else {
-        link = kitchenware.getImage();
-      }
-        SqlParameterSource param = new MapSqlParameterSource()
-                .addValue("kitchenwarename", kitchenware.getName())
-                .addValue("type", kitchenware.getType())
-                .addValue("category", kitchenware.getCategory())
-                .addValue("isActive", kitchenware.isActive())
-                .addValue("image", link);
-        jdbcTemplate.update(createKitchenware, param);
+  @Override
+  public void create(CreateKitchenware kitchenware) {
+    String link;
+    if (kitchenware.getImage() == null) {
+      link =
+          "https://static.thenounproject.com/png/1738131-200.png";
+    } else {
+      link = kitchenware.getImage();
     }
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("kitchenwarename", kitchenware.getName())
+        .addValue("type", kitchenware.getType())
+        .addValue("category", kitchenware.getCategory())
+        .addValue("isActive", kitchenware.isActive())
+        .addValue("image", link);
+    jdbcTemplate.update(createKitchenware, param);
+  }
 
   @Override
   public List<Kitchenware> findAllKitchenwareByName(String name) {
@@ -71,12 +69,11 @@ public class KitchenwareDaoImp implements KitchenwareDao {
 
   @Override
   public List<Kitchenware> findAllKitchenwareFiltered(String type, String category, String active) {
-      if (active == "true" || active == "false") {
-          return jdbcTemplate.query(String.format(findAllKitchenwareFiltered,
-              "%" + type + "%", "%" + category + "%", Boolean.valueOf(active)), rowMapper);
-      }
-    return jdbcTemplate.query(String.format(findAllKitchenwareFilteredWithoutActive,
-        "%" + type + "%", "%" + category + "%"), rowMapper);
+    if (active.isEmpty()) {
+      active = "true,false";
+    }
+    return jdbcTemplate.query(String.format(findAllKitchenwareFiltered,
+        "%" + type + "%", "%" + category + "%", active), rowMapper);
   }
 
   @Override
@@ -89,17 +86,17 @@ public class KitchenwareDaoImp implements KitchenwareDao {
     return jdbcTemplate.query(String.format(findKitchenwareById, id), rowMapper);
   }
 
-    @Override
-    public void editKitchenware(Kitchenware kitchenware) {
-        SqlParameterSource param = new MapSqlParameterSource()
-                .addValue("id", kitchenware.getId())
-                .addValue("kitchenwarename", kitchenware.getName())
-                .addValue("type", kitchenware.getType())
-                .addValue("category", kitchenware.getCategory())
-                .addValue("isActive", kitchenware.isActive())
-                .addValue("image", kitchenware.getImage());
-        jdbcTemplate.update(editKitchenware, param);
-    }
+  @Override
+  public void editKitchenware(Kitchenware kitchenware) {
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("id", kitchenware.getId())
+        .addValue("kitchenwarename", kitchenware.getName())
+        .addValue("type", kitchenware.getType())
+        .addValue("category", kitchenware.getCategory())
+        .addValue("isActive", kitchenware.isActive())
+        .addValue("image", kitchenware.getImage());
+    jdbcTemplate.update(editKitchenware, param);
+  }
 
   @Override
   public void removeKitchenware(Kitchenware kitchenware) {
