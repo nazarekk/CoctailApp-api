@@ -1,7 +1,6 @@
 package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.KitchenwareDao;
-import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
 import com.netcracker.coctail.model.CreateKitchenware;
 import com.netcracker.coctail.model.Kitchenware;
 import com.netcracker.coctail.service.KitchenwareService;

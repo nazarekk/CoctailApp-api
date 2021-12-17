@@ -1,7 +1,6 @@
 package com.netcracker.coctail.service.impl;
 
 import com.netcracker.coctail.dao.IngredientDao;
-import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
 import com.netcracker.coctail.model.CreateIngredient;
 import com.netcracker.coctail.model.Ingredient;
 import com.netcracker.coctail.service.IngredientService;
