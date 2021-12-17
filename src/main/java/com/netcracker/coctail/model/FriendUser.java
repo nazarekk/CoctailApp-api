@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class FriendUser {
-    private final long id;
+    private final Long id;
     private final String nickname;
     private final String email;
-    private final long statusId;
+    private final Long statusId;
 }

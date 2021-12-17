@@ -36,7 +36,6 @@ public class IngredientServiceImp implements IngredientService {
 
   @Override
   public List<Ingredient> getIngredientFiltered(String type, String category, String active) {
-    log.info("Filtering ");
     List<Ingredient> result = ingredientDao.findAllIngredientFiltered(type, category, active);
     return result;
   }
@@ -46,23 +45,22 @@ public class IngredientServiceImp implements IngredientService {
     String name = ingredient.getName();
     if (ingredientDao.findIngredientByName(name).isEmpty()) {
       ingredientDao.create(ingredient);
-      log.info("Ingredient with name " + name + " created");
+      log.info("Ingredient with name {} created", name);
       return Boolean.TRUE;
     } else {
-      log.info("Ingredient with name " + name + " already exists");
-      throw new InvalidEmailOrPasswordException();
+      log.error("Ingredient with name {} already exists", name);
+      return Boolean.FALSE;
     }
   }
 
   @Override
   public Boolean editIngredient(Ingredient ingredient) {
-    log.info("Ingredient isActive = " + ingredient.isActive());
     String name = ingredient.getName();
     long id = ingredient.getId();
     Ingredient result = ingredientDao.findIngredientById(id).get(0);
     if (result == null) {
-      log.info("Ingredient with id " + id + " doesn't exists");
-      throw new InvalidEmailOrPasswordException();
+      log.error("Ingredient with id {} doesn't exists", id);
+      return Boolean.FALSE;
     }
     if (ingredientDao.findIngredientByName(name).isEmpty()) {
       ingredientDao.editIngredient(ingredient);
@@ -71,8 +69,8 @@ public class IngredientServiceImp implements IngredientService {
       ingredientDao.editIngredient(ingredient);
       return Boolean.TRUE;
     } else {
-      log.info("Ingredient with name " + name + " already exists but in db " + result.getName());
-      throw new InvalidEmailOrPasswordException();
+      log.error("Ingredient with name " + name + " already exists but in db " + result.getName());
+      return Boolean.FALSE;
     }
   }
 
@@ -81,10 +79,9 @@ public class IngredientServiceImp implements IngredientService {
   public Boolean removeIngredient(long id) {
     Ingredient result = ingredientDao.findIngredientById(id).get(0);
     if (result == null) {
-      log.info("Ingredient with id " + id + " doesn't exists");
-      throw new InvalidEmailOrPasswordException();
+      log.error("Ingredient with id {} doesn't exist", id);
+      return Boolean.FALSE;
     }
-    log.info("Ingredient with id " + id + " exists");
     ingredientDao.removeIngredient(result);
     return Boolean.TRUE;
   }

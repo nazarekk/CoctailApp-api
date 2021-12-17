@@ -52,7 +52,6 @@ public class RecipeServiceImp implements RecipeService {
 
     @Override
     public List<DishRecipe> getRecipesFiltered(boolean sugarless, String alcohol) {
-        log.info("Filtering");
         List<Recipe> recipes = recipeDao.findAllRecipesFiltered(sugarless, alcohol);
         List<DishRecipe> result = new ArrayList<>();
         for (Recipe recipe : recipes) {
@@ -100,14 +99,14 @@ public class RecipeServiceImp implements RecipeService {
         String name = recipe.getName();
         Recipe result = recipeDao.findRecipeById(id).get(0);
         if (result == null) {
-            log.info("Recipe with id " + id + " doesn't exist");
+            log.error("Recipe with id {} doesn't exist", id);
             return false;
         }
         if (recipeDao.findRecipeByName(name).isEmpty()) {
             recipeDao.editRecipe(recipe);
             return true;
         } else {
-            log.info("Recipe with name " + name + " already exists");
+            log.error("Recipe with name {} already exists", name);
             return false;
         }
     }
@@ -116,7 +115,7 @@ public class RecipeServiceImp implements RecipeService {
     public boolean removeRecipe(int id) {
         Recipe result = recipeDao.findRecipeById(id).get(0);
         if (result == null) {
-            log.info("Recipe with id " + id + " doesn't exist");
+            log.error("Recipe with id {} doesn't exist", id);
             return false;
         }
         recipeDao.removeRecipe(result.getId());
@@ -133,10 +132,10 @@ public class RecipeServiceImp implements RecipeService {
             recipeDao.favouriteLock(ownerId, recipeId, favourite);
             return true;
         } else if (favourite) {
-            log.info("You already added this recipe to favourites");
+            log.error("You already added recipe with id {} to favourites", recipeId);
             return false;
         } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
-            log.info("You didn't add this recipe to favourites");
+            log.error("You didn't add recipe with id {} to favourites", recipeId);
             return false;
         } else {
             recipeDao.favouriteLock(ownerId, recipeId, favourite);
@@ -157,10 +156,10 @@ public class RecipeServiceImp implements RecipeService {
             return true;
         }
         else if (like) {
-            log.info("You already liked this recipe");
+            log.error("You already liked this recipe");
             return false;
         } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
-            log.info("You didn't like this recipe");
+            log.error("You didn't like this recipe");
             return false;
         } else {
             recipeDao.withdrawLike(recipeId);
@@ -176,7 +175,7 @@ public class RecipeServiceImp implements RecipeService {
             recipeDao.createRecipe(recipe);
             return recipeDao.findRecipeByName(recipe.getName()).get(0).getId();
         } else {
-            log.info("Recipe with name " + recipe.getName() + " already exists");
+            log.error("Recipe with name {} already exists", recipe.getName());
             return 0;
         }
     }
@@ -186,18 +185,18 @@ public class RecipeServiceImp implements RecipeService {
         Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
         Ingredient ingredient = ingredientDao.findIngredientByName(name).get(0);
         if (recipe == null) {
-            log.info("Recipe with id " + recipeId + " doesn't exist");
+            log.error("Recipe with id {} doesn't exist", recipeId);
             return false;
         }
         if (ingredient == null) {
-            log.info("Ingredient with name " + name + " doesn't exist");
+            log.error("Ingredient with name {} doesn't exist", name);
             return false;
         }
         if (!recipeDao.ingredientInRecipe(recipeId, ingredient.getId())) {
             recipeDao.addIngredientToRecipe(recipe.getId(), ingredient.getId());
             return true;
         } else {
-            log.info("Ingredient with name " + name + " is already included");
+            log.error("Ingredient with name {} is already included", name);
             return false;
         }
     }
@@ -207,18 +206,18 @@ public class RecipeServiceImp implements RecipeService {
         Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
         Kitchenware kitchenware = kitchenwareDao.findKitchenwareByName(name).get(0);
         if (recipe == null) {
-            log.info("Recipe with id " + recipeId + " doesn't exist");
+            log.error("Recipe with id {} doesn't exist", recipeId);
             return false;
         }
         if (kitchenware == null) {
-            log.info("Kitchenware with name " + name + " doesn't exist");
+            log.error("Kitchenware with name {} doesn't exist", name);
             return false;
         }
         if (!recipeDao.kitchenwareInRecipe(recipeId, kitchenware.getId())) {
             recipeDao.addKitchenwareToRecipe(recipe.getId(), kitchenware.getId());
             return true;
         } else {
-            log.info("Kitchenware with name " + name + " is already included");
+            log.error("Kitchenware with with name {} is already included", name);
             return false;
         }
     }
@@ -228,18 +227,18 @@ public class RecipeServiceImp implements RecipeService {
         Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
         Ingredient ingredient = ingredientDao.findIngredientByName(name).get(0);
         if (recipe == null) {
-            log.info("Recipe with id " + recipeId + " doesn't exist");
+            log.error("Recipe with id {} doesn't exist", recipeId);
             return false;
         }
         if (ingredient == null) {
-            log.info("Ingredient with name " + name + " doesn't exist");
+            log.error("Ingredient with name {} doesn't exist", name);
             return false;
         }
         if (recipeDao.ingredientInRecipe(recipeId, ingredient.getId())) {
             recipeDao.removeIngredientFromRecipe(recipe.getId(), ingredient.getId());
             return true;
         } else {
-            log.info("Ingredient with name " + name + " is not included");
+            log.error("Ingredient with name {} is not included", name);
             return false;
         }
     }
@@ -249,18 +248,18 @@ public class RecipeServiceImp implements RecipeService {
         Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
         Kitchenware kitchenware = kitchenwareDao.findKitchenwareByName(name).get(0);
         if (recipe == null) {
-            log.info("Recipe with id " + recipeId + " doesn't exist");
+            log.error("Recipe with id {} doesn't exist", recipeId);
             return false;
         }
         if (kitchenware == null) {
-            log.info("Kitchenware with name " + name + " doesn't exist");
+            log.error("Kitchenware with name {} doesn't exist", name);
             return false;
         }
         if (recipeDao.kitchenwareInRecipe(recipeId, kitchenware.getId())) {
             recipeDao.removeKitchenwareFromRecipe(recipe.getId(), kitchenware.getId());
             return true;
         } else {
-            log.info("Kitchenware with name " + name + " is not included");
+            log.error("Kitchenware with name {} is not included", name);
             return false;
         }
     }

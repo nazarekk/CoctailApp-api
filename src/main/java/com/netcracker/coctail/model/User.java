@@ -10,10 +10,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class User {
-    private Long id;
-    private String nickname;
-    private String email;
-    private String password;
-    private Long roleid;
-    private boolean isactive;
+    private final Long id;
+    private final String nickname;
+    private final String email;
+    private final String password;
+    private final Long roleid;
+    private final boolean isactive;
 }

@@ -13,7 +13,6 @@ import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.service.FriendlistService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.List;
 public class FriendlistServiceImpl implements FriendlistService {
 
     private final UserDao userDao;
-    private final JdbcTemplate jdbcTemplate;
     private final FriendlistDao friendlistDao;
 
     private boolean check(long ownerId, long friendId, long status) {
@@ -188,8 +186,8 @@ public class FriendlistServiceImpl implements FriendlistService {
         for (User user : users) {
             long friendId = user.getId();
             if (ownerId != friendId && friendlistDao.findFriendlist(ownerId, friendId).isEmpty()) {
-                    log.info("users with ids " + friendId + " and " + ownerId + " are not friends");
-                    noFriendlist.add(user);
+                log.info("users with ids " + friendId + " and " + ownerId + " are not friends");
+                noFriendlist.add(user);
             }
         }
         friendlistDao.batchFriendlist(ownerId, noFriendlist);
