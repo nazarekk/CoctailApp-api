@@ -70,8 +70,11 @@ public class AdminRestController {
   }
 
   @DeleteMapping("moderators/remove")
-  public void removeModerator(@RequestBody ModeratorInformation user) {
-    createModeratorDao.removeModerator(user);
+  public ResponseEntity removeModerator(@RequestBody ModeratorInformation user) {
+    Boolean result = createModeratorDao.removeModerator(user);
+    return result == true
+        ? new ResponseEntity(HttpStatus.OK) :
+        new ResponseEntity(result, HttpStatus.NOT_MODIFIED);
   }
 
   @GetMapping("moderators/search")
@@ -83,8 +86,9 @@ public class AdminRestController {
 
   @GetMapping("moderators/filter")
   public ResponseEntity<ModeratorInformation> filterModerator(@RequestParam Boolean q) {
-    return createModeratorDao.filterModerator(q) == null
+    ModeratorInformation result = createModeratorDao.filterModerator(q);
+    return result == null
         ? new ResponseEntity<>(HttpStatus.NO_CONTENT) :
-        new ResponseEntity<>(createModeratorDao.filterModerator(q), HttpStatus.OK);
+        new ResponseEntity<>(result, HttpStatus.OK);
   }
 }

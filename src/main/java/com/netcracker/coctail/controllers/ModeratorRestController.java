@@ -10,6 +10,7 @@ import com.netcracker.coctail.model.Kitchenware;
 import com.netcracker.coctail.model.Recipe;
 import com.netcracker.coctail.service.IngredientService;
 import com.netcracker.coctail.service.KitchenwareService;
+import com.netcracker.coctail.service.PersonalStockService;
 import com.netcracker.coctail.service.RecipeService;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class ModeratorRestController {
     private final IngredientService ingredientService;
     private final KitchenwareService kitchenwareService;
     private final RecipeService recipeService;
+    private final PersonalStockService personalStockService;
 
     @PostMapping("activation")
     public String activateModerator(@RequestBody ActivateModerator moderator) {
@@ -221,6 +223,25 @@ public class ModeratorRestController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+    }
+
+    @DeleteMapping("stock/remove/{userid}/{ingredientid}")
+    public ResponseEntity removeStockIngredient(
+            @PathVariable(name = "userid") int userId, @PathVariable(name = "ingredientid") long ingredientId) {
+        boolean result = personalStockService.removeIngredientFromStock(userId, ingredientId);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping(value = "stock/edit/{userid}")
+    public ResponseEntity editStockIngredient(
+            @PathVariable(name = "userid") int userId, @RequestParam long ingredientId,
+            @RequestParam long quantity) {
+        boolean result = personalStockService.editIngredient(userId, ingredientId, quantity);
+        return result == Boolean.TRUE
+                ? new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

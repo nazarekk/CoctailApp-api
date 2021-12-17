@@ -18,4 +18,6 @@ public class DishRecipe {
     private final Integer rating;
     private final List<Ingredient> ingredientList;
     private final List<Kitchenware> kitchenwareList;
+    private final Boolean liked;
+    private final Boolean favourite;
 }

@@ -5,8 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class StockIngredientOperations {
+public class UserPhoto {
+    private String photo;
 
-    private long ingredientId;
-    private long quantity;
+    public UserPhoto() {
+    }
 }

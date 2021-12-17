@@ -5,6 +5,7 @@ import com.netcracker.coctail.model.DishRecipe;
 import com.netcracker.coctail.model.Recipe;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public interface RecipeService {
 
@@ -18,9 +19,9 @@ public interface RecipeService {
 
     boolean removeKitchenwareFromRecipe(int id, String name);
 
-    List<DishRecipe> getRecipesByName(String name);
+    List<DishRecipe> getRecipesByName(String name, HttpServletRequest httpServletRequest);
 
-    List<DishRecipe> getRecipesFiltered(boolean sugarless, String alcohol);
+    List<DishRecipe> getRecipesFiltered(String sugarless, String alcohol, HttpServletRequest httpServletRequest);
 
     DishRecipe getRecipeById(int id);
 

@@ -3,6 +3,7 @@ package com.netcracker.coctail.dao;
 import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserInfo;
 import com.netcracker.coctail.model.UserPersonalInfo;
+import com.netcracker.coctail.model.UserPhoto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface UserDao {
     int editInfo(String email, UserPersonalInfo user);
     UserPersonalInfo getInfo(String email);
     List<UserPersonalInfo> findUsersByNickname(String email, UserPersonalInfo user);
+    String getUserPhoto(String email);
+    int editPhoto(String email, UserPhoto user);
 }

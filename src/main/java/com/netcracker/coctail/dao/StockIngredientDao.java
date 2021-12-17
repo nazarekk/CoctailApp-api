@@ -1,14 +1,13 @@
 package com.netcracker.coctail.dao;
 
 import com.netcracker.coctail.model.StockIngredientInfo;
-import com.netcracker.coctail.model.StockIngredientOperations;
 import com.netcracker.coctail.model.StockIngredient;
 
 import java.util.List;
 
 public interface StockIngredientDao {
 
-    void addIngredientToStock(long id, StockIngredientOperations stockIngredientOperations);
+    void addIngredientToStock(long id, long ingredientId, long quantity);
     void editStockIngredient(long id, long quantity);
     void removeIngredientFromStock(long id);
     List<StockIngredientInfo> findStockIngredientsByName(long userId, String name);

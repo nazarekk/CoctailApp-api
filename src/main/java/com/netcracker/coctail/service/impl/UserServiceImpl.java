@@ -4,12 +4,13 @@ import com.netcracker.coctail.dao.ForgotPasswordDao;
 import com.netcracker.coctail.exceptions.InvalidEmailOrPasswordException;
 import com.netcracker.coctail.exceptions.InvalidNicknameException;
 import com.netcracker.coctail.exceptions.InvalidPasswordException;
-import com.netcracker.coctail.model.Role;
-import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.dao.RoleDao;
 import com.netcracker.coctail.dao.UserDao;
+import com.netcracker.coctail.model.Role;
+import com.netcracker.coctail.model.User;
 import com.netcracker.coctail.model.UserPasswords;
 import com.netcracker.coctail.model.UserPersonalInfo;
+import com.netcracker.coctail.model.UserPhoto;
 import com.netcracker.coctail.service.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +104,18 @@ public class UserServiceImpl implements UserService {
         } else {
             userDao.editInfo(email, user);
             log.warn("EditInfo: user by email: {}, change personal info succsessful", email);
+        }
+    }
+
+    public boolean changeUserPhoto(String email, UserPhoto photo) {
+        int check = userDao.editPhoto(email, photo);
+        if (check == 1) {
+            log.info("EditPhoto: user by email: {}, change photo successful", email);
+            return true;
+        }
+        else {
+            log.warn("EditPhoto: user by email: {}, change photo NOT successful", email);
+            return false;
         }
     }
 }

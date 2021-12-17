@@ -30,7 +30,9 @@ CREATE TABLE USERS (
                        PASSWORD TEXT,
                        ROLEID BIGINT REFERENCES ROLE(ID),
                        ACTIVATION TEXT,
-                       ISACTIVE BOOLEAN
+                       ISACTIVE BOOLEAN,
+                       INFORMATION TEXT,
+                       PHOTO TEXT default 'D4q5xVf'
 );
 
 CREATE TABLE FRIENDSSTATUS (
