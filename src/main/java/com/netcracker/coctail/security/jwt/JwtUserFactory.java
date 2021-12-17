@@ -10,6 +10,7 @@ import java.util.Collections;
  * Implementation of Factory Method for class {JwtUser}.
  */
 
+
 public final class JwtUserFactory {
 
     public static JwtUser create(User user, String roleName) {
