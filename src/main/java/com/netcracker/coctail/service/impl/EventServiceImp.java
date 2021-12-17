@@ -49,7 +49,7 @@ public class EventServiceImp implements EventService {
             eventDao.joinEvent(eventId, creatorId);
             return eventId;
         } else {
-            log.info("Event with name " + name + " already exists");
+            log.error("Event with name {} already exists", name);
             return 0;
         }
     }
@@ -60,18 +60,18 @@ public class EventServiceImp implements EventService {
         long creatorId = friendlistDao.getOwnerId(ownerEmail);
         Event result = eventDao.findEventById(eventId).get(0);
         if (result == null) {
-            log.info("Event with id " + eventId + " doesn't exist");
+            log.error("Event with id {} doesn't exist", eventId);
             return false;
         }
         if (result.getCreatorId() != creatorId) {
-            log.info("You are not the creator of this event");
+            log.error("You are not the creator of this event");
             return false;
         }
         if (eventDao.findEventByName(name).isEmpty()) {
             eventDao.editEvent(creatorId, event, eventId);
             return true;
         } else {
-            log.info("Event with name " + name + " already exists");
+            log.error("Event with name {} already exists", name);
             return false;
         }
     }
@@ -81,11 +81,11 @@ public class EventServiceImp implements EventService {
         long creatorId = friendlistDao.getOwnerId(ownerEmail);
         Event result = eventDao.findEventById(eventId).get(0);
         if (result == null) {
-            log.info("Event with id " + eventId + " doesn't exist");
+            log.error("Event with id {} doesn't exist", eventId);
             return false;
         }
         if (result.getCreatorId() != creatorId) {
-            log.info("You are not the creator of this event");
+            log.error("You are not the creator of this event");
             return false;
         }
         eventDao.declineEvent(eventId);
@@ -116,14 +116,14 @@ public class EventServiceImp implements EventService {
     public boolean joinEvent(String ownerEmail, int eventId) {
         long userId = friendlistDao.getOwnerId(ownerEmail);
         if (eventDao.findEventById(eventId).get(0) == null) {
-            log.info("Event with id " + eventId + " doesn't exist");
+            log.error("Event with id {} doesn't exist", eventId);
             return false;
         }
         if (!eventDao.userInEvent(eventId, userId)) {
             eventDao.joinEvent(eventId, userId);
             return true;
         } else {
-            log.info("You already participate in this event");
+            log.error("You already participate in this event");
             return false;
         }
     }
@@ -132,23 +132,23 @@ public class EventServiceImp implements EventService {
     public boolean addRecipeToEvent(int eventId, String name, String userEmail) {
         long userId = friendlistDao.getOwnerId(userEmail);
         if (eventDao.findEventById(eventId).get(0) == null) {
-            log.info("Event with id " + eventId + " doesn't exist");
+            log.error("Event with id {} doesn't exist", eventId);
             return false;
         }
         Recipe recipe = recipeDao.findRecipeByName(name).get(0);
         if (recipe == null) {
-            log.info("Recipe with name " + name + " doesn't exist");
+            log.error("Recipe with name {} doesn't exist", name);
             return false;
         }
         if (!eventDao.userInEvent(eventId, userId)) {
-            log.info("You don't participate in this event");
+            log.error("You don't participate in this event");
             return false;
         }
         if (!eventDao.recipeInEvent(eventId, recipe.getId())) {
             eventDao.addRecipeToEvent(eventId, recipe.getId());
             return true;
         } else {
-            log.info("Recipe is already added to event");
+            log.error("Recipe is already added to event");
             return false;
         }
     }
@@ -157,14 +157,14 @@ public class EventServiceImp implements EventService {
     public boolean leaveEvent(String ownerEmail, int eventId) {
         long userId = friendlistDao.getOwnerId(ownerEmail);
         if (eventDao.findEventById(eventId).get(0) == null) {
-            log.info("Event with id " + eventId + " doesn't exist");
+            log.error("Event with id {} doesn't exist", eventId);
             return false;
         }
         if (eventDao.userInEvent(eventId, userId)) {
             eventDao.leaveEvent(eventId, userId);
             return true;
         } else {
-            log.info("You don't participate in this event");
+            log.error("You don't participate in this event");
             return false;
         }
     }
@@ -173,23 +173,23 @@ public class EventServiceImp implements EventService {
     public boolean removeRecipeFromEvent(int eventId, String name, String userEmail) {
         long userId = friendlistDao.getOwnerId(userEmail);
         if (eventDao.findEventById(eventId).get(0) == null) {
-            log.info("Event with id " + eventId + " doesn't exist");
+            log.error("Event with id {} doesn't exist", eventId);
             return false;
         }
         Recipe recipe = recipeDao.findRecipeByName(name).get(0);
         if (recipe == null) {
-            log.info("Recipe with name " + name + " doesn't exist");
+            log.error("Recipe with name {} doesn't exist", name);
             return false;
         }
         if (!eventDao.userInEvent(eventId, userId)) {
-            log.info("You don't participate in this event");
+            log.error("You don't participate in this event");
             return false;
         }
         if (eventDao.recipeInEvent(eventId, recipe.getId())) {
             eventDao.removeRecipeFromEvent(eventId, recipe.getId());
             return true;
         } else {
-            log.info("There is no recipe with name " + name + " in this event");
+            log.error("There is no recipe with name {} in this event", name);
             return false;
         }
     }
