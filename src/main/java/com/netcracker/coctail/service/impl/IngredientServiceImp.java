@@ -29,6 +29,7 @@ public class IngredientServiceImp implements IngredientService {
 
   @Override
   public List<Ingredient> getIngredientByName(String name) {
+    name = name.replaceAll("[^A-Za-z0-9]", "");
     List<Ingredient> result = ingredientDao.findAllIngredientByName(name);
     return result;
   }

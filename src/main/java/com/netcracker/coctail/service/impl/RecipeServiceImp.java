@@ -53,6 +53,7 @@ public class RecipeServiceImp implements RecipeService {
 
   @Override
   public List<DishRecipe> getRecipesByName(String name, HttpServletRequest httpServletRequest) {
+    name = name.replaceAll("[^A-Za-z0-9]", "");
     List<Recipe> recipes = recipeDao.findAllRecipesByName(name);
     UserToRecipe userToRecipe;
     Boolean liked = null;
