@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Friendlist {
-    private Long id;
-    private Long ownerid;
-    private Long friendid;
-    private Long statusid;
+    private final Long id;
+    private final Long ownerid;
+    private final Long friendid;
+    private final Long statusid;
 }
