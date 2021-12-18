@@ -111,7 +111,6 @@ public class UserRestController {
     public ResponseEntity<List<FriendUser>> getUserByNickname(@RequestParam String nickname,
                                                               HttpServletRequest request) {
         String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
-        //List<FriendUser> users = friendlistService.getUserByNickname(ownerEmail, nickname);
         List<FriendUser> users = friendlistService.showAllUsers(ownerEmail, nickname);
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
