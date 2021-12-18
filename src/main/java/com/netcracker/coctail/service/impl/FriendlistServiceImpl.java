@@ -179,6 +179,7 @@ public class FriendlistServiceImpl implements FriendlistService {
 
     @Override
     public List<FriendUser> getUserByNickname(String ownerEmail, String nickname) {
+        nickname = nickname.replaceAll("[^A-Za-z0-9]", "");
         log.info("calling dao with input " + ownerEmail + " and " + nickname);
         List<User> users = friendlistDao.getOwnerByNickname(nickname);
         List<FriendUser> friends = new ArrayList();
@@ -211,6 +212,7 @@ public class FriendlistServiceImpl implements FriendlistService {
 
     @Override
     public List<FriendUser> showAllUsers(String ownerEmail, String nickname) {
+        nickname = nickname.replaceAll("[^A-Za-z0-9]", "");
         log.info("calling dao with input " + ownerEmail + " and " + nickname);
         List<User> users = friendlistDao.getOwnerByNickname(nickname);
         List<FriendUser> result = new ArrayList();
