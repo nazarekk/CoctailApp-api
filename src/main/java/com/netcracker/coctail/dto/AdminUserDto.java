@@ -12,7 +12,7 @@ public class AdminUserDto {
     private String email;
     private Long roleid;
     private Boolean isActive;
-
+    private String image;
 
     public static AdminUserDto fromUser(User user) {
         AdminUserDto adminUserDto = new AdminUserDto();
@@ -21,6 +21,7 @@ public class AdminUserDto {
         adminUserDto.setEmail(user.getEmail());
         adminUserDto.setRoleid(user.getRoleid());
         adminUserDto.setIsActive(user.getIsActive());
+        adminUserDto.setImage(user.getImage());
         return adminUserDto;
     }
 }
