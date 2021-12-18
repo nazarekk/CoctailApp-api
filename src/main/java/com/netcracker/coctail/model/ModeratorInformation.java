@@ -8,6 +8,7 @@ import lombok.Data;
 public class ModeratorInformation {
   private final Long userid;
   private final String email;
-  private final String Nickname;
-  private final Boolean IsActive;
+  private final String nickname;
+  private final Boolean isActive;
+  private final String image;
 }

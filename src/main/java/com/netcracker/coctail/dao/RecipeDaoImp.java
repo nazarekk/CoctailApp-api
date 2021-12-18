@@ -64,6 +64,8 @@ public class RecipeDaoImp implements RecipeDao {
   private String ingredientInRecipe;
   @Value("${kitchenwareInRecipe}")
   private String kitchenwareInRecipe;
+  @Value("${dishSuggestion}")
+  private String suggestedQuery;
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -88,8 +90,12 @@ public class RecipeDaoImp implements RecipeDao {
   }
 
   @Override
-  public List<Recipe> findAllRecipesFiltered(boolean sugarless, String alcohol) {
-    return jdbcTemplate.query(String.format(findAllRecipesFiltered, sugarless, alcohol), rowMapper);
+  public List<Recipe> findAllRecipesFiltered(String sugarless, String alcohol) {
+    if (sugarless.isEmpty()) {
+      sugarless = "true,false";
+    }
+    return jdbcTemplate.query(String.format(findAllRecipesFiltered, sugarless, alcohol + "%"),
+        rowMapper);
   }
 
   @Override
@@ -255,6 +261,11 @@ public class RecipeDaoImp implements RecipeDao {
         .addValue("recipeid", recipeId)
         .addValue("kitchenwareid", kitchenwareId);
     jdbcTemplate.update(removeKitchenwareFromRecipe, param);
+  }
+
+  @Override
+  public List<Recipe> getSuggestion(Long id) {
+    return jdbcTemplate.query(String.format(suggestedQuery, id), rowMapper);
   }
 
 }

@@ -100,7 +100,8 @@ public class ModeratorDaoImp implements ModeratorDao {
             rs.getLong("userid"),
             rs.getString("email"),
             rs.getString("nickname"),
-            rs.getBoolean("isactive"));
+            rs.getBoolean("isactive"),
+                rs.getString("image"));
     return jdbcTemplate.query(getModerators, rowMapper);
   }
 
@@ -111,16 +112,17 @@ public class ModeratorDaoImp implements ModeratorDao {
         .addValue("userid", moderator.getUserid())
         .addValue("email", moderator.getEmail())
         .addValue("nickname", moderator.getNickname())
-        .addValue("isactive", moderator.getIsActive());
+        .addValue("isactive", moderator.getIsActive())
+            .addValue("image", moderator.getImage());
     jdbcTemplate.update(EditModerator, param, holder);
   }
 
   @Override
-  public void removeModerator(ModeratorInformation moderator) {
+  public Boolean removeModerator(ModeratorInformation moderator) {
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("userid", moderator.getUserid());
-    jdbcTemplate.update(RemoveModerator, param, holder);
+    return (jdbcTemplate.update(RemoveModerator, param, holder) == 1);
   }
 
   @Override
@@ -130,7 +132,8 @@ public class ModeratorDaoImp implements ModeratorDao {
             rs.getLong("userid"),
             rs.getString("email"),
             rs.getString("nickname"),
-            rs.getBoolean("isactive"));
+            rs.getBoolean("isactive"),
+                rs.getString("image"));
     return jdbcTemplate.query(String.format(SearchModerator, value), rowMapper).get(0);
   }
 
@@ -141,7 +144,8 @@ public class ModeratorDaoImp implements ModeratorDao {
             rs.getLong("userid"),
             rs.getString("email"),
             rs.getString("nickname"),
-            rs.getBoolean("isactive"));
+            rs.getBoolean("isactive"),
+                rs.getString("image"));
     return jdbcTemplate.query(String.format(FilterModerator, isactive), rowMapper).get(0);
   }
 

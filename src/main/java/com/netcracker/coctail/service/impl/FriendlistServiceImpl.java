@@ -13,7 +13,6 @@ import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.service.FriendlistService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,9 +23,8 @@ import java.util.List;
 @Data
 public class FriendlistServiceImpl implements FriendlistService {
 
-  private final UserDao userDao;
-  private final JdbcTemplate jdbcTemplate;
-  private final FriendlistDao friendlistDao;
+    private final UserDao userDao;
+    private final FriendlistDao friendlistDao;
 
   private boolean check(long ownerId, long friendId, long status) {
     return (friendlistDao.findFriendlist(ownerId, friendId).get(0).getStatusid() == status);
@@ -64,6 +62,7 @@ public class FriendlistServiceImpl implements FriendlistService {
   @Override
   public List<FriendUser> friendList(String ownerEmail) {
     long ownerId = friendlistDao.getOwnerId(ownerEmail);
+    log.info("Looking for friends for {}", ownerId);
     return friendlistDao.friendList(ownerId);
   }
 

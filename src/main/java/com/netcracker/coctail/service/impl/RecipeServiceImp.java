@@ -90,22 +90,26 @@ public class RecipeServiceImp implements RecipeService {
   }
 
   @Override
-  public List<DishRecipe> getRecipesFiltered(boolean sugarless, String alcohol) {
+  public List<DishRecipe> getRecipesFiltered(String sugarless, String alcohol,
+                                             HttpServletRequest httpServletRequest) {
     log.info("Filtering");
     List<Recipe> recipes = recipeDao.findAllRecipesFiltered(sugarless, alcohol);
+    UserToRecipe userToRecipe;
     Boolean liked = null;
     Boolean favourite = null;
-    String token = null;
-    if (!token.isEmpty()) {
-      Long userid =
-          userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();
-      Integer recipeid = recipeDao.findRecipeByName("name").get(0).getId();
-      UserToRecipe userToRecipe = recipeDao.checkLike(userid, recipeid).get(0);
-      liked = userToRecipe.isLiked();
-      favourite = userToRecipe.isFavourite();
-    }
+    String token = httpServletRequest.getHeader("Authorization");
     List<DishRecipe> result = new ArrayList<>();
+    long userid = 0;
+    if (token != null) {
+      userid =
+          userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();
+    }
     for (Recipe recipe : recipes) {
+      if (token != null & !recipeDao.checkLike(userid, recipe.getId()).isEmpty()) {
+        userToRecipe = recipeDao.checkLike(userid, recipe.getId()).get(0);
+        liked = userToRecipe.isLiked();
+        favourite = userToRecipe.isFavourite();
+      }
       int recipeId = recipe.getId();
       result.add(new DishRecipe(
           recipe.getId(),
@@ -150,173 +154,208 @@ public class RecipeServiceImp implements RecipeService {
     );
   }
 
-  @Override
-  public boolean editRecipe(Recipe recipe) {
-    int id = recipe.getId();
-    String name = recipe.getName();
-    Recipe result = recipeDao.findRecipeById(id).get(0);
-    if (result == null) {
-      log.info("Recipe with id " + id + " doesn't exist");
-      return false;
-    }
-    if (recipeDao.findRecipeByName(name).isEmpty() | recipe.getName().equals(result.getName())) {
-      recipeDao.editRecipe(recipe);
-      return true;
-    } else {
-      log.info("Recipe with name " + name + " already exists");
-      return false;
-    }
-  }
-
-  @Override
-  public boolean removeRecipe(int id) {
-    Recipe result = recipeDao.findRecipeById(id).get(0);
-    if (result == null) {
-      log.info("Recipe with id " + id + " doesn't exist");
-      return false;
-    }
-    recipeDao.removeRecipe(result.getId());
-    return true;
-  }
-
-  @Override
-  public boolean addToFavourites(String ownerEmail, int recipeId, boolean favourite) {
-    long ownerId = friendlistDao.getOwnerId(ownerEmail);
-    if (recipeDao.checkLike(ownerId, recipeId).isEmpty()) {
-      recipeDao.addToFavourites(ownerId, recipeId);
-    }
-    if (favourite && !recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
-      recipeDao.favouriteLock(ownerId, recipeId, favourite);
-      return true;
-    } else if (favourite) {
-      log.info("You already added this recipe to favourites");
-      return false;
-    } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
-      log.info("You didn't add this recipe to favourites");
-      return false;
-    } else {
-      recipeDao.favouriteLock(ownerId, recipeId, favourite);
-      return true;
+    @Override
+    public boolean editRecipe(Recipe recipe) {
+        int id = recipe.getId();
+        String name = recipe.getName();
+        Recipe result = recipeDao.findRecipeById(id).get(0);
+        if (result == null) {
+            log.error("Recipe with id {} doesn't exist", id);
+            return false;
+        }
+        if (recipeDao.findRecipeByName(name).isEmpty()) {
+            recipeDao.editRecipe(recipe);
+            return true;
+        } else {
+            log.error("Recipe with name {} already exists", name);
+            return false;
+        }
     }
 
+    @Override
+    public boolean removeRecipe(int id) {
+        Recipe result = recipeDao.findRecipeById(id).get(0);
+        if (result == null) {
+            log.error("Recipe with id {} doesn't exist", id);
+            return false;
+        }
+        recipeDao.removeRecipe(result.getId());
+        return true;
+    }
+
+    @Override
+    public boolean addToFavourites(String ownerEmail, int recipeId, boolean favourite) {
+        long ownerId = friendlistDao.getOwnerId(ownerEmail);
+        if (recipeDao.checkLike(ownerId, recipeId).isEmpty()) {
+            recipeDao.addToFavourites(ownerId, recipeId);
+        }
+        if (favourite && !recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
+            recipeDao.favouriteLock(ownerId, recipeId, favourite);
+            return true;
+        } else if (favourite) {
+            log.error("You already added recipe with id {} to favourites", recipeId);
+            return false;
+        } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isFavourite()) {
+            log.error("You didn't add recipe with id {} to favourites", recipeId);
+            return false;
+        } else {
+            recipeDao.favouriteLock(ownerId, recipeId, favourite);
+            return true;
+        }
+
   }
 
-  @Override
-  public boolean likeRecipe(String ownerEmail, int recipeId, boolean like) {
-    long ownerId = friendlistDao.getOwnerId(ownerEmail);
-    if (recipeDao.checkLike(ownerId, recipeId).isEmpty()) {
-      recipeDao.addToFavourites(ownerId, recipeId);
+    @Override
+    public boolean likeRecipe(String ownerEmail, int recipeId, boolean like) {
+        long ownerId = friendlistDao.getOwnerId(ownerEmail);
+        if (recipeDao.checkLike(ownerId, recipeId).isEmpty()) {
+            recipeDao.addToFavourites(ownerId, recipeId);
+        }
+        if (like && !recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
+            recipeDao.likeRecipe(recipeId);
+            recipeDao.likedLock(ownerId, recipeId, like);
+            return true;
+        }
+        else if (like) {
+            log.error("You already liked this recipe");
+            return false;
+        } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
+            log.error("You didn't like this recipe");
+            return false;
+        } else {
+            recipeDao.withdrawLike(recipeId);
+            recipeDao.likedLock(ownerId, recipeId, like);
+            return true;
+        }
     }
-    if (like && !recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
-      recipeDao.likeRecipe(recipeId);
-      recipeDao.likedLock(ownerId, recipeId, like);
-      return true;
-    } else if (like) {
-      log.info("You already liked this recipe");
-      return false;
-    } else if (!recipeDao.checkLike(ownerId, recipeId).get(0).isLiked()) {
-      log.info("You didn't like this recipe");
-      return false;
-    } else {
-      recipeDao.withdrawLike(recipeId);
-      recipeDao.likedLock(ownerId, recipeId, like);
-      return true;
-    }
-  }
 
   @Override
   public Integer addRecipe(CreateRecipe recipe) {
 
-    if (recipeDao.findRecipeByName(recipe.getName()).isEmpty()) {
-      recipeDao.createRecipe(recipe);
-      return recipeDao.findRecipeByName(recipe.getName()).get(0).getId();
-    } else {
-      log.info("Recipe with name " + recipe.getName() + " already exists");
-      return 0;
+        if (recipeDao.findRecipeByName(recipe.getName()).isEmpty()) {
+            recipeDao.createRecipe(recipe);
+            return recipeDao.findRecipeByName(recipe.getName()).get(0).getId();
+        } else {
+            log.error("Recipe with name {} already exists", recipe.getName());
+            return 0;
+        }
     }
-  }
+
+    @Override
+    public boolean addIngredientToRecipe(int recipeId, String name) {
+        Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
+        Ingredient ingredient = ingredientDao.findIngredientByName(name).get(0);
+        if (recipe == null) {
+            log.error("Recipe with id {} doesn't exist", recipeId);
+            return false;
+        }
+        if (ingredient == null) {
+            log.error("Ingredient with name {} doesn't exist", name);
+            return false;
+        }
+        if (!recipeDao.ingredientInRecipe(recipeId, ingredient.getId())) {
+            recipeDao.addIngredientToRecipe(recipe.getId(), ingredient.getId());
+            return true;
+        } else {
+            log.error("Ingredient with name {} is already included", name);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean addKitchenwareToRecipe(int recipeId, String name) {
+        Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
+        Kitchenware kitchenware = kitchenwareDao.findKitchenwareByName(name).get(0);
+        if (recipe == null) {
+            log.error("Recipe with id {} doesn't exist", recipeId);
+            return false;
+        }
+        if (kitchenware == null) {
+            log.error("Kitchenware with name {} doesn't exist", name);
+            return false;
+        }
+        if (!recipeDao.kitchenwareInRecipe(recipeId, kitchenware.getId())) {
+            recipeDao.addKitchenwareToRecipe(recipe.getId(), kitchenware.getId());
+            return true;
+        } else {
+            log.error("Kitchenware with with name {} is already included", name);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeIngredientFromRecipe(int recipeId, String name) {
+        Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
+        Ingredient ingredient = ingredientDao.findIngredientByName(name).get(0);
+        if (recipe == null) {
+            log.error("Recipe with id {} doesn't exist", recipeId);
+            return false;
+        }
+        if (ingredient == null) {
+            log.error("Ingredient with name {} doesn't exist", name);
+            return false;
+        }
+        if (recipeDao.ingredientInRecipe(recipeId, ingredient.getId())) {
+            recipeDao.removeIngredientFromRecipe(recipe.getId(), ingredient.getId());
+            return true;
+        } else {
+            log.error("Ingredient with name {} is not included", name);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeKitchenwareFromRecipe(int recipeId, String name) {
+        Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
+        Kitchenware kitchenware = kitchenwareDao.findKitchenwareByName(name).get(0);
+        if (recipe == null) {
+            log.error("Recipe with id {} doesn't exist", recipeId);
+            return false;
+        }
+        if (kitchenware == null) {
+            log.error("Kitchenware with name {} doesn't exist", name);
+            return false;
+        }
+        if (recipeDao.kitchenwareInRecipe(recipeId, kitchenware.getId())) {
+            recipeDao.removeKitchenwareFromRecipe(recipe.getId(), kitchenware.getId());
+            return true;
+        } else {
+            log.error("Kitchenware with name {} is not included", name);
+            return false;
+        }
+    }
 
   @Override
-  public boolean addIngredientToRecipe(int recipeId, String name) {
-    Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
-    Ingredient ingredient = ingredientDao.findIngredientByName(name).get(0);
-    if (recipe == null) {
-      log.info("Recipe with id " + recipeId + " doesn't exist");
-      return false;
+  public List<DishRecipe> getSuggestion(String header) {
+    Long userid =
+        userDao.findUserByEmail(jwtTokenProvider.getEmail(header.substring(7))).get(0).getId();
+    List<Recipe> recipes = recipeDao.getSuggestion(userid);
+    UserToRecipe userToRecipe;
+    Boolean liked = null;
+    Boolean favourite = null;
+    List<DishRecipe> result = new ArrayList<>();
+    for (Recipe recipe : recipes) {
+      if (!recipeDao.checkLike(userid, recipe.getId()).isEmpty()) {
+        userToRecipe = recipeDao.checkLike(userid, recipe.getId()).get(0);
+        liked = userToRecipe.isLiked();
+        favourite = userToRecipe.isFavourite();
+      }
+      int recipeId = recipe.getId();
+      result.add(new DishRecipe(
+          recipe.getId(),
+          recipe.getName(),
+          recipe.getAlcohol(),
+          recipe.isSugarless(),
+          recipe.isActive(),
+          recipe.getImage(),
+          recipe.getRecipe(),
+          recipe.getRating(),
+          recipeDao.containsIngredients(recipeId),
+          recipeDao.containsKitchenware(recipeId),
+          liked,
+          favourite
+      ));
     }
-    if (ingredient == null) {
-      log.info("Ingredient with name " + name + " doesn't exist");
-      return false;
-    }
-    if (!recipeDao.ingredientInRecipe(recipeId, ingredient.getId())) {
-      recipeDao.addIngredientToRecipe(recipe.getId(), ingredient.getId());
-      return true;
-    } else {
-      log.info("Ingredient with name " + name + " is already included");
-      return false;
-    }
-  }
-
-  @Override
-  public boolean addKitchenwareToRecipe(int recipeId, String name) {
-    Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
-    Kitchenware kitchenware = kitchenwareDao.findKitchenwareByName(name).get(0);
-    if (recipe == null) {
-      log.info("Recipe with id " + recipeId + " doesn't exist");
-      return false;
-    }
-    if (kitchenware == null) {
-      log.info("Kitchenware with name " + name + " doesn't exist");
-      return false;
-    }
-    if (!recipeDao.kitchenwareInRecipe(recipeId, kitchenware.getId())) {
-      recipeDao.addKitchenwareToRecipe(recipe.getId(), kitchenware.getId());
-      return true;
-    } else {
-      log.info("Kitchenware with name " + name + " is already included");
-      return false;
-    }
-  }
-
-  @Override
-  public boolean removeIngredientFromRecipe(int recipeId, String name) {
-    Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
-    Ingredient ingredient = ingredientDao.findIngredientByName(name).get(0);
-    if (recipe == null) {
-      log.info("Recipe with id " + recipeId + " doesn't exist");
-      return false;
-    }
-    if (ingredient == null) {
-      log.info("Ingredient with name " + name + " doesn't exist");
-      return false;
-    }
-    if (recipeDao.ingredientInRecipe(recipeId, ingredient.getId())) {
-      recipeDao.removeIngredientFromRecipe(recipe.getId(), ingredient.getId());
-      return true;
-    } else {
-      log.info("Ingredient with name " + name + " is not included");
-      return false;
-    }
-  }
-
-  @Override
-  public boolean removeKitchenwareFromRecipe(int recipeId, String name) {
-    Recipe recipe = recipeDao.findRecipeById(recipeId).get(0);
-    Kitchenware kitchenware = kitchenwareDao.findKitchenwareByName(name).get(0);
-    if (recipe == null) {
-      log.info("Recipe with id " + recipeId + " doesn't exist");
-      return false;
-    }
-    if (kitchenware == null) {
-      log.info("Kitchenware with name " + name + " doesn't exist");
-      return false;
-    }
-    if (recipeDao.kitchenwareInRecipe(recipeId, kitchenware.getId())) {
-      recipeDao.removeKitchenwareFromRecipe(recipe.getId(), kitchenware.getId());
-      return true;
-    } else {
-      log.info("Kitchenware with name " + name + " is not included");
-      return false;
-    }
+    return result;
   }
 }

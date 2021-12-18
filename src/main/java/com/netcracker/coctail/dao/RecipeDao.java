@@ -27,7 +27,7 @@ public interface RecipeDao {
 
     List<Recipe> findAllRecipesByName(String name);
 
-    List<Recipe> findAllRecipesFiltered(boolean sugarless, String alcohol);
+    List<Recipe> findAllRecipesFiltered(String sugarless, String alcohol);
 
     boolean ingredientInRecipe(Integer recipeId, Long ingredientId);
 
@@ -52,6 +52,8 @@ public interface RecipeDao {
     List<Ingredient> containsIngredients(int recipeId);
 
     List<Kitchenware> containsKitchenware(int recipeId);
+
+    List<Recipe> getSuggestion(Long id);
 
 
 }

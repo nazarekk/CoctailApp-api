@@ -9,28 +9,31 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface RecipeService {
 
-    Integer addRecipe(CreateRecipe recipe);
+  Integer addRecipe(CreateRecipe recipe);
 
-    boolean addIngredientToRecipe(int id, String name);
+  boolean addIngredientToRecipe(int id, String name);
 
-    boolean addKitchenwareToRecipe(int id, String name);
+  boolean addKitchenwareToRecipe(int id, String name);
 
-    boolean removeIngredientFromRecipe(int id, String name);
+  boolean removeIngredientFromRecipe(int id, String name);
 
-    boolean removeKitchenwareFromRecipe(int id, String name);
+  boolean removeKitchenwareFromRecipe(int id, String name);
 
-    List<DishRecipe> getRecipesByName(String name, HttpServletRequest httpServletRequest);
+  List<DishRecipe> getRecipesByName(String name, HttpServletRequest httpServletRequest);
 
-    List<DishRecipe> getRecipesFiltered(boolean sugarless, String alcohol);
+  List<DishRecipe> getRecipesFiltered(String sugarless, String alcohol,
+                                      HttpServletRequest httpServletRequest);
 
-    DishRecipe getRecipeById(int id);
+  DishRecipe getRecipeById(int id);
 
-    boolean editRecipe(Recipe recipe);
+  boolean editRecipe(Recipe recipe);
 
-    boolean removeRecipe(int id);
+  boolean removeRecipe(int id);
 
-    boolean addToFavourites(String ownerEmail, int recipeId, boolean favourite);
+  boolean addToFavourites(String ownerEmail, int recipeId, boolean favourite);
 
-    boolean likeRecipe(String ownerEmail, int recipeId, boolean liked);
+  boolean likeRecipe(String ownerEmail, int recipeId, boolean liked);
+
+  List<DishRecipe> getSuggestion(String header);
 
 }
