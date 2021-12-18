@@ -99,5 +99,4 @@ public class StockIngredientDaoImp implements StockIngredientDao {
                 rowMapper);
     }
 
-
 }
