@@ -10,6 +10,7 @@ import java.util.Collections;
  * Implementation of Factory Method for class {JwtUser}.
  */
 
+
 public final class JwtUserFactory {
 
     public static JwtUser create(User user, String roleName) {
@@ -19,7 +20,7 @@ public final class JwtUserFactory {
                 user.getPassword(),
                 user.getEmail(),
                 user.getRoleid(),
-                user.isIsactive(),
+                user.getIsActive(),
                 Collections.singletonList(new SimpleGrantedAuthority(roleName))
         );
     }

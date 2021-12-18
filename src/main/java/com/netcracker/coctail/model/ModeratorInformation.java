@@ -10,4 +10,5 @@ public class ModeratorInformation {
   private final String email;
   private final String nickname;
   private final Boolean isActive;
+  private final String image;
 }
