@@ -1,4 +1,5 @@
 package com.netcracker.coctail.controllers;
+
 import com.netcracker.coctail.dao.RegistrationDao;
 import com.netcracker.coctail.dao.UserDao;
 import com.netcracker.coctail.dto.UserDto;
@@ -237,8 +238,10 @@ public class UserRestController {
 
   @GetMapping("recipe/filter")
   public ResponseEntity<List<DishRecipe>> getRecipesFiltered(
-      @RequestParam String sugarless, @RequestParam String alcohol, HttpServletRequest httpServletRequest) {
-    List<DishRecipe> recipes = recipeService.getRecipesFiltered(sugarless, alcohol, httpServletRequest);
+      @RequestParam String sugarless, @RequestParam String alcohol,
+      HttpServletRequest httpServletRequest) {
+    List<DishRecipe> recipes =
+        recipeService.getRecipesFiltered(sugarless, alcohol, httpServletRequest);
     if (recipes.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -378,6 +381,14 @@ public class UserRestController {
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
+  }
+
+  @GetMapping("recipe/suggestion")
+  public ResponseEntity<List<DishRecipe>> getSuggestion(@RequestHeader("Authorization") String header) {
+    List<DishRecipe> result = recipeService.getSuggestion(header);
+    return result.isEmpty()
+        ? new ResponseEntity(HttpStatus.NO_CONTENT) :
+        new ResponseEntity<>(result, HttpStatus.OK);
   }
 
   @GetMapping(value = "events/{id}")

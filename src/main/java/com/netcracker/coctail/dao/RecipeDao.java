@@ -53,5 +53,7 @@ public interface RecipeDao {
 
     List<Kitchenware> containsKitchenware(int recipeId);
 
+    List<Recipe> getSuggestion(Long id);
+
 
 }
