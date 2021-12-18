@@ -90,7 +90,8 @@ public class RecipeServiceImp implements RecipeService {
   }
 
   @Override
-  public List<DishRecipe> getRecipesFiltered(String sugarless, String alcohol, HttpServletRequest httpServletRequest) {
+  public List<DishRecipe> getRecipesFiltered(String sugarless, String alcohol,
+                                             HttpServletRequest httpServletRequest) {
     log.info("Filtering");
     List<Recipe> recipes = recipeDao.findAllRecipesFiltered(sugarless, alcohol);
     UserToRecipe userToRecipe;
@@ -321,5 +322,39 @@ public class RecipeServiceImp implements RecipeService {
       log.info("Kitchenware with name " + name + " is not included");
       return false;
     }
+  }
+
+  @Override
+  public List<DishRecipe> getSuggestion(String header) {
+    Long userid =
+        userDao.findUserByEmail(jwtTokenProvider.getEmail(header.substring(7))).get(0).getId();
+    List<Recipe> recipes = recipeDao.getSuggestion(userid);
+    UserToRecipe userToRecipe;
+    Boolean liked = null;
+    Boolean favourite = null;
+    List<DishRecipe> result = new ArrayList<>();
+    for (Recipe recipe : recipes) {
+      if (!recipeDao.checkLike(userid, recipe.getId()).isEmpty()) {
+        userToRecipe = recipeDao.checkLike(userid, recipe.getId()).get(0);
+        liked = userToRecipe.isLiked();
+        favourite = userToRecipe.isFavourite();
+      }
+      int recipeId = recipe.getId();
+      result.add(new DishRecipe(
+          recipe.getId(),
+          recipe.getName(),
+          recipe.getAlcohol(),
+          recipe.isSugarless(),
+          recipe.isActive(),
+          recipe.getImage(),
+          recipe.getRecipe(),
+          recipe.getRating(),
+          recipeDao.containsIngredients(recipeId),
+          recipeDao.containsKitchenware(recipeId),
+          liked,
+          favourite
+      ));
+    }
+    return result;
   }
 }

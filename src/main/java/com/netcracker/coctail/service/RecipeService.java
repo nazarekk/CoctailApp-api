@@ -33,4 +33,6 @@ public interface RecipeService {
 
     boolean likeRecipe(String ownerEmail, int recipeId, boolean liked);
 
+    List<DishRecipe> getSuggestion (String header);
+
 }
