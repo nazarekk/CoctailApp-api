@@ -225,7 +225,7 @@ public class FriendlistServiceImpl implements FriendlistService {
                     isFriend = true;
                 }
             }
-            if (ownerId != friendId && !isFriend){
+            if (ownerId != friendId && !isFriend) {
                 log.info("users with ids " + ownerId + " and " + friendId + " are not friends");
                 noFriendList.add(user);
             }

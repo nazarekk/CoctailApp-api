@@ -79,13 +79,7 @@ public class FriendlistDaoImpl implements FriendlistDao {
                         rs.getLong("ownerid"),
                         rs.getLong("friendid"),
                         rs.getLong("statusid"));
-        /*List<Friendlist> friends =*/
         return jdbcTemplate.query(String.format(allFriends, ownerId), rowMapper);
-//        long[] result = new long[friends.size()];
-//        for (int i=0; i<friends.size(); i++) {
-//            result[i]=friends.get(i).getFriendid();
-//        }
-//        return result;
     }
 
     @Override
