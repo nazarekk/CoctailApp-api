@@ -26,4 +26,6 @@ public interface FriendlistDao {
     List<User> getOwnerByNickname(String nickname);
 
     List<FriendUser> friendList(long ownerId);
+
+    List<Friendlist> allFriends(long ownerId);
 }

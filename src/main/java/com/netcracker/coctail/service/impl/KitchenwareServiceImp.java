@@ -29,6 +29,7 @@ public class KitchenwareServiceImp implements KitchenwareService {
 
   @Override
   public List<Kitchenware> getKitchenwareByName(String name) {
+    name = name.replaceAll("[^A-Za-z0-9]", "");
     return kitchenwareDao.findAllKitchenwareByName(name);
   }
 
