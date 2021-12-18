@@ -21,7 +21,7 @@ public interface RecipeService {
 
     List<DishRecipe> getRecipesByName(String name, HttpServletRequest httpServletRequest);
 
-    List<DishRecipe> getRecipesFiltered(boolean sugarless, String alcohol);
+    List<DishRecipe> getRecipesFiltered(String sugarless, String alcohol, HttpServletRequest httpServletRequest);
 
     DishRecipe getRecipeById(int id);
 

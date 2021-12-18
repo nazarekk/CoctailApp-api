@@ -33,7 +33,7 @@ public class FriendlistDaoImpl implements FriendlistDao {
 
   @Value("${friendlistCreation}")
   private String friendlistCreation;
-  @Value("${friendlist}")
+  @Value("${friendList}")
   private String friendlist;
   @Value("${EditFriendlist}")
   private String EditFriendlist;

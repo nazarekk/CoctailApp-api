@@ -118,11 +118,11 @@ public class ModeratorDaoImp implements ModeratorDao {
   }
 
   @Override
-  public void removeModerator(ModeratorInformation moderator) {
+  public Boolean removeModerator(ModeratorInformation moderator) {
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("userid", moderator.getUserid());
-    jdbcTemplate.update(RemoveModerator, param, holder);
+    return (jdbcTemplate.update(RemoveModerator, param, holder) == 1);
   }
 
   @Override

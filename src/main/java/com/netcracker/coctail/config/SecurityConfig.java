@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
   private static final String REFRESH_ENDPOINT = "/api/auth/refresh-token";
   private static final String USER_ENDPOINT = "/api/users**";
   private static final String REG_ENDPOINT = "/api/users";
-  private static final String DISHES_ENDPOINT = "/api/users/recipe/list";
+  private static final String DISHES_ENDPOINT = "/api/users/recipe/**";
   //private static final String front_link = "${front_link}";
 
   @Autowired
@@ -45,6 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
   @Autowired
   private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+  @Bean
+  public RestTemplate getRestTemplate() {
+    return new RestTemplate();
+  }
 
   @Bean
   @Override
@@ -57,16 +63,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     http.csrf().disable()
         .cors().configurationSource(corsConfigurationSource())
         .and()
-        .csrf().disable()
         .authorizeRequests()
         .antMatchers(AUTHENTICAL_ENDPOINT).permitAll()
         .antMatchers(REG_ENDPOINT).permitAll()
-        .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
-        .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
         .antMatchers(MODERACTIVATION_ENDPOINT).permitAll()
         .antMatchers(USERACTIVATION_ENDPOINT).permitAll()
         .antMatchers(REFRESH_ENDPOINT).permitAll()
         .antMatchers(DISHES_ENDPOINT).permitAll()
+        .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+        .antMatchers(MODERATOR_ENDPOINT).hasRole("MODERATOR")
         .antMatchers(USER_ENDPOINT).hasRole("CONFIRMED")
         .antMatchers(USER_ENDPOINT).hasRole("MODERATOR")
         .anyRequest().authenticated()

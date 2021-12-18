@@ -35,4 +35,8 @@ public class CustomControllerAdvice {
     public ResponseEntity<String> handleInvalidNickname(InvalidNicknameException exception) {
         return new ResponseEntity<>("This username is already taken", HttpStatus.EXPECTATION_FAILED);
     }
+    @ExceptionHandler({InvalidCaptchaException.class})
+    public ResponseEntity<String> handleInvalidCaptcha(InvalidCaptchaException exception) {
+        return new ResponseEntity<>("Fall captcha", HttpStatus.NO_CONTENT);
+    }
 }
