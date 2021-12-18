@@ -98,5 +98,4 @@ public class StockIngredientDaoImp implements StockIngredientDao {
         return jdbcTemplate.query(String.format(findStockIngredientsFiltered, userId, type, category),
                 rowMapper);
     }
-
 }
