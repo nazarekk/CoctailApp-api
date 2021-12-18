@@ -27,7 +27,7 @@ public class RegistrationController {
   }
 
   @PostMapping
-  public String create(@RequestBody @Valid CreateUser user) {
+  public String create(@RequestBody CreateUser user) {
     return registrationDao.create(user);
   }
 

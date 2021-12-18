@@ -228,8 +228,7 @@ public class ModeratorRestController {
     @DeleteMapping("stock/remove/{userid}/{ingredientid}")
     public ResponseEntity removeStockIngredient(
             @PathVariable(name = "userid") int userId, @PathVariable(name = "ingredientid") long ingredientId) {
-        boolean result = personalStockService.removeIngredientFromStock(userId, ingredientId);
-        return result == Boolean.TRUE
+        return personalStockService.removeIngredientFromStock(userId, ingredientId) == Boolean.TRUE
                 ? new ResponseEntity(HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -238,8 +237,7 @@ public class ModeratorRestController {
     public ResponseEntity editStockIngredient(
             @PathVariable(name = "userid") int userId, @RequestParam long ingredientId,
             @RequestParam long quantity) {
-        boolean result = personalStockService.editIngredient(userId, ingredientId, quantity);
-        return result == Boolean.TRUE
+        return personalStockService.editIngredient(userId, ingredientId, quantity) == Boolean.TRUE
                 ? new ResponseEntity(HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
