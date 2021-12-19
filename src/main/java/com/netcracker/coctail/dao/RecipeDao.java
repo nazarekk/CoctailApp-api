@@ -55,5 +55,5 @@ public interface RecipeDao {
 
     List<Recipe> getSuggestion(Long id);
 
-
+    List<Recipe> favList(Long id);
 }

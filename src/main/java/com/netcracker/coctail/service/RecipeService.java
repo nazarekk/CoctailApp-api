@@ -36,4 +36,5 @@ public interface RecipeService {
 
   List<DishRecipe> getSuggestion(String header);
 
+  List<DishRecipe> getFavourites(String header);
 }

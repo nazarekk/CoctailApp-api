@@ -68,6 +68,8 @@ public class RecipeDaoImp implements RecipeDao {
   private String kitchenwareInRecipe;
   @Value("${dishSuggestion}")
   private String suggestedQuery;
+  @Value("${getFavourites}")
+  private String favList;
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -267,7 +269,13 @@ public class RecipeDaoImp implements RecipeDao {
 
   @Override
   public List<Recipe> getSuggestion(Long id) {
+    log.info(String.format(suggestedQuery, id));
     return jdbcTemplate.query(String.format(suggestedQuery, id), rowMapper);
+  }
+
+  @Override
+  public List<Recipe> favList(Long id) {
+    return jdbcTemplate.query(String.format(favList, id), rowMapper);
   }
 
 }

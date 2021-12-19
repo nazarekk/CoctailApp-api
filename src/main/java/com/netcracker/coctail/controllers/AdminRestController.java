@@ -65,8 +65,10 @@ public class AdminRestController {
   }
 
   @PatchMapping("moderator/edit")
-  public void editModerator(@RequestBody @Valid ModeratorInformation user) {
-    createModeratorDao.editModerator(user);
+  public ResponseEntity editModerator(@RequestBody @Valid ModeratorInformation user) {
+    return createModeratorDao.editModerator(user) == 1 ? new ResponseEntity(HttpStatus.OK) :
+        new ResponseEntity(HttpStatus.NOT_MODIFIED);
+
   }
 
   @DeleteMapping("moderators/remove")

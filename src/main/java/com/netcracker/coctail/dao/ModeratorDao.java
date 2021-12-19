@@ -12,7 +12,7 @@ public interface ModeratorDao {
 
   Collection<ModeratorInformation> moderatorList();
 
-  void editModerator(ModeratorInformation moderator);
+  int editModerator(ModeratorInformation moderator);
 
   Boolean removeModerator(ModeratorInformation moderator);
 
