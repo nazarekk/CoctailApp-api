@@ -190,6 +190,18 @@ public class UserRestController {
     return new ResponseEntity<>(ingredients, HttpStatus.OK);
   }
 
+  @GetMapping("ingredients/filter")
+  public ResponseEntity<List<Ingredient>> getIngredientsFiltered(
+      @RequestParam String type,
+      @RequestParam String category,
+      @RequestParam String active) {
+    List<Ingredient> ingredients = ingredientService.getIngredientFiltered(type, category, active);
+    if (ingredients.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(ingredients, HttpStatus.OK);
+  }
+
   @GetMapping("recipe")
   public ResponseEntity<List<DishRecipe>> getRecipeByName(@RequestParam String name,
                                                           HttpServletRequest httpServletRequest) {
