@@ -106,7 +106,7 @@ public class ModeratorDaoImp implements ModeratorDao {
   }
 
   @Override
-  public void editModerator(ModeratorInformation moderator) {
+  public int editModerator(ModeratorInformation moderator) {
     KeyHolder holder = new GeneratedKeyHolder();
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("userid", moderator.getUserid())
@@ -114,7 +114,7 @@ public class ModeratorDaoImp implements ModeratorDao {
         .addValue("nickname", moderator.getNickname())
         .addValue("isactive", moderator.getIsActive())
             .addValue("image", moderator.getImage());
-    jdbcTemplate.update(EditModerator, param, holder);
+    return jdbcTemplate.update(EditModerator, param, holder);
   }
 
   @Override
