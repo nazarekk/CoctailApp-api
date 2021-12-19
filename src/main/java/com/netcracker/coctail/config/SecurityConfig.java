@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
   private static final String USER_ENDPOINT = "/api/users**";
   private static final String REG_ENDPOINT = "/api/users";
   private static final String DISHES_ENDPOINT = "/api/users/recipe/**";
-  //private static final String front_link = "${front_link}";
+  private static final String front_link = "${front_link}";
 
   @Autowired
   public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -86,7 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList("*"));
     configuration.setAllowedMethods(Arrays.asList("*"));
-    configuration.addAllowedOrigin("*");
+    configuration.addAllowedOrigin(front_link);
     configuration.addAllowedHeader("*");
     configuration.addAllowedMethod("*");
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
