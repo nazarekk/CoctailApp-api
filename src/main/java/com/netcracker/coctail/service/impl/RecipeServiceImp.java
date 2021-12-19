@@ -164,7 +164,7 @@ public class RecipeServiceImp implements RecipeService {
             log.error("Recipe with id {} doesn't exist", id);
             return false;
         }
-        if (recipeDao.findRecipeByName(name).isEmpty()) {
+        if (recipeDao.findRecipeByName(name).isEmpty() | result.getName().equals(name)) {
             recipeDao.editRecipe(recipe);
             return true;
         } else {
