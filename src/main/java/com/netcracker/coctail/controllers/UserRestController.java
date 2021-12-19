@@ -402,6 +402,15 @@ public class UserRestController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @GetMapping(value = "my_events/{id}")
+  public ResponseEntity isCreator(@PathVariable(name = "id") int id, HttpServletRequest request) {
+     String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+      if (!eventService.isCreator(id, ownerEmail)) {
+          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      }
+      return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @GetMapping(value = "events/list")
   public ResponseEntity<List<Event>> eventsList() {
     List<Event> events = eventService.getEventsByName("");

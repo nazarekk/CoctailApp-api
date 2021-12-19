@@ -175,4 +175,9 @@ public class EventDaoImp implements EventDao {
         jdbcTemplate.update(removeRecipeFromEvent, param);
     }
 
+    @Override
+    public boolean isCreator(int id, long userId) {
+        return false;
+    }
+
 }

@@ -194,4 +194,11 @@ public class EventServiceImp implements EventService {
         }
     }
 
+    @Override
+    public boolean isCreator(int id, String ownerEmail) {
+        long userId = friendlistDao.getOwnerId(ownerEmail);
+        Event result = eventDao.findEventById(id).get(0);
+        return (userId == result.getCreatorId());
+    }
+
 }

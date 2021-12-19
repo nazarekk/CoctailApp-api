@@ -39,4 +39,5 @@ public interface EventDao {
 
     void removeRecipeFromEvent(Integer eventId, Integer recipeId);
 
+    boolean isCreator(int id, long userId);
 }

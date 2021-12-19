@@ -28,4 +28,5 @@ public interface EventService {
 
     boolean removeRecipeFromEvent(int eventId, String name, String userEmail);
 
+    boolean isCreator(int id, String ownerEmail);
 }
