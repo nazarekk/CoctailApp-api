@@ -364,6 +364,14 @@ public class UserRestController {
         new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  @GetMapping("recipe/favourites")
+  public ResponseEntity<List<DishRecipe>> getFavouritesList(@RequestHeader("Authorization") String header) {
+    List<DishRecipe> result = recipeService.getFavourites(header);
+    return result.isEmpty()
+        ? new ResponseEntity(HttpStatus.NO_CONTENT) :
+        new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
   @GetMapping(value = "events/{id}")
   public ResponseEntity<EventInfo> eventInfo(@PathVariable(name = "id") int id) {
     EventInfo result = eventService.eventInfo(id);

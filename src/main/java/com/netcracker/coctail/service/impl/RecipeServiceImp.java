@@ -51,6 +51,36 @@ public class RecipeServiceImp implements RecipeService {
     this.userDao = userDao;
   }
 
+  private List<DishRecipe> jsonConvert(List<Recipe> input, Long id) {
+    UserToRecipe userToRecipe;
+    Boolean liked = null;
+    Boolean favourite = null;
+    List<DishRecipe> result = new ArrayList<>();
+    for (Recipe recipe : input) {
+      if (!recipeDao.checkLike(id, recipe.getId()).isEmpty() & id >= 0) {
+        userToRecipe = recipeDao.checkLike(id, recipe.getId()).get(0);
+        liked = userToRecipe.isLiked();
+        favourite = userToRecipe.isFavourite();
+      }
+      int recipeId = recipe.getId();
+      result.add(new DishRecipe(
+          recipe.getId(),
+          recipe.getName(),
+          recipe.getAlcohol(),
+          recipe.isSugarless(),
+          recipe.isActive(),
+          recipe.getImage(),
+          recipe.getRecipe(),
+          recipe.getRating(),
+          recipeDao.containsIngredients(recipeId),
+          recipeDao.containsKitchenware(recipeId),
+          liked,
+          favourite
+      ));
+    }
+    return result;
+  }
+
   @Override
   public List<DishRecipe> getRecipesByName(String name, HttpServletRequest httpServletRequest) {
     name = name.replaceAll("[^A-Za-z0-9]", "");
@@ -95,39 +125,13 @@ public class RecipeServiceImp implements RecipeService {
                                              HttpServletRequest httpServletRequest) {
     log.info("Filtering");
     List<Recipe> recipes = recipeDao.findAllRecipesFiltered(sugarless, alcohol);
-    UserToRecipe userToRecipe;
-    Boolean liked = null;
-    Boolean favourite = null;
-    String token = httpServletRequest.getHeader("Authorization");
-    List<DishRecipe> result = new ArrayList<>();
     long userid = 0;
+    String token = httpServletRequest.getHeader("Authorization");
     if (token != null) {
       userid =
           userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();
-    }
-    for (Recipe recipe : recipes) {
-      if (token != null & !recipeDao.checkLike(userid, recipe.getId()).isEmpty()) {
-        userToRecipe = recipeDao.checkLike(userid, recipe.getId()).get(0);
-        liked = userToRecipe.isLiked();
-        favourite = userToRecipe.isFavourite();
-      }
-      int recipeId = recipe.getId();
-      result.add(new DishRecipe(
-          recipe.getId(),
-          recipe.getName(),
-          recipe.getAlcohol(),
-          recipe.isSugarless(),
-          recipe.isActive(),
-          recipe.getImage(),
-          recipe.getRecipe(),
-          recipe.getRating(),
-          recipeDao.containsIngredients(recipeId),
-          recipeDao.containsKitchenware(recipeId),
-          liked,
-          favourite
-      ));
-    }
-    return result;
+    } else userid = -1;
+    return this.jsonConvert(recipes,userid);
   }
 
   @Override
@@ -137,8 +141,6 @@ public class RecipeServiceImp implements RecipeService {
       log.warn("IN getRecipeById - no recipes found by id: {}", id);
       return null;
     }
-    Boolean liked = null;
-    Boolean favourite = null;
     return new DishRecipe(
         recipe.getId(),
         recipe.getName(),
@@ -150,8 +152,8 @@ public class RecipeServiceImp implements RecipeService {
         recipe.getRating(),
         recipeDao.containsIngredients(id),
         recipeDao.containsKitchenware(id),
-        liked,
-        favourite
+        null,
+        null
     );
   }
 
@@ -331,32 +333,15 @@ public class RecipeServiceImp implements RecipeService {
         userDao.findUserByEmail(jwtTokenProvider.getEmail(header.substring(7))).get(0).getId();
     log.info("looking for dishes for userid {}", userid);
     List<Recipe> recipes = recipeDao.getSuggestion(userid);
-    UserToRecipe userToRecipe;
-    Boolean liked = null;
-    Boolean favourite = null;
-    List<DishRecipe> result = new ArrayList<>();
-    for (Recipe recipe : recipes) {
-      if (!recipeDao.checkLike(userid, recipe.getId()).isEmpty()) {
-        userToRecipe = recipeDao.checkLike(userid, recipe.getId()).get(0);
-        liked = userToRecipe.isLiked();
-        favourite = userToRecipe.isFavourite();
-      }
-      int recipeId = recipe.getId();
-      result.add(new DishRecipe(
-          recipe.getId(),
-          recipe.getName(),
-          recipe.getAlcohol(),
-          recipe.isSugarless(),
-          recipe.isActive(),
-          recipe.getImage(),
-          recipe.getRecipe(),
-          recipe.getRating(),
-          recipeDao.containsIngredients(recipeId),
-          recipeDao.containsKitchenware(recipeId),
-          liked,
-          favourite
-      ));
-    }
-    return result;
+    return this.jsonConvert(recipes, userid);
+  }
+
+  @Override
+  public List<DishRecipe> getFavourites(String header) {
+    Long userid =
+        userDao.findUserByEmail(jwtTokenProvider.getEmail(header.substring(7))).get(0).getId();
+    log.info("looking for favourite dishes for userid {}", userid);
+    List<Recipe> recipes = recipeDao.favList(userid);
+    return this.jsonConvert(recipes, userid);
   }
 }
