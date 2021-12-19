@@ -330,6 +330,7 @@ public class RecipeServiceImp implements RecipeService {
   public List<DishRecipe> getSuggestion(String header) {
     Long userid =
         userDao.findUserByEmail(jwtTokenProvider.getEmail(header.substring(7))).get(0).getId();
+    log.info("looking for dishes for userid {}",userid);
     List<Recipe> recipes = recipeDao.getSuggestion(userid);
     UserToRecipe userToRecipe;
     Boolean liked = null;

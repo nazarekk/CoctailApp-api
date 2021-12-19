@@ -2,6 +2,7 @@ package com.netcracker.coctail.dao;
 
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Data
 @Component
+@Slf4j
 @PropertySource("classpath:SQLscripts.properties")
 public class RecipeDaoImp implements RecipeDao {
 
@@ -118,7 +120,7 @@ public class RecipeDaoImp implements RecipeDao {
         .addValue("id", recipe.getId())
         .addValue("name", recipe.getName())
         .addValue("image", recipe.getImage())
-        .addValue("recipe", recipe.getName())
+        .addValue("recipe", recipe.getRecipe())
         .addValue("alcohol", recipe.getAlcohol().name())
         .addValue("sugarless", recipe.isSugarless())
         .addValue("isActive", recipe.isActive());
@@ -265,6 +267,7 @@ public class RecipeDaoImp implements RecipeDao {
 
   @Override
   public List<Recipe> getSuggestion(Long id) {
+    log.info(String.format(suggestedQuery, id));
     return jdbcTemplate.query(String.format(suggestedQuery, id), rowMapper);
   }
 
