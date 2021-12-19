@@ -130,8 +130,10 @@ public class RecipeServiceImp implements RecipeService {
     if (token != null) {
       userid =
           userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();
-    } else userid = -1;
-    return this.jsonConvert(recipes,userid);
+    } else {
+      userid = -1;
+    }
+    return this.jsonConvert(recipes, userid);
   }
 
   @Override
