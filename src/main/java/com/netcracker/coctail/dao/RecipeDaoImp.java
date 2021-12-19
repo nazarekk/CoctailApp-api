@@ -267,7 +267,6 @@ public class RecipeDaoImp implements RecipeDao {
 
   @Override
   public List<Recipe> getSuggestion(Long id) {
-    log.info(String.format(suggestedQuery, id));
     return jdbcTemplate.query(String.format(suggestedQuery, id), rowMapper);
   }
 
