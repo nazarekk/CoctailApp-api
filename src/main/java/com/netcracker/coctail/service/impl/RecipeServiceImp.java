@@ -35,6 +35,7 @@ public class RecipeServiceImp implements RecipeService {
   private FriendlistDao friendlistDao;
   private JwtTokenProvider jwtTokenProvider;
   private UserDao userDao;
+  private final String token_key = "Authorization";
 
   @Autowired
   @Lazy
@@ -88,7 +89,7 @@ public class RecipeServiceImp implements RecipeService {
     UserToRecipe userToRecipe;
     Boolean liked = null;
     Boolean favourite = null;
-    String token = httpServletRequest.getHeader("Authorization");
+    String token = httpServletRequest.getHeader(token_key);
     List<DishRecipe> result = new ArrayList<>();
     long userid = 0;
     if (token != null) {
@@ -126,7 +127,7 @@ public class RecipeServiceImp implements RecipeService {
     log.info("Filtering");
     List<Recipe> recipes = recipeDao.findAllRecipesFiltered(sugarless, alcohol);
     long userid = 0;
-    String token = httpServletRequest.getHeader("Authorization");
+    String token = httpServletRequest.getHeader(token_key);
     if (token != null) {
       userid =
           userDao.findUserByEmail(jwtTokenProvider.getEmail(token.substring(7))).get(0).getId();

@@ -50,6 +50,7 @@ public class UserRestController {
     private IngredientService ingredientService;
     private EventService eventService;
     private RegistrationDao registrationDao;
+    private final String token_key = "Authorization";
 
     @Autowired
     @Lazy
@@ -98,7 +99,7 @@ public class UserRestController {
     public ResponseEntity addFriend(
             @PathVariable(name = "friendid") long friendid,
             HttpServletRequest request) {
-        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
         Boolean ret = friendlistService.addFriend(ownerEmail, friendid);
         return ret == Boolean.TRUE
                 ? new ResponseEntity(ret, HttpStatus.OK) :
@@ -108,7 +109,7 @@ public class UserRestController {
     @GetMapping("find")
     public ResponseEntity<List<FriendUser>> getUserByNickname(@RequestParam String nickname,
                                                               HttpServletRequest request) {
-        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
         List<FriendUser> users = friendlistService.showAllUsers(ownerEmail, nickname);
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -118,7 +119,7 @@ public class UserRestController {
 
     @GetMapping("friendlist")
     public ResponseEntity<List<FriendUser>> getFriendList(HttpServletRequest request) {
-        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+        String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
         List<FriendUser> users = friendlistService.friendList(ownerEmail);
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -130,7 +131,7 @@ public class UserRestController {
   public ResponseEntity acceptFriend(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     Boolean ret = friendlistService.acceptFriendRequest(ownerEmail, friendid);
     return ret == Boolean.TRUE
         ? new ResponseEntity(ret, HttpStatus.OK) :
@@ -141,7 +142,7 @@ public class UserRestController {
   public ResponseEntity declineFriend(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     Boolean ret = friendlistService.declineFriendRequest(ownerEmail, friendid);
     return ret == Boolean.TRUE
         ? new ResponseEntity(ret, HttpStatus.OK) :
@@ -151,7 +152,7 @@ public class UserRestController {
   @PatchMapping("subscribe/{friendid}")
   public ResponseEntity subcribeTo(
       @PathVariable(name = "friendid") long friendid,
-      @RequestHeader("Authorization") String token) {
+      @RequestHeader(token_key) String token) {
     String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
     Boolean ret = friendlistService.subscribeToFriend(ownerEmail, friendid);
     return ret == Boolean.TRUE
@@ -162,7 +163,7 @@ public class UserRestController {
   @PatchMapping("unsubscribe/{friendid}")
   public ResponseEntity unsubcribeFrom(
       @PathVariable(name = "friendid") long friendid,
-      @RequestHeader("Authorization") String token) {
+      @RequestHeader(token_key) String token) {
     String ownerEmail = jwtTokenProvider.getEmail(token.substring(7));
     Boolean ret = friendlistService.unsubcribeFromFriend(ownerEmail, friendid);
     return ret == Boolean.TRUE
@@ -174,7 +175,7 @@ public class UserRestController {
   public ResponseEntity removeFromFriends(
       @PathVariable(name = "friendid") long friendid,
       HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     Boolean ret = friendlistService.removeFriend(ownerEmail, friendid);
     return ret == Boolean.TRUE
         ? new ResponseEntity(ret, HttpStatus.OK) :
@@ -214,14 +215,14 @@ public class UserRestController {
 
   @GetMapping(value = "info")
   public ResponseEntity<UserInfo> seeMyPersonalData(HttpServletRequest request) {
-    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String email = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     return new ResponseEntity<>(userDao.myInfo(email), HttpStatus.OK);
   }
 
   @PutMapping(value = "settings")
   public ResponseEntity<?> changePassword(HttpServletRequest request,
                                           @RequestBody @Valid UserPasswords userPasswords) {
-    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String email = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     User user = userService.getUserByEmail(email);
     userService.checkPassword(user, userPasswords);
     return new ResponseEntity<>(HttpStatus.OK);
@@ -230,7 +231,7 @@ public class UserRestController {
   @PatchMapping(value = "settings/edit")
   public ResponseEntity<?> editMyPersonalData(HttpServletRequest request,
                                               @RequestBody @Valid UserPersonalInfo user) {
-    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String email = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     userService.changeInfo(email, user);
     return new ResponseEntity<>(HttpStatus.OK);
   }
@@ -238,13 +239,13 @@ public class UserRestController {
   @PutMapping("settings/edit")
   public ResponseEntity<?> editUserPhoto(HttpServletRequest request,
                                          @RequestBody UserPhoto user) {
-    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String email = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     return new ResponseEntity<>(userService.changeUserPhoto(email, user), HttpStatus.OK);
   }
 
   @GetMapping("settings/edit")
   public ResponseEntity<UserPersonalInfo> getInformationInSettings(HttpServletRequest request) {
-    String email = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String email = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     return new ResponseEntity<>(userDao.getInfo(email), HttpStatus.OK);
   }
 
@@ -261,7 +262,7 @@ public class UserRestController {
   }
 
     @PostMapping(value = "stock/ingredients")
-    public ResponseEntity addIngredient(@RequestHeader("Authorization") String token,
+    public ResponseEntity addIngredient(@RequestHeader(token_key) String token,
                                         @RequestParam long ingredientId,
                                         @RequestParam long quantity) {
         long userId = personalStockService.getOwnerIdByToken(token);
@@ -272,7 +273,7 @@ public class UserRestController {
 
     @DeleteMapping("stock/{ingredientid}")
     public ResponseEntity removeStockIngredient(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(token_key) String token,
             @PathVariable(name = "ingredientid") long ingredientId) {
         long userId = personalStockService.getOwnerIdByToken(token);
         return personalStockService.removeIngredientFromStock(userId, ingredientId) == Boolean.TRUE
@@ -282,7 +283,7 @@ public class UserRestController {
 
     @PatchMapping(value = "stock/edit")
     public ResponseEntity editStockIngredient(
-            @RequestHeader("Authorization") String token, @RequestParam long ingredientId,
+            @RequestHeader(token_key) String token, @RequestParam long ingredientId,
             @RequestParam long quantity) {
         long userId = personalStockService.getOwnerIdByToken(token);
         return personalStockService.editIngredient(userId, ingredientId, quantity) == Boolean.TRUE
@@ -292,7 +293,7 @@ public class UserRestController {
 
     @GetMapping(value = "stock/my")
     public ResponseEntity<List<StockIngredientInfo>> getAllUserIngredients(
-            @RequestHeader("Authorization") String token) {
+            @RequestHeader(token_key) String token) {
         long userId = personalStockService.getOwnerIdByToken(token);
         List<StockIngredientInfo> stockIngredients =
                 personalStockService.getStockIngredientsByName(userId, "");
@@ -303,7 +304,7 @@ public class UserRestController {
 
     @GetMapping("stock/search")
     public ResponseEntity<List<StockIngredientInfo>> getStockIngredientsByName(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(token_key) String token,
             @RequestParam String name) {
         long userId = personalStockService.getOwnerIdByToken(token);
         List<StockIngredientInfo> stockIngredients =
@@ -315,7 +316,7 @@ public class UserRestController {
 
     @GetMapping("stock/filter")
     public ResponseEntity<List<StockIngredientInfo>> getStockIngredientsFiltered(
-            @RequestHeader("Authorization") String token, @RequestParam String type,
+            @RequestHeader(token_key) String token, @RequestParam String type,
             @RequestParam String category) {
         long userId = personalStockService.getOwnerIdByToken(token);
         List<StockIngredientInfo> stockIngredients =
@@ -347,7 +348,7 @@ public class UserRestController {
   public ResponseEntity addToFavourites(@PathVariable(name = "id") int id,
                                         @RequestParam boolean favourite,
                                         HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (recipeService.addToFavourites(ownerEmail, id, favourite)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -360,7 +361,7 @@ public class UserRestController {
       @PathVariable(name = "id") int id,
       @RequestParam boolean like,
       HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (recipeService.likeRecipe(ownerEmail, id, like)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -369,7 +370,7 @@ public class UserRestController {
   }
 
   @GetMapping("recipe/suggestion")
-  public ResponseEntity<List<DishRecipe>> getSuggestion(@RequestHeader("Authorization") String header) {
+  public ResponseEntity<List<DishRecipe>> getSuggestion(@RequestHeader(token_key) String header) {
     List<DishRecipe> result = recipeService.getSuggestion(header);
     return result.isEmpty()
         ? new ResponseEntity(HttpStatus.NO_CONTENT) :
@@ -377,7 +378,7 @@ public class UserRestController {
   }
 
   @GetMapping("recipe/favourites")
-  public ResponseEntity<List<DishRecipe>> getFavouritesList(@RequestHeader("Authorization") String header) {
+  public ResponseEntity<List<DishRecipe>> getFavouritesList(@RequestHeader(token_key) String header) {
     List<DishRecipe> result = recipeService.getFavourites(header);
     return result.isEmpty()
         ? new ResponseEntity(HttpStatus.NO_CONTENT) :
@@ -404,7 +405,7 @@ public class UserRestController {
 
   @GetMapping(value = "events/filter")
   public ResponseEntity<List<Event>> getEventsFiltered(HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     List<Event> events = eventService.getEventsFiltered(ownerEmail);
     if (events.isEmpty()) {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -415,7 +416,7 @@ public class UserRestController {
   @PostMapping(value = "events")
   public ResponseEntity<Integer> createEvent(@RequestBody CreateEvent event,
                                              HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     int id = eventService.createEvent(ownerEmail, event);
     if (id > 0) {
       return new ResponseEntity<>(id, HttpStatus.OK);
@@ -426,7 +427,7 @@ public class UserRestController {
 
   @PostMapping(value = "join/{id}")
   public ResponseEntity joinEvent(@PathVariable(name = "id") int id, HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (eventService.joinEvent(ownerEmail, id)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -437,7 +438,7 @@ public class UserRestController {
   @PostMapping(value = "events/{id}/recipe")
   public ResponseEntity addRecipeToEvent(@PathVariable(name = "id") int id,
                                          @RequestParam String name, HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (eventService.addRecipeToEvent(id, name, ownerEmail)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -447,7 +448,7 @@ public class UserRestController {
 
   @DeleteMapping(value = "leave/{id}")
   public ResponseEntity leaveEvent(@PathVariable(name = "id") int id, HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (eventService.leaveEvent(ownerEmail, id)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -459,7 +460,7 @@ public class UserRestController {
   public ResponseEntity removeRecipeFromEvent(@PathVariable(name = "id") int id,
                                               @RequestParam String name,
                                               HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (eventService.removeRecipeFromEvent(id, name, ownerEmail)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -470,7 +471,7 @@ public class UserRestController {
   @PatchMapping(value = "events/{id}")
   public ResponseEntity editEvent(@RequestBody CreateEvent event, @PathVariable(name = "id") int id,
                                   HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (eventService.editEvent(ownerEmail, event, id)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
@@ -481,7 +482,7 @@ public class UserRestController {
   @DeleteMapping(value = "events/{id}")
   public ResponseEntity declineEvent(@PathVariable(name = "id") int id,
                                      HttpServletRequest request) {
-    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader("Authorization").substring(7));
+    String ownerEmail = jwtTokenProvider.getEmail(request.getHeader(token_key).substring(7));
     if (eventService.declineEvent(ownerEmail, id)) {
       return new ResponseEntity<>(HttpStatus.OK);
     } else {
